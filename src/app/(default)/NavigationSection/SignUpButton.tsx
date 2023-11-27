@@ -1,7 +1,12 @@
+import Link from "next/link";
+
 export default function SignUpButton() {
     return (
-        <button className="border-2">
+        <Link
+            href="/sign-up"
+            className="border-2"
+        >
             Sign up
-        </button>
+        </Link>
     )
 }

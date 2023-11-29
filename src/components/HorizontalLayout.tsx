@@ -5,7 +5,7 @@ type HorizontalLayoutProps = {
 
 export default function HorizontalLayout({ children, screenWidth}: HorizontalLayoutProps) {
     return (
-        <div className={`w-${screenWidth ? "screen" : "full"} h-full flex border-2 relative`}>
+        <div className={`w-${screenWidth ? "screen" : "full"} h-full flex relative bg-theme-white`}>
             {children}
         </div>
     )

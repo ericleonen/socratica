@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-theme-black {
+    @apply bg-black/90;
+}
+
+.text-theme-black {
+    @apply text-black/90;
+}
+
+.bg-theme-white {
+    @apply bg-slate-50;
+}
+
+.text-theme-white {
+    @apply text-slate-50/90;
+}
+

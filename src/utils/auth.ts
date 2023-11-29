@@ -4,16 +4,16 @@ import firebase from "firebase/compat/app";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useEffect } from "react";
 import { AppRouterInstance } from "next/dist/shared/lib/app-router-context.shared-runtime";
+import { initializeUserDoc } from "./store";
+import { useRouter } from "next/navigation";
+import { useAuthState } from "react-firebase-hooks/auth";
 
 export async function signUpWithEmailAndPassword(email: string, password: string) {
     try {
         const res = await createUserWithEmailAndPassword(auth, email, password);
         const user = res.user;
 
-        await setDoc(doc(db, "users", user.uid), {
-            authProvider: "local",
-            email
-        });
+        initializeUserDoc(user.uid, email, "local");
 
         return null;
     } catch (error) {
@@ -37,16 +37,9 @@ export async function signInWithGoogle() {
     try {
         const res = await signInWithPopup(auth, googleProvider);
         const user = res.user;
+        
+        initializeUserDoc(user.uid, user.email, "google");
 
-        const userDocRef = doc(db, "users", user.uid);
-        const userDocSnapshot = await getDoc(userDocRef);
-
-        if (!userDocSnapshot.exists()) {
-            await setDoc(userDocRef, {
-                authProvider: "google",
-                email: user.email
-            });
-        }
     } catch (error) {
         const signInError = error as firebase.auth.Error;
         console.log(signInError.message);
@@ -54,9 +47,12 @@ export async function signInWithGoogle() {
     }
 }
 
-export function useAutoLogin(router: AppRouterInstance, authUser: User | null | undefined, authError: Error | undefined) {
+export function useAutoLogin() {
+    const router = useRouter();
+    const [authUser, authLoading, authError] = useAuthState(auth);
+
     useEffect(() => {
-        if (authUser && authError === null) {
+        if (authUser && authError === undefined) {
             router.push("/app");
         }
     }, [authUser, authError]);

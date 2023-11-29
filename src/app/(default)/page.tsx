@@ -1,7 +1,7 @@
 import Header from "@/components/Header";
 import Logo from "@/components/Logo";
 import VerticalLayout from "@/components/VerticalLayout";
-import NavigationSection from "./NavigationSection";
+import NavigationSection from "./_components/NavigationSection";
 
 export default function Default() {
   return (

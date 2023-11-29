@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import AuthContent from "../_components/AuthContent";
 import AuthHeader from "../_components/AuthHeader";
 import Form from "../_components/Form";
@@ -10,8 +10,6 @@ import PasswordField from "../_components/PasswordField";
 import SubmitButton from "../_components/SubmitButton";
 import SignInWithGoogle from "../_components/SignInWithGoogle";
 import { logInWithEmailAndPassword, signInWithGoogle, useAutoLogin } from "@/utils/auth";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/utils/firebase";
 import { useRouter } from "next/navigation";
 import { AUTH_ERROR_MESSAGE } from "@/config/authConfig";
 
@@ -19,8 +17,6 @@ export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
-
-    const [authUser, authLoading, authError] = useAuthState(auth);
     const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -41,7 +37,7 @@ export default function LoginPage() {
         }
     }
 
-    useAutoLogin(router, authUser, authError);
+    useAutoLogin();
 
     return (<>
         <AuthHeader>Login</AuthHeader>

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { User } from "firebase/auth";
 import { usePathname } from "next/navigation";
+import { CurrDocState } from "@/app/app/_components/CurrDocContext";
 
 export async function initializeUserDoc(userID: string, email: string | null, authProvider: string) {
     const userDocRef = doc(db, "users", userID);
@@ -88,7 +89,7 @@ export async function getDocument(userID: string, docID: string) {
     }
 }
 
-type Question = {
+export type Question = {
     question: string,
     answer: string
 }
@@ -98,7 +99,7 @@ type Document = {
     questions: Question[]
 }
 
-export function useLoadDocument() {
+export function useLoadDocument(): CurrDocState {
     const [authUser, authLoading, authError] = useAuthState(auth);
     const docID = getPathDocID(usePathname());
 
@@ -117,7 +118,7 @@ export function useLoadDocument() {
             })
     }, [authUser, docID]);
 
-    return {text, setText, questions, setQuestions};
+    return [[text, setText], [questions, setQuestions]];
 }
 
 export async function saveDocument(userID: string, docID: string, { text, questions }: Document) {
@@ -141,13 +142,12 @@ export async function saveDocumentMetadata(
     }
 }
 
-
-export function useAutoSaveDocument({ text, questions }: Document, title: string, documents: DocumentMetadataType[] | null) {
+export function useAutoSaveDocument(text: string | null, questions: Question[] | null, title: string, documents: DocumentMetadataType[] | null) {
     const [authUser, authLoading, authError] = useAuthState(auth);
     const docID = getPathDocID(usePathname());
 
     useEffect(() => {
-        if (!authUser || !docID || !documents) return;
+        if (!authUser || !docID || !documents || !(typeof text === "string") || !questions) return;
 
         const timer = setTimeout(() => {
             saveDocument(authUser.uid, docID, { text, questions });

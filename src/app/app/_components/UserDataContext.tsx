@@ -10,14 +10,4 @@ export const nullUserData: UserDataType = {
 
 const UserDataContext = createContext<UserDataType>(nullUserData);
 
-type CurrTitleState = {
-    currTitle: string,
-    setCurrTitle: (title: string) => void
-}
-
-export const CurrTitleContext = createContext<CurrTitleState>({
-    currTitle: "",
-    setCurrTitle: () => {}
-});
-
 export default UserDataContext;

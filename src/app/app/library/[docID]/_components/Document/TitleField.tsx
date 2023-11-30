@@ -1,6 +1,6 @@
 "use client"
 
-import { CurrTitleContext } from "@/app/app/_components/UserDataContext";
+import CurrTitleContext from "@/app/app/_components/CurrTitleContext";
 import { handleChange, useAutoSizeTextArea } from "@/utils/input";
 import { KeyboardEvent, useContext, useRef, useState } from "react"
 

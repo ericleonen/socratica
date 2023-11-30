@@ -5,7 +5,7 @@ type VerticalLayoutProps = {
 
 export default function VerticalLayout({ children, screenHeight }: VerticalLayoutProps) {
     return (
-        <div className={`h-${screenHeight ? "screen" : "full"} w-full flex flex-col border-2 relative`}>
+        <div className={`h-${screenHeight ? "screen" : "full"} w-full flex flex-col relative overflow-y-scroll`}>
             {children}
         </div>
     )

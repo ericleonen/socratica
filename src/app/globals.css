@@ -7,10 +7,14 @@
 }
 
 .text-theme-black {
-    @apply text-black/90;
+    @apply text-black/75;
 }
 
 .bg-theme-white {
+    @apply bg-slate-100;
+}
+
+.bg-theme-white-lighter {
     @apply bg-slate-50;
 }
 

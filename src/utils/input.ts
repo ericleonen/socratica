@@ -1,6 +1,8 @@
 // utilities for handling input
 
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
+import { UserDataType, getPathDocID } from "./store";
+import { usePathname } from "next/navigation";
 
 export function handleChange(setValue: (value: any) => void, parseAsInt: boolean = false) {
     return (event: ChangeEvent) => {
@@ -17,4 +19,27 @@ export function handleChange(setValue: (value: any) => void, parseAsInt: boolean
             }
         }
     };
+}
+
+export function useAutoSizeTextArea(textAreaRef: HTMLTextAreaElement | null, value: string) {
+    useEffect(() => {
+        if (textAreaRef) {
+            textAreaRef.style.height = "0px";
+            textAreaRef.style.height = `${textAreaRef.scrollHeight}px`;
+        }
+    }, [textAreaRef, value]);
+}
+
+export function useCurrentTitle(userData: UserDataType | undefined, setCurrTitle: (title: string) => void) {
+    const path = usePathname();
+
+    useEffect(() => {
+        const currDocID = getPathDocID(path);
+
+        if (userData?.documents && currDocID) {
+            userData.documents.forEach(({ id, title }) => {
+                if (id === currDocID) setCurrTitle(title);
+            });
+        }
+    }, [userData, path]);
 }

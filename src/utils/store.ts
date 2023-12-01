@@ -121,7 +121,7 @@ export function useLoadDocument(): CurrDocState {
     return [[text, setText], [questions, setQuestions]];
 }
 
-export async function saveDocument(userID: string, docID: string, { text, questions }: Document) {
+export async function saveDocumentData(userID: string, docID: string, { text, questions }: Document) {
     await updateDoc(doc(db, "docs", userID, "userDocs", docID), {
         text,
         questions
@@ -142,18 +142,45 @@ export async function saveDocumentMetadata(
     }
 }
 
-export function useAutoSaveDocument(text: string | null, questions: Question[] | null, title: string, documents: DocumentMetadataType[] | null) {
-    const [authUser, authLoading, authError] = useAuthState(auth);
+export async function saveDocument(
+    userID: string | undefined,
+    text: string | null, 
+    questions: Question[] | null, 
+    title: string | null, 
+    documents: DocumentMetadataType[] | null,
+    docID: string | null
+) {
+    const notReadyToSave = !userID || !(typeof title === "string") || 
+        !docID || !documents || !(typeof text === "string") || !questions;
+    
+    if (notReadyToSave) return false;
+
+    await saveDocumentData(userID, docID, { text, questions});
+    await saveDocumentMetadata(userID, docID, title, documents);
+
+    return true;
+}
+
+export function useAutoSaveDocument(
+    text: string | null, 
+    questions: Question[] | null, 
+    title: string, 
+    documents: DocumentMetadataType[] | null
+) {
+    const authUser = useAuthState(auth)[0];
     const docID = getPathDocID(usePathname());
 
     useEffect(() => {
-        if (!authUser || !docID || !documents || !(typeof text === "string") || !questions) return;
-
         const timer = setTimeout(() => {
-            saveDocument(authUser.uid, docID, { text, questions });
-            saveDocumentMetadata(authUser.uid, docID, title, documents)
-            console.log("saved!");
-        }, 10000);
+            saveDocument(authUser?.uid, text, questions, title, documents, docID)
+                .then(success => {
+                    if (success) {
+                        console.log("Autosave succeed")
+                    } else {
+                        console.log("Autosave failed")
+                    }
+                })
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, [text, questions, title]);

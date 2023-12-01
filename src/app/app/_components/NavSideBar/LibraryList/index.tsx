@@ -1,4 +1,4 @@
-import { DocumentMetadataType, getPathDocID, saveDocument, saveDocumentMetadata } from "@/utils/store";
+import { getPathDocID } from "@/utils/store";
 import DocumentItem from "./DocumentItem";
 import LibraryButton from "./LibraryButton";
 import LineSkeleton from "@/components/skeletons/LineSkeleton";
@@ -6,25 +6,13 @@ import { useContext } from "react";
 import UserDataContext from "../../UserDataContext";
 import CurrTitleContext from "../../CurrTitleContext";
 import { usePathname } from "next/navigation";
-import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "@/utils/firebase";
-import CurrDocContext from "../../CurrDocContext";
+import SaveDocContext from "../../SaveDocContext";
 
 export default function LibraryList() {
     const { documents } = useContext(UserDataContext);
     const { currTitle } = useContext(CurrTitleContext);
-    const [authUser, authLoading, authError] = useAuthState(auth);
-    const [[text, setText], [questions, setQuestions]] = useContext(CurrDocContext);
-
+    const saveDocument = useContext(SaveDocContext);
     const docID = getPathDocID(usePathname());
-
-    const forceSave = () => {
-        if (!authUser || !docID || !(typeof text === "string") || !questions || !documents) return;
-
-        const userID = authUser.uid;
-        saveDocument(userID, docID, { text, questions });
-        saveDocumentMetadata(userID, docID, currTitle, documents)
-    }
 
     return (<>
         <LibraryButton />
@@ -32,7 +20,7 @@ export default function LibraryList() {
             documents ? documents.map(({ title, id }, i) => {
                 return !(docID === id) ? (
                     <DocumentItem
-                        onClick={forceSave}
+                        onClick={saveDocument}
                         key={`doc_${i}`}
                         {...{title, id}}
                     />

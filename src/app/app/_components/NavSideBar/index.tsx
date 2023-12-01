@@ -3,7 +3,6 @@
 import Logo from "@/components/Logo";
 import NewDocumentButton from "./NewDocumentButton";
 import LibraryList from "./LibraryList";
-import { UserDataType, useUserData } from "@/utils/store";
 import BuyTokensButton from "./BuyTokensButton";
 
 export default function NavSideBar() {

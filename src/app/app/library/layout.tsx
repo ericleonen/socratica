@@ -1,7 +1,7 @@
 import VerticalLayout from "@/components/VerticalLayout";
 import { LayoutType } from "@/types";
 
-export default function DocLayout({ children }: LayoutType) {
+export default function LibraryLayout({ children }: LayoutType) {
     return (
         <div className="flex-grow">
             <VerticalLayout screenHeight>

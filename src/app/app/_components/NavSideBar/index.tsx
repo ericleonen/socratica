@@ -1,18 +1,18 @@
 "use client"
 
 import Logo from "@/components/Logo";
-import NewDocumentButton from "./NewDocumentButton";
+import NewDocButton from "./NewDocButton";
 import LibraryList from "./LibraryList";
 import BuyTokensButton from "./BuyTokensButton";
 
 export default function NavSideBar() {
     return (
-        <div className="h-full flex flex-col px-3 bg-theme-black w-64">
+        <div className="h-full flex flex-col px-3 bg-theme-black w-64 shadow-lg sticky">
             <div className="flex px-3 items-center h-14">
                 <Logo />
                 <BuyTokensButton/>
             </div>
-            <NewDocumentButton />
+            <NewDocButton />
             <LibraryList />
         </div>
     );

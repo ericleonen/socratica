@@ -8,7 +8,7 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Socratica',
   description: 'Learn with questions',
-}
+};
 
 export default function RootLayout({ children }: LayoutType) {
   return (

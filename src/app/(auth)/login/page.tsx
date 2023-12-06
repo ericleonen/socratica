@@ -9,40 +9,30 @@ import HorizontalDivider from "../_components/HorizontalDivider";
 import PasswordField from "../_components/PasswordField";
 import SubmitButton from "../_components/SubmitButton";
 import SignInWithGoogle from "../_components/SignInWithGoogle";
-import { logInWithEmailAndPassword, signInWithGoogle, useAutoLogin } from "@/utils/auth";
-import { useRouter } from "next/navigation";
-import { AUTH_ERROR_MESSAGE } from "@/config/authConfig";
+import { logInLocally, signInWithGoogle, useAutoLogIn } from "@/auth";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
+    const [error, setError] = useState<Error>();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (email.length === 0) {
-            setError(AUTH_ERROR_MESSAGE.EMAIL_EMPTY);
-        } else if (password.length === 0) {
-            setError(AUTH_ERROR_MESSAGE.PASSWORD_EMPTY);
-        } else {
-            const signInError = await logInWithEmailAndPassword(email, password);
-            
-            if (signInError) {
-                setError(signInError);
-            } else {
-                router.push("/app");
-            }
-        }
+        const loginError = await logInLocally(email, password);
+        if (loginError) setError(loginError);
     }
 
-    useAutoLogin();
+    useAutoLogIn();
 
     return (<>
         <AuthHeader>Login</AuthHeader>
         <AuthContent>
-            <SignInWithGoogle onClick={signInWithGoogle}>Sign in with Google</SignInWithGoogle>
+            <SignInWithGoogle 
+                onClick={signInWithGoogle}
+            >
+                Sign in with Google
+            </SignInWithGoogle>
             <HorizontalDivider />
             <Form
                 onSubmit={handleSubmit}
@@ -51,7 +41,6 @@ export default function LoginPage() {
                 <PasswordField {...{password, setPassword}} />
                 <SubmitButton>Log in</SubmitButton>
             </Form>
-            { error }
         </AuthContent>
     </>);
 }

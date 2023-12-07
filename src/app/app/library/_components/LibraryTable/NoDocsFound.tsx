@@ -13,7 +13,7 @@ export default function NoDocsFound() {
             No documents match your query.
             <button
                 onClick={() => createDoc(query)} 
-                className="mt-3 flex items-center rounded-md text-theme-white py-2 pl-3 pr-5 bg-slate-800/90 shadow-md hover:bg-slate-800/80 font-medium"
+                className="mt-3 flex items-center rounded-md text-theme-white py-2 pl-3 pr-5 bg-slate-900/90 shadow-md hover:bg-slate-800/80 font-medium"
             >
                 <PlusIcon className="h-5 w-5 mr-2"/>
                 Create a document titled "{query}"

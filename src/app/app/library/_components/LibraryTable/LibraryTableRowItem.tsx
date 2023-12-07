@@ -5,7 +5,7 @@ type LibraryTableRowItemProps = {
 
 export default function LibraryTableRowItem({ className, children }: LibraryTableRowItemProps) {
     return (
-        <div className={`flex px-5 py-3 ${className}`}>
+        <div className={`flex px-5 py-3 ${className} bg-transparent`}>
             {children}
         </div>
     )

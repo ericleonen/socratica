@@ -11,6 +11,7 @@ import NoDocsFound from "./NoDocsFound";
 import LibraryTableRowOptions from "./LibraryTableRowOptions";
 import { ResourceStatus } from "@/store/types";
 import Skeleton from "@/components/Skeleton";
+import LibraryTableRow from "./LibraryTableRow";
 
 export default function LibraryTable() {
     const { query } = useContext(LibraryContext);
@@ -27,32 +28,27 @@ export default function LibraryTable() {
     );
 
     return status === "succeeded" ? (
-        <div className="mt-6 w-full flex flex-col rounded-md shadow-md overflow-hidden border-2 border-slate-300">
+        <div className="mt-6 w-full flex flex-col shadow-md rounded-md">
             {/* Header */}
-            <div className="flex border-b-2 border-slate-300 bg-slate-200">
+            <div className="flex border-2 border-slate-300 bg-slate-200 rounded-t-md">
                 <LibraryTableHeaderItem className="w-2/3">Title</LibraryTableHeaderItem>
                 <LibraryTableHeaderItem>Last saved</LibraryTableHeaderItem>
             </div>
             {/* Content */}
             {
                 sortedFilteredIDs.length ?
-                sortedFilteredIDs.map((docID, i) => 
-                    <div className="relative w-full">
-                        <Link 
-                            href={`/app/library/${docID}`}
-                            key={`docLibraryItem_${i}`}
-                            scroll={false}
-                            className="flex hover:bg-gray-200 bg-theme-white-lighter items-center"
-                        >
-                            <LibraryTableRowItem className="w-2/3 font-medium pr-4 text-theme-black">{docsMetadatas[docID].title || "Untitled"}</LibraryTableRowItem>
-                            <LibraryTableRowItem className="text-slate-400">{formatAbsoluteDate(docsMetadatas[docID].lastSaved)}</LibraryTableRowItem>
-                        </Link>
-                        <LibraryTableRowOptions docID={docID} />
+                sortedFilteredIDs.map((docID, i) =>
+                    <LibraryTableRow 
+                        key={`row_${i}`}
+                        docID={docID}
+                        title={docsMetadatas[docID].title}
+                        lastSaved={docsMetadatas[docID].lastSaved}
+                    />
+                ) : (
+                    <div className="bg-theme-white-lighter border-2 border-t-0 border-slate-300 rounded-b-md">
+                        <NoDocsFound /> 
                     </div>
-                ) :
-                <div className="bg-theme-white-lighter">
-                   <NoDocsFound /> 
-                </div>
+                )
             }
         </div>
     ) : (<>

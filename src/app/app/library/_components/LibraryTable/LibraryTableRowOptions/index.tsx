@@ -1,26 +1,26 @@
-import { useState } from "react";
 import LibraryTableRowOptionsButton from "./LibraryTableRowOptionsButton";
 import Shadow from "@/components/Shadow";
 import LibraryTableRowOptionsModal from "./LibraryTableRowOptionsModal";
+import { Transition } from "@headlessui/react";
 
 type LibraryTableRowOptionsProps = {
+    active: boolean,
+    setActive: (active: boolean) => void,
     docID: string
 }
 
-export default function LibraryTableRowOptions({ docID }: LibraryTableRowOptionsProps) {
-    const [show, setShow] = useState(false);
-
+export default function LibraryTableRowOptions({ active, setActive, docID }: LibraryTableRowOptionsProps) {
     return (<>
-        <LibraryTableRowOptionsButton onClick={() => setShow(true)}/>
-        {
-            show &&
+        <LibraryTableRowOptionsButton onClick={() => setActive(true)}/>
+        { 
+        active &&
             <>
-                <Shadow 
-                    onClick={() => setShow(false)}
+                <Shadow
+                    onClick={() => setActive(false)}
                     transparent
-                />
+                /> 
                 <LibraryTableRowOptionsModal 
-                    onClick={() => setShow(false)} 
+                    onClick={() => setActive(false)} 
                     docID={docID}
                 />
             </>

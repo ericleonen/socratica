@@ -10,11 +10,13 @@ export default function LibraryPage() {
     const [query, setQuery] = useState("");
 
     return (
-        <div className="py-20 px-24">
-            <SearchBar {...{query, setQuery}} />
-            <LibraryContext.Provider value={{ query }}>
-                <LibraryTable />
-            </LibraryContext.Provider>
+        <div className="w-full h-screen overflow-y-scroll">
+            <div className="py-20 px-24">
+                <SearchBar {...{query, setQuery}} />
+                <LibraryContext.Provider value={{ query }}>
+                    <LibraryTable />
+                </LibraryContext.Provider>
+            </div>
         </div>
     )
 }

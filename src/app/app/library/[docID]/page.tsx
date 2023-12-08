@@ -8,11 +8,13 @@ import Questions from "./_components/Questions";
 export default function DocPage() {
     useDoc();
 
-    return (<>
-        <DocumentHeader />
-        <div className="flex flex-grow w-full px-20">
-            <Document />
-            <Questions />
+    return (
+        <div className="flex flex-col w-full h-screen">
+            <DocumentHeader />
+            <div className="flex-grow flex overflow-hidden">
+                <Document />
+                <Questions />
+            </div>
         </div>
-    </>);
+    );
 }

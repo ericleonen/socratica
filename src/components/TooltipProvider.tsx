@@ -10,7 +10,6 @@ type TooltipProviderProps = {
 
 export default function TooltipProvider({ text, className, containerClassName, children }: TooltipProviderProps) {
     const [show, setShow] = useState(false);
-    console.log(show)
     
     return (
         <div className={`relative ${containerClassName}`}>

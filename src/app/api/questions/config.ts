@@ -1,0 +1,1 @@
+export const MIN_PARAGRAPH_LENGTH = 100;

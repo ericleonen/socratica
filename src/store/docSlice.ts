@@ -17,7 +17,7 @@ const initialState: DocState = {
     questions: [],
     status: "idle",
     error: "",
-    savingStatus: "not ready"
+    savingStatus: "saved"
 }
 
 const docSlice = createSlice({

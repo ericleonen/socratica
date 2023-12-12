@@ -176,8 +176,6 @@ export function useSaveDoc(metadataOnly?: boolean) {
                 docID,
                 lastSaved: lastSaved.toJSON()
             }));
-
-           dispatch(updateSavingStatus("saved"));
         } catch (err) {
             dispatch(updateSavingStatus("failed"));
             dispatch(updateError(err as Error));

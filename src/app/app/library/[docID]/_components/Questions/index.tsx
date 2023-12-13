@@ -1,41 +1,75 @@
 import { useSelector } from "react-redux";
 import GenerateQuestions from "./GenerateQuestions";
 import Question from "./Question";
-import axios from "axios";
-import { RootState } from "@/store";
-import { useState } from "react";
+import { RootState, useAppDispatch } from "@/store";
+import { Question as QuestionType } from "@/db/schemas";
+import { useGenerateQuestions } from "@/db/docs";
+import { ResourceStatus } from "@/store/types";
+import { LayoutType } from "@/types";
+import Skeleton from "@/components/Skeleton";
+import { Fragment, useState } from "react";
+import { blurQuestionFocus, focusOnQuestion, updateQuestionAnswer } from "@/store/docSlice";
+import { createSelector } from "@reduxjs/toolkit";
+
+const Container = ({ children }: LayoutType) => <div className="flex-grow h-full px-10 shadow-2xl w-min py-16 overflow-y-scroll">{children}</div>
 
 export default function Questions() {
-    const text = useSelector<RootState, string>(
-        state => state.doc.text
+    const status = useSelector<RootState, ResourceStatus>(
+        state => state.doc.status
     );
-    const [questions, setQuestions] = useState<string[]>([]);
+    const numQuestions = useSelector<RootState, number>(
+        state => state.doc.questions.length
+    );
+    const generateQuestions = useGenerateQuestions();
+    const dispatch = useAppDispatch();
 
-    const generateQuestions = async () => {
-        const result = await axios.post(
-            "/api/questions",
-            { text },
-            {
-                params: {
-                    count: 10
-                }
-            }
-        );
+    const [hyperFocused, setHyperFocused] = useState(false);
+    const hyperFocus = (i: number) => () => {
+        dispatch(focusOnQuestion(i));
+        setHyperFocused(true);
+    }
+    const hyperBlur = () => {
+        dispatch(blurQuestionFocus());
+        setHyperFocused(false);
+    }
+    const focus = (i: number) => () => {
+        if (hyperFocused) return;
+        dispatch(focusOnQuestion(i));
+    };
+    const blur = () => {
+        if (hyperFocused) return;
+        dispatch(blurQuestionFocus());
+    };
 
-        console.log(result.data);
-
-        setQuestions(result.data.questions);
+    const handleAnswerChange = (i: number) => (answer: string) => {
+        dispatch(updateQuestionAnswer({
+            answer,
+            index: i
+        }));
     }
 
-    return (
-        <div className="flex-grow h-full px-10 shadow-2xl w-min py-16 overflow-y-scroll">
-            {
-                questions.length ? questions.map(
-                    question => <Question question={question} />
-                ) : (
-                    <GenerateQuestions  onClick={generateQuestions} />
-                )
-            }
-        </div>
+    return status === "succeeded" ? (
+        <Container>{
+            numQuestions > 0 ? Array.from(Array(numQuestions)).map((_, i) => 
+                <Question 
+                    index={i}
+                    key={`question_${i}`}
+                    hyperFocus={hyperFocus(i)}
+                    hyperBlur={hyperBlur}
+                    focus={focus(i)}
+                    blur={blur}
+                    setAnswer={handleAnswerChange(i)}
+                />
+            ) : (
+                <GenerateQuestions onClick={generateQuestions}/>
+            )
+        }</Container>
+    ) : (
+        <Container>{
+            Array.from(Array(3)).map((_, i) => <Fragment key={`question_loading_${i}`}>
+                <Skeleton className="w-full py-2 mt-2">Question loading...</Skeleton>
+                <Skeleton className="w-full mt-5 mb-[3.75rem]">Answer loading...</Skeleton>
+            </Fragment>)
+        }</Container>
     )
 }

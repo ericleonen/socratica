@@ -184,6 +184,14 @@ export function generateParagraphs(sentences: string[], similarities: Matrix, MI
         }
     }
 
+    if (currStart <= N - 1) {
+        babyParagraphs.push({
+            start: currStart,
+            end: N - 1,
+            content: sentences.slice(currStart, N).join("")
+        });
+    }
+
     const paragraphs: Paragraph[] = [];
 
     for (let i = 0; i < babyParagraphs.length; i++) {

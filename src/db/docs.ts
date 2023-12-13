@@ -7,7 +7,7 @@ import { addMetadata, fetchDocsMetadatas, removeMetadata, updateLastSaved, updat
 import { useSelector } from "react-redux";
 import { ResourceStatus, SavingStatus } from "@/store/types";
 import { usePathDocID } from "@/utils/routing";
-import { clearDoc, fetchDoc, updateError, updateSavingStatus, updateText } from "@/store/docSlice";
+import { clearDoc, fetchDoc, generateQuestions, updateError, updateSavingStatus, updateText } from "@/store/docSlice";
 import { useRouter } from "next/navigation";
 
 /**
@@ -61,15 +61,15 @@ export function useCreateDoc() {
 export function useDocsMetadatas() {
     const userID = useSelector<RootState, string>(state => state.user.ID);
     const dispatch = useAppDispatch();
-    const docsMetadatasStatus = useSelector<RootState, ResourceStatus>(
+    const status = useSelector<RootState, ResourceStatus>(
         state => state.docsMetadatas.status
     );
 
     useEffect(() => {
-        if (userID && docsMetadatasStatus === "idle") {
+        if (userID && status === "idle") {
             dispatch(fetchDocsMetadatas(userID));
         }
-    }, [docsMetadatasStatus, userID]);
+    }, [status, userID]);
 }
 
 /**
@@ -130,7 +130,7 @@ export function useDocTitle(): [string, (title: string) => void] {
  * @param metadataOnly optional boolean that makes the trigger only save the metadata
  * @returns a trigger that saves the doc
  */
-export function useSaveDoc(metadataOnly?: boolean) {
+export function useSaveDoc(metadataOnly: boolean = false) {
     const userID = useSelector<RootState, string>(
         state => state.user.ID
     );
@@ -172,6 +172,7 @@ export function useSaveDoc(metadataOnly?: boolean) {
                 lastSaved
             });
 
+            dispatch(updateSavingStatus("saved"));
             dispatch(updateLastSaved({
                 docID,
                 lastSaved: lastSaved.toJSON()
@@ -190,7 +191,7 @@ export function useSaveDoc(metadataOnly?: boolean) {
  * @param metadataOnly optional boolean that flags saves to the metadata only
  * @returns a trigger that allows a save
  */
-export function useAutoSaveDoc(dependency: any, metadataOnly?: boolean) {
+export function useAutoSaveDoc(dependency: any, metadataOnly: boolean = false) {
     const savingStatus = useSelector<RootState, SavingStatus>(
         state => state.doc.savingStatus
     );
@@ -242,5 +243,24 @@ export function useDeleteDoc(providedDocID?: string) {
         } catch (err) {
             dispatch(updateError(err as Error));
         }
+    }
+}
+
+/**
+ * Hook that provides a trigger that generates questions based on text into store and saves
+ * to Firestore
+ * @returns a trigger that generates questions into store
+ */
+export function useGenerateQuestions() {
+    const dispatch = useAppDispatch();
+    const text = useSelector<RootState, string>(
+        state => state.doc.text
+    );
+    const saveDoc = useSaveDoc();
+    
+    return async () => {
+        await dispatch(generateQuestions(text));
+        dispatch(updateSavingStatus("unsaved"));
+        saveDoc();
     }
 }

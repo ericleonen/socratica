@@ -23,7 +23,7 @@ export default function TitleField() {
         }
     }
 
-    const allowSave = useAutoSaveDoc(title, true);
+    const allowSave = useAutoSaveDoc(title);
 
     return status === "succeeded" ? (
         <textarea

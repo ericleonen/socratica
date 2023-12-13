@@ -24,7 +24,7 @@ export default function LibraryList() {
             Object.keys(docsMetadatas).map((ID, i) => {
                 return (
                     <DocumentItem
-                        key={`doc_${i}`}
+                        key={ID}
                         title={docsMetadatas[ID].title}
                         ID={ID}
                         current={currDocID === ID}

@@ -1,6 +1,6 @@
 import { RootState } from "@/store"
 import { ResourceStatus } from "@/store/types"
-import { ChatBubbleLeftEllipsisIcon } from "@heroicons/react/24/outline"
+import { BookOpenIcon } from "@heroicons/react/24/outline"
 import { SparklesIcon } from "@heroicons/react/24/solid"
 import { useSelector } from "react-redux"
 import { LayoutType } from "@/types"
@@ -11,7 +11,7 @@ type GenerateQuestionsProps = {
     onClick: () => void
 }
 
-const Container = ({ children }: LayoutType) => <div className="flex justify-center items-center flex-col h-full w-full">{children}</div>
+const Container = ({ children }: LayoutType) => <div className="flex justify-center items-center flex-col h-full w-full">{children}</div>;
 
 export default function GenerateQuestions({ onClick }: GenerateQuestionsProps) {
     const status = useSelector<RootState, ResourceStatus>(
@@ -41,8 +41,8 @@ export default function GenerateQuestions({ onClick }: GenerateQuestionsProps) {
         </Container>
     ) : (
         <Container>
-            <ChatBubbleLeftEllipsisIcon className="h-6 w-6 text-slate-400 animate-bounce"/>
-            <p className="text-slate-400 mt-3">Pondering</p>
+            <BookOpenIcon className="h-6 w-6 text-slate-400 animate-bounce"/>
+            <p className="text-slate-400 mt-3">Reading the text</p>
         </Container>
     )
 }

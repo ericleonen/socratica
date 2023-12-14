@@ -3,9 +3,9 @@ import { auth, db } from "@/firebase";
 import { INITIAL_TOKENS } from "@/auth/config";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState, useAppDispatch } from "@/store";
-import { ResourceStatus } from "@/store/utils";
+import { ResourceStatus } from "@/store/types";
 import { fetchUser } from "@/store/userSlice";
 
 /**

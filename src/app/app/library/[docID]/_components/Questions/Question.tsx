@@ -24,7 +24,7 @@ export default function Question(
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     useAutoSizeTextArea(textareaRef.current, answer);
 
-    const allowSave = useAutoSaveDoc(answer);
+    const saveDoc = useAutoSaveDoc(answer);
     const focused = useSelector<RootState, boolean>(
         state => state.doc.focusQuestion === index
     );
@@ -45,7 +45,7 @@ export default function Question(
                 value={answer}
                 onChange={(e) => {
                     handleChange(setAnswer)(e);
-                    allowSave();
+                    saveDoc();
                 }}
                 placeholder="Your answer here"
                 className={`transition-colors h-[48px] rounded-b-md w-full placeholder:text-slate-400/90 bg-theme-white-lighter focus:outline-none resize-none px-5 py-3 overflow-hidden ${focused ? "border-slate-400" : "border-slate-300"} border-b-2 border-x-2`}

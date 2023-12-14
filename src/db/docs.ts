@@ -50,7 +50,7 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
             }));
 
             router.push(`/app/library/${docID}`, { scroll: false });
-
+            
             dispatch(updateSavingStatus("saved"));
             setInProgress(false);
 
@@ -135,10 +135,9 @@ export function useDocTitle(): [string, (title: string) => void] {
 
 /**
  * Hook that provides a trigger to save the current doc to Firestore. Updates store saving status
- * @param metadataOnly optional boolean that makes the trigger only save the metadata
  * @returns a trigger that saves the doc
  */
-export function useSaveDoc(metadataOnly: boolean = false) {
+export function useSaveDoc() {
     const userID = useSelector<RootState, string>(
         state => state.user.ID
     );
@@ -160,17 +159,15 @@ export function useSaveDoc(metadataOnly: boolean = false) {
 
     return async () => {
         try {
-            if (["deleting", "saved"].includes(savingStatus)) return;
+            if (savingStatus !== "unsaved") return;
 
             dispatch(updateSavingStatus("saving"));
 
-            if (!metadataOnly) {
-                const docRef = doc(db, "users", userID, "docs", docID);
-                await setDoc(docRef, {
-                    text,
-                    questions
-                });
-            }
+            const docRef = doc(db, "users", userID, "docs", docID);
+            await setDoc(docRef, {
+                text,
+                questions
+            });
 
             const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
             const lastSaved = Timestamp.now();
@@ -196,24 +193,24 @@ export function useSaveDoc(metadataOnly: boolean = false) {
  * Hook that automatically saves the current doc whenever the dependency changes. Updates store
  * saving status
  * @param dependency any value in the doc that, when changed, can trigger a save
- * @param metadataOnly optional boolean that flags saves to the metadata only
  * @returns a trigger that allows a save
  */
-export function useAutoSaveDoc(dependency: any, metadataOnly: boolean = false) {
+export function useAutoSaveDoc(dependency: any) {
     const savingStatus = useSelector<RootState, SavingStatus>(
         state => state.doc.savingStatus
     );
-    const saveDoc = useSaveDoc(metadataOnly);
+    const saveDoc = useSaveDoc();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (["deleting", "saved"].includes(savingStatus)) return;
-        const timeout = setTimeout(saveDoc, 1000);
+        let countdown = -1;
+        if (savingStatus === "unsaved") {
+            countdown = window.setTimeout(saveDoc, 1000);
+        }
+        return () => clearTimeout(countdown);
+    }, [dependency])
 
-        return () => clearTimeout(timeout);
-    }, [savingStatus, dependency]);
-
-    return () => {
+    return async () => {
         dispatch(updateSavingStatus("unsaved"));
     }
 }

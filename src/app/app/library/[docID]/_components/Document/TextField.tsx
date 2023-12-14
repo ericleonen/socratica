@@ -15,7 +15,7 @@ export default function TextField() {
 
     useAutoSizeTextArea(textareaRef.current, text);
 
-    const allowSave = useAutoSaveDoc(text);
+    const saveDoc = useAutoSaveDoc(text);
 
     return status === "succeeded" ? (
         <textarea
@@ -23,7 +23,7 @@ export default function TextField() {
             value={text}
             onChange={(e) => {
                 handleChange(setText)(e);
-                allowSave();
+                saveDoc();
             }}
             placeholder="Paste some interesting text here..."
             className="placeholder:text-slate-400/90 mt-6 w-full resize-none bg-transparent focus:outline-none text-theme-black"

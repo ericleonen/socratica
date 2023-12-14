@@ -21,8 +21,11 @@ export default function SaveInfo() {
             status === "deleting" ? (<>
                 <ArrowPathIcon className="h-5 w-4 animate-spin mr-2"/> Deleting
             </>) :
-            ["unsaved", "saving"].includes(status) ? (<>
+            status === "saving" ? (<>
                 <ArrowPathIcon className="h-5 w-4 animate-spin mr-2"/> Saving
+            </>) :
+            status === "unsaved" ? (<>
+                <ExclamationTriangleIcon className="h-5 w-4 mr-2"/> Unsaved
             </>) :
             ""
         }</div>

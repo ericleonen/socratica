@@ -23,7 +23,7 @@ export default function TitleField() {
         }
     }
 
-    const allowSave = useAutoSaveDoc(title);
+    const saveDoc = useAutoSaveDoc(title);
 
     return status === "succeeded" ? (
         <textarea
@@ -31,11 +31,11 @@ export default function TitleField() {
             value={title}
             onChange={(e) => {
                 handleChange(setTitle)(e);
-                allowSave();
+                saveDoc();
             }}
             onKeyDown={preventEnter}
             placeholder="Untitled"
-            className="scrollbar-hide placeholder:text-slate-400/90 h-[42px] w-full resize-none text-4xl bg-transparent focus:outline-none font-bold text-theme-black"
+            className="scrollbar-hide placeholder:text-slate-400/90 w-full resize-none text-4xl bg-transparent focus:outline-none font-bold text-theme-black"
         />
     ) : (
         <Skeleton className="w-full text-4xl h-[42px]">Title</Skeleton>

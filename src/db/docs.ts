@@ -1,7 +1,7 @@
 import { db } from "@/firebase";
 import { Timestamp, addDoc, collection, deleteDoc, doc, setDoc } from "firebase/firestore";
 import { DocMetadata, Question } from "./schemas";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { RootState, useAppDispatch } from "@/store";
 import { addMetadata, fetchDocsMetadatas, removeMetadata, updateLastSaved, updateTitle } from "@/store/docsMetadatasSlice";
 import { useSelector } from "react-redux";
@@ -13,17 +13,21 @@ import { useRouter } from "next/navigation";
 /**
  * Hook that provides a trigger to create a new doc in Firestore and store as well as open the
  * doc via routing
- * @returns a create trigger that creates a document with an optional title parameter
+ * @returns a boolean denoting if a document is in progress and a create trigger that creates a
+ *          document with an optional title parameter
  */
-export function useCreateDoc() {
+export function useCreateDoc(): [boolean, (title?: string) => void] {
     const userID = useSelector<RootState, string>(
         state => state.user.ID
     );
     const router = useRouter();
     const dispatch = useAppDispatch();
 
-    return async (title: string = "") => {
+    const [inProgress, setInProgress] = useState(false);
+
+    const trigger = async (title: string = "") => {
         try {
+            setInProgress(true);
             const docsRef = collection(db, "users", userID, "docs");
             const newDocRef = await addDoc(docsRef, {
                 text: "",
@@ -48,11 +52,15 @@ export function useCreateDoc() {
             router.push(`/app/library/${docID}`, { scroll: false });
 
             dispatch(updateSavingStatus("saved"));
+            setInProgress(false);
 
         } catch (err) {
+            setInProgress(false);
             dispatch(updateError(err as Error));
         }
     }
+
+    return [inProgress, trigger];
 }
 
 /**

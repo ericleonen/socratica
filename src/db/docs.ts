@@ -7,7 +7,7 @@ import { addMetadata, fetchDocsMetadatas, removeMetadata, updateLastSaved, updat
 import { useSelector } from "react-redux";
 import { ResourceStatus, SavingStatus } from "@/store/types";
 import { usePathDocID } from "@/utils/routing";
-import { clearDoc, fetchDoc, generateQuestions, updateError, updateSavingStatus, updateText } from "@/store/docSlice";
+import { clearDoc, fetchDoc, addQuestion, updateQuestionsStatus, updateError, updateSavingStatus, updateText } from "@/store/docSlice";
 import { useRouter } from "next/navigation";
 
 /**
@@ -259,8 +259,33 @@ export function useGenerateQuestions() {
     const saveDoc = useSaveDoc();
     
     return async () => {
-        await dispatch(generateQuestions(text));
-        dispatch(updateSavingStatus("unsaved"));
-        saveDoc();
+        dispatch(updateQuestionsStatus("loading"));
+        const questionsRes = await fetch("/api/questions", {
+            method: "POST",
+            headers: {
+                "Content-type": "application/json"
+            },
+            body: JSON.stringify({ text })
+        });
+
+        if (!questionsRes.body) return;
+
+        const reader = questionsRes.body.getReader();
+
+        while (true) {
+            const { done, value } = await reader.read();
+
+            if (done) {
+                dispatch(updateQuestionsStatus("idle"));
+                dispatch(updateSavingStatus("unsaved"));
+                saveDoc();
+                break;
+            };
+
+            let chunk = new TextDecoder('utf-8').decode(value);
+            const question = JSON.parse(chunk);
+
+            dispatch(addQuestion(question));
+        }
     }
 }

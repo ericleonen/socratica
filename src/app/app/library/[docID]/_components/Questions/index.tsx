@@ -10,6 +10,7 @@ import Skeleton from "@/components/Skeleton";
 import { Fragment, useState } from "react";
 import { blurQuestionFocus, focusOnQuestion, updateQuestionAnswer } from "@/store/docSlice";
 import { createSelector } from "@reduxjs/toolkit";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 const Container = ({ children }: LayoutType) => <div className="flex-grow h-full px-10 shadow-2xl w-min py-16 overflow-y-scroll">{children}</div>
 
@@ -19,6 +20,9 @@ export default function Questions() {
     );
     const numQuestions = useSelector<RootState, number>(
         state => state.doc.questions.length
+    );
+    const questionsStatus = useSelector<RootState, ResourceStatus>(
+        state => state.doc.questionsStatus
     );
     const generateQuestions = useGenerateQuestions();
     const dispatch = useAppDispatch();
@@ -50,7 +54,9 @@ export default function Questions() {
 
     return status === "succeeded" ? (
         <Container>{
-            numQuestions > 0 ? Array.from(Array(numQuestions)).map((_, i) => 
+            numQuestions > 0 ? 
+            <>{
+                Array.from(Array(numQuestions)).map((_, i) =>
                 <Question 
                     index={i}
                     key={`question_${i}`}
@@ -60,7 +66,11 @@ export default function Questions() {
                     blur={blur}
                     setAnswer={handleAnswerChange(i)}
                 />
-            ) : (
+                )
+            }{
+                questionsStatus === "loading" &&
+                <div className="flex text-black/30 items-center w-full justify-center"><ArrowPathIcon className="animate-spin h-4 w-4 mr-2"/> Generating more questions</div>
+            }</> : (
                 <GenerateQuestions onClick={generateQuestions}/>
             )
         }</Container>

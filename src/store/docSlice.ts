@@ -11,7 +11,7 @@ export type DocState = {
     status: ResourceStatus,
     error: string,
     savingStatus: SavingStatus,
-    generateQuestionsStatus: ResourceStatus,
+    questionsStatus: ResourceStatus,
     focusQuestion: number
 }
 
@@ -21,7 +21,7 @@ const initialState: DocState = {
     status: "idle",
     error: "",
     savingStatus: "saved",
-    generateQuestionsStatus: "idle",
+    questionsStatus: "idle",
     focusQuestion: -1
 }
 
@@ -43,6 +43,9 @@ const docSlice = createSlice({
             state.focusQuestion = action.payload as number;
         },
         blurQuestionFocus: (state) => { state.focusQuestion = -1 },
+        addQuestion: (state, action) => {
+            state.questions.push(action.payload as Question);
+        },
         updateQuestionAnswer: (state, action) => {
             type Payload = {
                 answer: string,
@@ -52,6 +55,9 @@ const docSlice = createSlice({
             const { answer, index } = action.payload as Payload;
 
             state.questions[index].answer = answer;
+        },
+        updateQuestionsStatus: (state, action) => {
+            state.questionsStatus = action.payload as ResourceStatus;
         }
     },
     extraReducers: (builder) => {
@@ -70,19 +76,6 @@ const docSlice = createSlice({
                 state.status = "failed";
                 state.error = action.error.message as string;
             })
-            .addCase(generateQuestions.pending, (state) => {
-                state.generateQuestionsStatus = "loading";
-            })
-            .addCase(generateQuestions.fulfilled, (state, action) => {
-                const questions = action.payload as Question[];
-
-                state.questions = questions;
-                state.generateQuestionsStatus = "idle";
-            })
-            .addCase(generateQuestions.rejected, (state, action) => {
-                state.generateQuestionsStatus = "failed";
-                state.error = action.error.message as string;
-            })
     } 
 });
 
@@ -96,16 +89,6 @@ export const fetchDoc = createAsyncThunk(
     }
 );
 
-export const generateQuestions = createAsyncThunk(
-    "doc/generateQuestions",
-    async (text: string) => {
-        const questionsRes = await axios.post("/api/questions", { text }); 
-        const { questions } = questionsRes.data;
-
-        return questions;
-    }
-)
-
 export const { 
     updateText, 
     updateSavingStatus,
@@ -113,7 +96,9 @@ export const {
     clearDoc,
     focusOnQuestion,
     blurQuestionFocus,
-    updateQuestionAnswer
+    updateQuestionAnswer,
+    addQuestion,
+    updateQuestionsStatus
 } = docSlice.actions;
 
 export default docSlice;

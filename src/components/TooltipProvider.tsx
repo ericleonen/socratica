@@ -5,13 +5,14 @@ type TooltipProviderProps = {
     text: string,
     className?: string,
     containerClassName?: string
-    children: React.ReactNode
+    children: React.ReactNode,
+    disabled?: boolean
 }
 
-export default function TooltipProvider({ text, className, containerClassName, children }: TooltipProviderProps) {
+export default function TooltipProvider({ text, className, containerClassName, children, disabled }: TooltipProviderProps) {
     const [show, setShow] = useState(false);
     
-    return (
+    return disabled ? children : (
         <div className={`relative ${containerClassName}`}>
             <div
                 onMouseOver={() => setShow(true)}

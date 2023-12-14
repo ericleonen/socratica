@@ -44,17 +44,17 @@ export default function Question(
                 </button>
             </div>
             <textarea
-                    onFocus={hyperFocus}
-                    onBlur={hyperBlur}
-                    ref={textareaRef}
-                    value={answer}
-                    onChange={(e) => {
-                        handleChange(setAnswer)(e);
-                        allowSave();
-                    }}
-                    placeholder="Your answer here"
-                    className={`transition-colors h-[40px] rounded-b-md w-full placeholder:text-slate-400/90 bg-theme-white-lighter focus:outline-none resize-none px-5 py-3 overflow-hidden ${focused ? "border-slate-400" : "border-slate-300"} border-b-2 border-x-2`}
-                />
+                onFocus={hyperFocus}
+                onBlur={hyperBlur}
+                ref={textareaRef}
+                value={answer}
+                onChange={(e) => {
+                    handleChange(setAnswer)(e);
+                    allowSave();
+                }}
+                placeholder="Your answer here"
+                className={`transition-colors h-[48px] rounded-b-md w-full placeholder:text-slate-400/90 bg-theme-white-lighter focus:outline-none resize-none px-5 py-3 overflow-hidden ${focused ? "border-slate-400" : "border-slate-300"} border-b-2 border-x-2`}
+            />
         </div>
     )
 }

@@ -69,7 +69,7 @@ export default function Questions() {
                 )
             }{
                 questionsStatus === "loading" &&
-                <div className="flex text-black/30 items-center w-full justify-center"><ArrowPathIcon className="animate-spin h-4 w-4 mr-2"/> Generating more questions</div>
+                <div className="flex text-slate-400 items-center w-full justify-center"><ArrowPathIcon className="animate-spin h-4 w-4 mr-2"/> Generating more questions</div>
             }</> : (
                 <GenerateQuestions onClick={generateQuestions}/>
             )

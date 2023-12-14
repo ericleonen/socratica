@@ -11,7 +11,7 @@ export default function SaveInfo() {
     )
 
     return (
-        <div className="text-black/50 flex items-center">{
+        <div className="text-slate-400 flex items-center">{
             status === "saved" && lastSaved ? (<>
                 <CheckCircleIcon className="h-5 w-5 mr-2"/> {lastSaved}
             </>) :

@@ -16,16 +16,16 @@ export default function DocOptionsModal() {
             className="bg-theme-white rounded-md p-2 w-[12rem] fixed right-4 top-16 shadow-2xl border-2"
         >
             <DocOptionButton
-                icon={<TrashIcon className="w-5 h-5"/>}
-                onClick={deleteDoc}
-            >
-                Delete
-            </DocOptionButton>
-            <DocOptionButton
                 icon={<ClipboardDocumentIcon className="w-5 h-5"/>}
                 onClick={() => {}}
             >
                 Copy doc
+            </DocOptionButton>
+            <DocOptionButton
+                icon={<TrashIcon className="w-5 h-5 text-red-600"/>}
+                onClick={deleteDoc}
+            >
+                <span className="text-red-600">Delete</span>
             </DocOptionButton>
         </Transition>
     );

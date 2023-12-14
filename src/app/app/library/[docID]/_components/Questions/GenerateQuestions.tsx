@@ -23,10 +23,10 @@ export default function GenerateQuestions({ onClick }: GenerateQuestionsProps) {
 
     return status === "idle" ? (
         <Container>
-            <p className="text-black/50">You don't have any questions yet</p>
+            <p className="text-slate-400">You don't have any questions yet</p>
             <TooltipProvider
                 disabled={!disabled}
-                className="mt-2 whitespace-pre-wrap"
+                className="mt-2 whitespace-pre-wrap left-0"
                 text={`Text is too short (must be at least ${MIN_PARAGRAPH_LENGTH} characters)`}
             >
                 <button
@@ -41,8 +41,8 @@ export default function GenerateQuestions({ onClick }: GenerateQuestionsProps) {
         </Container>
     ) : (
         <Container>
-            <ChatBubbleLeftEllipsisIcon className="h-6 w-6 text-black/50 animate-bounce"/>
-            <p className="text-black/50 mt-3">Pondering</p>
+            <ChatBubbleLeftEllipsisIcon className="h-6 w-6 text-slate-400 animate-bounce"/>
+            <p className="text-slate-400 mt-3">Pondering</p>
         </Container>
     )
 }

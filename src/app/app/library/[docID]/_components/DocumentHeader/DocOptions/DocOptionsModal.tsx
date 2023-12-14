@@ -12,10 +12,10 @@ export default function DocOptionsModal() {
         <Transition
             show={true}
             appear={true}
-            enter="transition-opacity duration-15"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            className="bg-theme-white-lighter rounded-md p-2 w-[16rem] fixed right-4 top-16 shadow-2xl border-2"
+            enter="transition-opacity transition-transform"
+            enterFrom="opacity-0 scale-90"
+            enterTo="opacity-100 scale-100"
+            className="duration-75 bg-theme-white-lighter rounded-md p-2 w-[16rem] fixed right-4 top-16 shadow-2xl border-2"
         >
             <DocOptionButton
                 icon={<ClipboardDocumentIcon className="w-5 h-5"/>}

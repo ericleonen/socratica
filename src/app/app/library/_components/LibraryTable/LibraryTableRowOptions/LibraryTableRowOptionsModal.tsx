@@ -17,11 +17,11 @@ export default function LibraryTableRowOptionsModal(
         <Transition
             show={true}
             appear={true}
-            enter="transition-opacity duration-15"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
+            enter="transition-opacity transition-transform"
+            enterFrom="opacity-0 scale-90"
+            enterTo="opacity-100 scale-100"
             onClick={onClick}
-            className="bg-theme-white-lighter rounded-md p-2 w-[12rem] absolute shadow-2xl border-2 z-[100] right-2 top-1/2 translate-y-3"
+            className="duration-75 bg-theme-white-lighter rounded-md p-2 w-[12rem] absolute shadow-2xl border-2 z-[100] right-2 top-1/2 translate-y-3"
         >
             <LibraryTableRowOptionButton
                 icon={<TrashIcon className="w-5 h-5 text-red-600"/>}

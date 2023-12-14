@@ -3,18 +3,17 @@
 import HorizontalLayout from "@/components/HorizontalLayout";
 import { LayoutType } from "@/types";
 import NavSideBar from "./_components/NavSideBar";
-import ReduxProvider from "./_components/ReduxProvider";
-import Content from "./_components/Content";
+import { useDocsMetadatas } from "@/db/docs";
+import { useUser } from "@/db/user";
 
 export default function AppLayout({ children }: LayoutType) {
+    useUser();
+    useDocsMetadatas();
+
     return (
         <HorizontalLayout screenWidth>
-            <ReduxProvider>
-                <Content>
-                    <NavSideBar />
-                    {children}
-                </Content>
-            </ReduxProvider>
+            <NavSideBar />
+            {children}
         </HorizontalLayout>
     )
 }

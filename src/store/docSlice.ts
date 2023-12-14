@@ -3,7 +3,6 @@ import { ResourceStatus, SavingStatus, UserDocID } from "./types"
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { db } from "@/firebase"
 import { doc, getDoc } from "firebase/firestore"
-import axios from "axios"
 
 export type DocState = {
     text: string,
@@ -12,7 +11,8 @@ export type DocState = {
     error: string,
     savingStatus: SavingStatus,
     questionsStatus: ResourceStatus,
-    focusQuestion: number
+    focusQuestion: number,
+    threatenDelete: string
 }
 
 const initialState: DocState = {
@@ -22,7 +22,8 @@ const initialState: DocState = {
     error: "",
     savingStatus: "saved",
     questionsStatus: "idle",
-    focusQuestion: -1
+    focusQuestion: -1,
+    threatenDelete: ""
 }
 
 const docSlice = createSlice({
@@ -58,6 +59,9 @@ const docSlice = createSlice({
         },
         updateQuestionsStatus: (state, action) => {
             state.questionsStatus = action.payload as ResourceStatus;
+        },
+        updateThreatenDelete: (state, action) => {
+            state.threatenDelete = action.payload as string;
         }
     },
     extraReducers: (builder) => {
@@ -98,7 +102,8 @@ export const {
     blurQuestionFocus,
     updateQuestionAnswer,
     addQuestion,
-    updateQuestionsStatus
+    updateQuestionsStatus,
+    updateThreatenDelete
 } = docSlice.actions;
 
 export default docSlice;

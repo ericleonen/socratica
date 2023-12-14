@@ -3,9 +3,14 @@ import { DocOptionButton } from "./DocOptionButton";
 import { ClipboardDocumentIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { Transition } from "@headlessui/react";
 import { useCopyText } from "@/utils/input";
+import { useAppDispatch } from "@/store";
+import { updateThreatenDelete } from "@/store/docSlice";
+import { usePathDocID } from "@/utils/routing";
 
 export default function DocOptionsModal() {
-    const deleteDoc = useDeleteDoc();
+    const dispatch = useAppDispatch();
+    const docID = usePathDocID();
+    const deleteDoc = () => dispatch(updateThreatenDelete(docID));
     const copyText = useCopyText();
 
     return (

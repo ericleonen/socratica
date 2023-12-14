@@ -221,14 +221,14 @@ export function useAutoSaveDoc(dependency: any, metadataOnly: boolean = false) {
 /**
  * Hook that provides a trigger to delete a doc and its metadata from the store and Firestore.
  * Re-routes to main app page if deleting a current doc
- * @param providedDocID optional string ID of a specific doc
+ * @param providedDocID string ID of a specific doc
  * @returns a trigger that deletes the doc
  */
-export function useDeleteDoc(providedDocID?: string) {
+export function useDeleteDoc(providedDocID: string) {
     const userID = useSelector<RootState, string>(
         state => state.user.ID
     );
-    const docID: string = usePathDocID() || providedDocID as string;
+    const docID = providedDocID as string;
     const dispatch = useAppDispatch();
     const router = useRouter();
 
@@ -245,9 +245,7 @@ export function useDeleteDoc(providedDocID?: string) {
             dispatch(removeMetadata(docID));
             dispatch(clearDoc());
 
-            if (!providedDocID) {
-                router.push("/app/library");
-            }
+            router.push("/app/library");
         } catch (err) {
             dispatch(updateError(err as Error));
         }

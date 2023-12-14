@@ -2,6 +2,8 @@ import { TrashIcon } from "@heroicons/react/24/outline";
 import { LibraryTableRowOptionButton } from "./LibraryTableRowOptionButton";
 import { useDeleteDoc } from "@/db/docs";
 import { Transition } from "@headlessui/react";
+import { useAppDispatch } from "@/store";
+import { updateThreatenDelete } from "@/store/docSlice";
 
 type LibraryTableRowOptionsModalProps = {
     onClick: () => void,
@@ -11,7 +13,8 @@ type LibraryTableRowOptionsModalProps = {
 export default function LibraryTableRowOptionsModal(
     { docID, onClick }: LibraryTableRowOptionsModalProps
 ) {
-    const deleteDoc = useDeleteDoc(docID);
+    const dispatch = useAppDispatch();
+    const deleteDoc = () => dispatch(updateThreatenDelete(docID));
 
     return (
         <Transition

@@ -1,3 +1,5 @@
+import { Transition } from "@headlessui/react"
+
 type ShadowProps = {
     children?: React.ReactNode,
     transparent?: boolean,
@@ -6,11 +8,16 @@ type ShadowProps = {
 
 export default function Shadow({ transparent, children, onClick }: ShadowProps) {
     return (
-        <div
+        <Transition
+            show={true}
+            appear={true}
+            enter="transition-color"
+            enterFrom="bg-transparent"
+            enterTo={`${transparent ? "bg-transparent" : "bg-black/80"}`}
             onClick={onClick}
-            className={`w-screen h-screen fixed left-0 top-0 ${transparent ? "bg-transparent" : "bg-black/80"} z-50 hover:cursor-default`}
+            className={`w-screen h-screen fixed left-0 top-0 z-50 hover:cursor-default`}
         >
             {children}
-        </div>
+        </Transition>
     )
 }

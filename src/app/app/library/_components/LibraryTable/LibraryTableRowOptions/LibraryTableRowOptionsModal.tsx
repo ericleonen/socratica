@@ -21,13 +21,13 @@ export default function LibraryTableRowOptionsModal(
             enterFrom="opacity-0"
             enterTo="opacity-100"
             onClick={onClick}
-            className="bg-theme-white rounded-md p-2 w-[12rem] absolute shadow-2xl border-2 z-[100] right-2 top-1/2 translate-y-3"
+            className="bg-theme-white-lighter rounded-md p-2 w-[12rem] absolute shadow-2xl border-2 z-[100] right-2 top-1/2 translate-y-3"
         >
             <LibraryTableRowOptionButton
-                icon={<TrashIcon className="w-5 h-5"/>}
+                icon={<TrashIcon className="w-5 h-5 text-red-600"/>}
                 onClick={deleteDoc}
             >
-                Delete document
+                <span className="text-red-600">Delete document</span>
             </LibraryTableRowOptionButton>
         </Transition>
     )

@@ -13,7 +13,7 @@ export default function DocOptionsButton({ onClick }: DocOptionsButtonProps) {
         >
             <button 
                 onClick={onClick}
-                className="ml-3 px-1 rounded-md hover:bg-gray-200 text-theme-black"
+                className="ml-3 px-1 rounded-md hover:bg-gray-200/70 text-theme-black"
             >
                 <EllipsisHorizontalIcon className="w-6 h-6"/>
             </button>

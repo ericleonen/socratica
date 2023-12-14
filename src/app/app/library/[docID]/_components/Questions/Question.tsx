@@ -37,11 +37,6 @@ export default function Question(
         >
             <div className={`transition-colors flex ${focused ? "bg-slate-300" : "bg-slate-200"} border-2 rounded-t-md ${focused ? "border-slate-400" : "border-slate-300"} pl-5 pr-3 py-3`}>
                 <p className="font-medium">{question}</p>
-                <button
-                    className="transition-colors p-1 h-min rounded-md hover:bg-gray-400/30 text-slate-400 ml-auto"
-                >
-                    <EllipsisHorizontalIcon className="h-5 w-5 text-slate-400"/>
-                </button>
             </div>
             <textarea
                 onFocus={hyperFocus}

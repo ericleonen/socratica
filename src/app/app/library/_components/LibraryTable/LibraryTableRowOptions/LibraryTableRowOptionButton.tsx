@@ -8,7 +8,7 @@ export function LibraryTableRowOptionButton({ icon, children, onClick }: Library
     return (
         <button
             onClick={onClick}
-            className="flex w-full p-2 text-theme-black hover:bg-gray-200 rounded-md items-center text-sm"
+            className="flex w-full p-2 text-theme-black hover:bg-gray-200/70 rounded-md items-center text-sm"
         >
             <div className="mr-2">{icon}</div>
             {children}

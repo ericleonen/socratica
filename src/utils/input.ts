@@ -1,4 +1,6 @@
+import { RootState } from "@/store";
 import { ChangeEvent, useEffect } from "react";
+import { useSelector } from "react-redux";
 
 export function handleChange(setValue: (value: any) => void, parseAsInt: boolean = false) {
     return (event: ChangeEvent) => {
@@ -24,4 +26,14 @@ export function useAutoSizeTextArea(textAreaRef: HTMLTextAreaElement | null, val
             textAreaRef.style.height = `${textAreaRef.scrollHeight}px`;
         }
     }, [textAreaRef, value]);
+}
+
+export function useCopyText() {
+    const text = useSelector<RootState, string>(
+        state => state.doc.text
+    );
+
+    return () => {
+        navigator.clipboard.writeText(text);
+    }
 }

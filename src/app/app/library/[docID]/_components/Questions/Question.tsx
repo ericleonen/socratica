@@ -5,6 +5,7 @@ import { Question, Question as QuestionType } from "@/db/schemas";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useAutoSaveDoc } from "@/db/docs";
+import { Transition } from "@headlessui/react";
 
 type QuestionProps = {
     index: number,
@@ -30,7 +31,12 @@ export default function Question(
     );
 
     return (
-        <div 
+        <Transition 
+            show={true}
+            appear={true}
+            enter="transition-opacity duration-20"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
             onMouseOver={focus}
             onMouseLeave={blur}
             className="text-theme-black w-full flex flex-col shadow-md bg-theme-white rounded-md mb-10 last:mb-0"
@@ -50,6 +56,6 @@ export default function Question(
                 placeholder="Your answer here"
                 className={`transition-colors h-[48px] rounded-b-md w-full placeholder:text-slate-400/90 bg-theme-white-lighter focus:outline-none resize-none px-5 py-3 overflow-hidden ${focused ? "border-slate-400" : "border-slate-300"} border-b-2 border-x-2`}
             />
-        </div>
+        </Transition>
     )
 }

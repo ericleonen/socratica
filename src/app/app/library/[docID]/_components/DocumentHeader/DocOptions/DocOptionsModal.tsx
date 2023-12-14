@@ -29,10 +29,10 @@ export default function DocOptionsModal() {
                 Copy document text
             </DocOptionButton>
             <DocOptionButton
-                icon={<TrashIcon className="w-5 h-5 text-red-600"/>}
+                icon={<TrashIcon className="w-5 h-5 text-red-500"/>}
                 onClick={deleteDoc}
             >
-                <span className="text-red-600">Delete</span>
+                <span className="text-red-500">Delete</span>
             </DocOptionButton>
         </Transition>
     );

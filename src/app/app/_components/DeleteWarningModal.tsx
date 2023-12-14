@@ -34,9 +34,12 @@ export default function DeleteWarningModal() {
                     e.stopPropagation();
                 }}
             >
-                <div>
-                    Delete the document <span className="font-bold">"{title}"</span> forever?
-                </div>
+                <div>{
+                    title ? <>
+                        Delete the document <span className="font-bold">"{title}"</span> forever?
+                    </> :
+                    "Delete the untitled document forever?"
+                }</div>
                 <div className="flex justify-end mt-5">
                     <button 
                         className="px-2 py-1 rounded-md hover:bg-gray-200 mr-2 text-slate-400"

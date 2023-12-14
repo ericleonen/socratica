@@ -154,12 +154,11 @@ export function useSaveDoc() {
     const savingStatus = useSelector<RootState, SavingStatus>(
         state => state.doc.savingStatus
     );
-
     const dispatch = useAppDispatch();
 
-    return async () => {
+    return async (force: boolean = false) => {
         try {
-            if (savingStatus !== "unsaved") return;
+            if (savingStatus !== "unsaved" && !force) return;
 
             dispatch(updateSavingStatus("saving"));
 
@@ -199,12 +198,15 @@ export function useAutoSaveDoc(dependency: any) {
     const savingStatus = useSelector<RootState, SavingStatus>(
         state => state.doc.savingStatus
     );
+    const questionsStatus = useSelector<RootState, ResourceStatus>(
+        state => state.doc.questionsStatus
+    );
     const saveDoc = useSaveDoc();
     const dispatch = useAppDispatch();
 
     useEffect(() => {
         let countdown = -1;
-        if (savingStatus === "unsaved") {
+        if (savingStatus === "unsaved" && questionsStatus === "idle") {
             countdown = window.setTimeout(saveDoc, 1000);
         }
         return () => clearTimeout(countdown);
@@ -274,14 +276,14 @@ export function useGenerateQuestions() {
         if (!questionsRes.body) return;
 
         const reader = questionsRes.body.getReader();
+        dispatch(updateSavingStatus("unsaved"));
 
         while (true) {
             const { done, value } = await reader.read();
 
             if (done) {
                 dispatch(updateQuestionsStatus("idle"));
-                dispatch(updateSavingStatus("unsaved"));
-                saveDoc();
+                saveDoc(true);
                 break;
             };
 

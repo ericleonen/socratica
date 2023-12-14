@@ -27,10 +27,10 @@ export default function LibraryTableRowOptionsModal(
             className="duration-75 bg-theme-white-lighter rounded-md p-2 w-[12rem] absolute shadow-2xl border-2 z-[100] right-2 top-1/2 translate-y-3"
         >
             <LibraryTableRowOptionButton
-                icon={<TrashIcon className="w-5 h-5 text-red-600"/>}
+                icon={<TrashIcon className="w-5 h-5 text-red-500"/>}
                 onClick={deleteDoc}
             >
-                <span className="text-red-600">Delete document</span>
+                <span className="text-red-500">Delete document</span>
             </LibraryTableRowOptionButton>
         </Transition>
     )

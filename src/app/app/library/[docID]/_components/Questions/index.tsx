@@ -9,7 +9,6 @@ import { LayoutType } from "@/types";
 import Skeleton from "@/components/Skeleton";
 import { Fragment, useState } from "react";
 import { blurQuestionFocus, focusOnQuestion, updateQuestionAnswer } from "@/store/docSlice";
-import { createSelector } from "@reduxjs/toolkit";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 const Container = ({ children }: LayoutType) => <div className="flex-grow h-full px-10 shadow-2xl w-min py-16 overflow-y-scroll">{children}</div>

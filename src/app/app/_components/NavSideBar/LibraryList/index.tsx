@@ -21,7 +21,7 @@ export default function LibraryList() {
         <LibraryButton />
         <div className="flex flex-col flex-grow w-full">{
             docsMetadatasStatus ==="succeeded" ? 
-            Object.keys(docsMetadatas).map((ID, i) => {
+            Object.keys(docsMetadatas).map((ID) => {
                 return (
                     <DocumentItem
                         key={ID}

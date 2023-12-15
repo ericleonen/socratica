@@ -1,8 +1,8 @@
+import PopUp from "@/components/PopUp";
 import Shadow from "@/components/Shadow";
 import { useDeleteDoc } from "@/db/docs";
 import { RootState, useAppDispatch } from "@/store";
 import { updateThreatenDelete } from "@/store/docSlice";
-import { Transition } from "@headlessui/react";
 import { useSelector } from "react-redux";
 
 export default function DeleteWarningModal() {
@@ -22,17 +22,8 @@ export default function DeleteWarningModal() {
         <Shadow 
             onClick={close}
         >
-            <Transition
-                show={true}
-                appear={true}
-                enter="transition-opacity transition-transform"
-                enterFrom="opacity-0 scale-90"
-                enterTo="opacity-100 scale-100"
+            <PopUp
                 className="absolute w-[30rem] font-medium text-theme-black bg-theme-white shadow-lg border-2 border-slate-300 rounded-md flex flex-col py-5 px-7 top-1/2 left-1/2 translate-x-[-50%] translate-y-[-50%]"
-                onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                }}
             >
                 <div>{
                     title ? <>
@@ -57,7 +48,7 @@ export default function DeleteWarningModal() {
                         Yes, delete
                     </button>
                 </div>
-            </Transition>
+            </PopUp>
         </Shadow>
     )
 }

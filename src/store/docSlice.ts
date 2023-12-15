@@ -62,6 +62,16 @@ const docSlice = createSlice({
         },
         updateThreatenDelete: (state, action) => {
             state.threatenDelete = action.payload as string;
+        },
+        updateQuestion: (state, action) => {
+            type Payload = {
+                question: string,
+                index: number
+            };
+
+            const { question, index } = action.payload as Payload;
+
+            state.questions[index].question = question;
         }
     },
     extraReducers: (builder) => {
@@ -103,7 +113,8 @@ export const {
     updateQuestionAnswer,
     addQuestion,
     updateQuestionsStatus,
-    updateThreatenDelete
+    updateThreatenDelete,
+    updateQuestion
 } = docSlice.actions;
 
 export default docSlice;

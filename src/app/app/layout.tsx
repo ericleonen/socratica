@@ -13,7 +13,7 @@ export default function AppLayout({ children }: LayoutType) {
     useUser();
     useDocsMetadatas();
 
-    const threatenDelete = useSelector<RootState, boolean>(
+    const threatenDelete = useSelector<RootState, string>(
         state => state.doc.threatenDelete
     )
 

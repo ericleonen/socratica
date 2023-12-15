@@ -7,8 +7,10 @@ import { addMetadata, fetchDocsMetadatas, removeMetadata, updateLastSaved, updat
 import { useSelector } from "react-redux";
 import { ResourceStatus, SavingStatus } from "@/store/types";
 import { usePathDocID } from "@/utils/routing";
-import { clearDoc, fetchDoc, addQuestion, updateQuestionsStatus, updateError, updateSavingStatus, updateText } from "@/store/docSlice";
+import { clearDoc, fetchDoc, addQuestion, updateQuestionsStatus, updateError, updateSavingStatus, updateText, updateQuestion, updateQuestionAnswer } from "@/store/docSlice";
 import { useRouter } from "next/navigation";
+import { Trigger } from "@/types";
+import { AUTOSAVE_DELAY } from "@/config";
 
 /**
  * Hook that provides a trigger to create a new doc in Firestore and store as well as open the
@@ -207,7 +209,7 @@ export function useAutoSaveDoc(dependency: any) {
     useEffect(() => {
         let countdown = -1;
         if (savingStatus === "unsaved" && questionsStatus === "idle") {
-            countdown = window.setTimeout(saveDoc, 1000);
+            countdown = window.setTimeout(saveDoc, AUTOSAVE_DELAY);
         }
         return () => clearTimeout(countdown);
     }, [dependency])
@@ -293,4 +295,52 @@ export function useGenerateQuestions() {
             dispatch(addQuestion(question));
         }
     }
+}
+
+type QuestionState = [
+    string, 
+    (question: string) => void,
+    Trigger,
+    Trigger,
+];
+
+export function useQuestion(index: number): QuestionState {
+    const currQuestion = useSelector<RootState, string>(
+        state => state.doc.questions[index].question
+    );
+    const dispatch = useAppDispatch();
+    const [question, setQuestion] = useState(currQuestion);
+    const saveDoc = useSaveDoc();
+
+    const revertQuestion = () => setQuestion(currQuestion);
+
+    const saveQuestion = () => {
+        dispatch(updateQuestion({
+            question,
+            index
+        }));
+
+        saveDoc(true);
+    }
+
+    return [question, setQuestion, revertQuestion, saveQuestion];
+}
+
+type AnswerState = [
+    string,
+    (answer: string) => void
+]
+
+export function useAnswer(index: number): AnswerState {
+    const answer = useSelector<RootState, string>(
+        state => state.doc.questions[index].answer
+    );
+    const dispatch = useAppDispatch();
+
+    const setAnswer = (newAnswer: string) => dispatch(updateQuestionAnswer({
+        answer: newAnswer,
+        index
+    }));
+
+    return [answer, setAnswer];
 }

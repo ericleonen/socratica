@@ -4,7 +4,7 @@ import { BookOpenIcon } from "@heroicons/react/24/outline"
 import { SparklesIcon } from "@heroicons/react/24/solid"
 import { useSelector } from "react-redux"
 import { LayoutType } from "@/types"
-import { MIN_PARAGRAPH_LENGTH } from "@/app/api/questions/config"
+import { MIN_PARAGRAPH_LENGTH } from "@/config"
 import TooltipProvider from "@/components/TooltipProvider"
 
 type GenerateQuestionsProps = {

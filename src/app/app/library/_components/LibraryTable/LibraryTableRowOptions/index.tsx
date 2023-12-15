@@ -1,7 +1,6 @@
 import LibraryTableRowOptionsButton from "./LibraryTableRowOptionsButton";
 import Shadow from "@/components/Shadow";
 import LibraryTableRowOptionsModal from "./LibraryTableRowOptionsModal";
-import { Transition } from "@headlessui/react";
 
 type LibraryTableRowOptionsProps = {
     active: boolean,

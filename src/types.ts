@@ -1,4 +1,4 @@
-export type LayoutType = {
+export type LayoutProps = {
     children: React.ReactNode
 }
 
@@ -7,3 +7,8 @@ export type Paragraph = {
     end: number,
     content: string
 }
+
+/**
+ * Parameterless void-valued function
+ */
+export type Trigger = () => void;

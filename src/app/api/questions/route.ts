@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { MIN_PARAGRAPH_LENGTH } from "./config";
+import { TEST_MODE } from "@/config";
 import { segmentTextIntoSentences, generateSentenceSimilarities, generateParagraphs } from "@/utils/format";
 import XenovaLM from "./XenovaLM";
 
@@ -7,14 +7,12 @@ const openai = new OpenAI({
     apiKey: process.env.OPEN_AI_KEY
 });
 
-const TEST_MODE = true;
-
 export async function POST(req: Request) {
     const { text } = await req.json();
     
     const sentences = segmentTextIntoSentences(text);
     const similarities = await generateSentenceSimilarities(await XenovaLM.getInstance(), sentences);
-    const paragraphs = generateParagraphs(sentences, similarities, MIN_PARAGRAPH_LENGTH);
+    const paragraphs = generateParagraphs(sentences, similarities);
 
     function sleep(time: number) {
     return new Promise((resolve) => {

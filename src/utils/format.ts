@@ -5,6 +5,7 @@ import { Timestamp } from "firebase/firestore";
 import { Paragraph } from "@/types";
 import { matrix, multiply, transpose, Matrix, zeros, index, dotDivide, add, map, exp } from "mathjs";
 import { linspace } from "./math";
+import { MIN_PARAGRAPH_LENGTH } from "@/config";
 
 /**
  * Converts a seconds number to a date
@@ -153,7 +154,7 @@ export async function generateSentenceSimilarities(model: any, sentences: string
  * @returns an array of Paragraphs where each content is at least MIN_PARAGRAPH_LENGTH 
  *          (if possible)
  */
-export function generateParagraphs(sentences: string[], similarities: Matrix, MIN_PARAGRAPH_LENGTH: number) {
+export function generateParagraphs(sentences: string[], similarities: Matrix) {
     const x = matrix(zeros(similarities.size()));
     const N = sentences.length;
 

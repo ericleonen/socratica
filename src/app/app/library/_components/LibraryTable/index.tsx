@@ -3,12 +3,8 @@ import LibraryTableHeaderItem from "./LibraryTableHeaderItem";
 import LibraryContext from "../../LibraryContext";
 import { RootState } from "@/store";
 import { DocMetadataMap } from "@/store/docsMetadatasSlice";
-import { formatAbsoluteDate } from "@/utils/format";
-import Link from "next/link";
 import { useSelector } from "react-redux";
-import LibraryTableRowItem from "./LibraryTableRowItem";
 import NoDocsFound from "./NoDocsFound";
-import LibraryTableRowOptions from "./LibraryTableRowOptions";
 import { ResourceStatus } from "@/store/types";
 import Skeleton from "@/components/Skeleton";
 import LibraryTableRow from "./LibraryTableRow";
@@ -21,7 +17,9 @@ export default function LibraryTable() {
     );
     const sortedFilteredIDs = Object.keys(docsMetadatas)
         .filter(ID => docsMetadatas[ID].title.toLowerCase().includes(query.toLowerCase()))
-        .sort((ID1, ID2) => docsMetadatas[ID2].lastSaved.seconds - docsMetadatas[ID1].lastSaved.seconds)
+        .sort((ID1, ID2) => 
+            docsMetadatas[ID2].lastSaved.seconds - docsMetadatas[ID1].lastSaved.seconds
+        )
 
     const status = useSelector<RootState, ResourceStatus>(
         state => state.docsMetadatas.status

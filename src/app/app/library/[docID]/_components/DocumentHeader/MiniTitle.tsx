@@ -11,11 +11,11 @@ export default function MiniTitle() {
     )
 
     return status === "succeeded" ? (
-        <button 
-            className="px-2 py-1 text-theme-black rounded-md hover:bg-gray-200 overflow-hidden whitespace-nowrap text-ellipsis max-w-md"
+        <p 
+            className="px-2 py-1 text-theme-black rounded-md overflow-hidden whitespace-nowrap text-ellipsis max-w-md"
         >
             {title || "Untitled"}
-        </button>
+        </p>
     ) : (
         <Skeleton className="my-1">Mini title loading...</Skeleton>
     )

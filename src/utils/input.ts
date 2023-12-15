@@ -21,7 +21,7 @@ export function handleChange(setValue: (value: any) => void, parseAsInt: boolean
 
 export function useAutoSizeTextArea(textAreaRef: HTMLTextAreaElement | null, value: string) {
     useEffect(() => {
-        if (textAreaRef && value) {
+        if (textAreaRef) {
             textAreaRef.style.height = "0px";
             textAreaRef.style.height = `${textAreaRef.scrollHeight}px`;
         }

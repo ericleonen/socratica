@@ -35,7 +35,7 @@ export default function TitleField() {
             }}
             onKeyDown={preventEnter}
             placeholder="Untitled"
-            className="scrollbar-hide placeholder:text-slate-400/90 w-full resize-none text-4xl bg-transparent focus:outline-none font-bold text-theme-black"
+            className={`${!title && "h-[42px]"} scrollbar-hide placeholder:text-slate-400/90 w-full resize-none text-4xl bg-transparent focus:outline-none font-bold text-theme-black`}
         />
     ) : (
         <Skeleton className="w-full text-4xl h-[42px]">Title</Skeleton>

@@ -9,6 +9,7 @@ import { Trigger } from "@/types";
 import { Fragment, useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import Worksheet from "../../Worksheet";
+import { useDocTitle } from "@/db/docs";
 
 type DocOptionsModal = {
     close: Trigger
@@ -19,10 +20,12 @@ export default function DocOptionsModal({ close }: DocOptionsModal) {
     const docID = usePathDocID();
     const deleteDoc = () => dispatch(updateThreatenDelete(docID));
     const copyText = useCopyText();
+    const title = useDocTitle()[0];
 
     const worksheetRef = useRef(null);
     const printWorksheet = useReactToPrint({
-        content: () => worksheetRef.current
+        content: () => worksheetRef.current,
+        documentTitle: `${title} Worksheet by Socratica`
     });
 
     return (<>

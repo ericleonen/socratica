@@ -8,7 +8,7 @@ import { RootState } from "@/store";
 import { Question } from "@/db/schemas";
 
 const selectSentences = createSelector((state) => state.doc.text, (text) => {
-    return segmentTextIntoSentences(text as string).filter(value => value.trim() !== "")
+    return segmentTextIntoSentences(text as string)
 })
 
 const Worksheet = forwardRef((props: any, ref: any) => {
@@ -53,7 +53,7 @@ const Worksheet = forwardRef((props: any, ref: any) => {
             <div className="page-break"/>
             <h1 className="font-bold text-4xl">{title} <span className="text-slate-400">Questions</span></h1>
             <div className="mt-8">{
-                questions.map(({ question }, i: number) => <div className="flex mt-14">
+                questions.map(({ question }, i: number) => <div className="flex mt-20">
                     <span className="mr-2 font-bold">{i + 1}.</span><p className="">{question}</p>
                 </div>)
             }</div>

@@ -8,7 +8,7 @@ type DocOptionsButtonProps = {
 export default function DocOptionsButton({ onClick }: DocOptionsButtonProps) {
     return (
         <TooltipProvider 
-            text="Delete or copy"
+            text="Document options"
             className="right-0 translate-y-1"
         >
             <button 

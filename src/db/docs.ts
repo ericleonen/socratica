@@ -310,7 +310,7 @@ export function useQuestion(index: number): QuestionState {
     );
     const dispatch = useAppDispatch();
     const [question, setQuestion] = useState(currQuestion);
-    const saveDoc = useSaveDoc();
+    const saveDoc = useAutoSaveDoc(currQuestion);
 
     const revertQuestion = () => setQuestion(currQuestion);
 
@@ -319,8 +319,7 @@ export function useQuestion(index: number): QuestionState {
             question,
             index
         }));
-
-        saveDoc(true);
+        saveDoc();
     }
 
     return [question, setQuestion, revertQuestion, saveQuestion];

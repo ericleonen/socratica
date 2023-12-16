@@ -13,7 +13,7 @@ export default function DocumentItem({ title, ID, current, onClick }: DocumentIt
     return (
         <TooltipProvider 
             text={title} 
-            className={`${!title && "opacity-0"} right-0 top-0 translate-y-[-100%] max-w-full whitespace-pre-wrap break-words`}
+            className={`${!title && "opacity-0"} text-right right-0 top-0 translate-y-[-100%] max-w-full whitespace-pre-wrap break-words`}
         >
             <Link 
                 scroll={false}

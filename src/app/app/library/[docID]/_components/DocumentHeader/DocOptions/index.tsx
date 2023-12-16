@@ -11,16 +11,17 @@ export default function DocOptions() {
         state => state.docsMetadatas.status
     );
     const [open, setOpen] = useState(false);
+    const close = () => setOpen(false);
 
     return status === "succeeded" && (<>
         <DocOptionsButton onClick={() => setOpen(true)} />
         { 
             open && 
             <Shadow 
-                onClick={() => setOpen(false)}
+                onClick={close}
                 transparent
             >
-                <DocOptionsModal />
+                <DocOptionsModal close={close} />
             </Shadow>
         }
     </>)

@@ -8,7 +8,7 @@ export function DocOptionButton({ icon, children, onClick }: DocOptionButtonProp
     return (
         <button
             onClick={onClick}
-            className="flex w-full p-2 text-theme-black hover:bg-gray-200 rounded-md items-center text-sm"
+            className="flex w-full p-2 text-theme-black hover:bg-gray-200 rounded-md items-center text-sm mb-1"
         >
             <div className="mr-3">{icon}</div>
             {children}

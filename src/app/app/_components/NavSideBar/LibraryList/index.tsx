@@ -22,6 +22,10 @@ export default function LibraryList() {
         200
     );
 
+    const sortedIDs = Object.keys(docsMetadatas).toSorted((ID1: string, ID2: string) => {
+        return docsMetadatas[ID2].lastSaved.seconds - docsMetadatas[ID1].lastSaved.seconds;
+    });
+
     return (
         <div className="flex flex-col flex-grow w-full mt-8 overflow-hidden">
             <div className={`py-1 pl-3 flex items-center w-full border-slate-200 ${showRecent && "border-b-2"}`}>
@@ -35,7 +39,7 @@ export default function LibraryList() {
             </div>
             <div className="w-full flex-grow overflow-y-scroll pb-5">{
                 docsMetadatasStatus === "succeeded" && showRecent ? <>{
-                    Object.keys(docsMetadatas).map(ID => 
+                    sortedIDs.map(ID => 
                         <NavButton
                             key={ID}
                             text={docsMetadatas[ID].title || "Untitled"}

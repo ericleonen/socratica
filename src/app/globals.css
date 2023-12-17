@@ -2,33 +2,5 @@
 @tailwind components;
 @tailwind utilities;
 
-.bg-theme-black {
-    @apply bg-black/90;
-}
 
-.text-theme-black {
-    @apply text-black/75;
-}
-
-.bg-theme-white {
-    @apply bg-slate-100;
-}
-
-.bg-theme-white-lighter {
-    @apply bg-slate-50;
-}
-
-.text-theme-white {
-    @apply text-slate-50/90;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-    display: none;
-}
-
-/* For IE, Edge and Firefox */
-.scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
 

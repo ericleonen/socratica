@@ -1,12 +1,18 @@
-import Link from "next/link";
+import SecondaryButton from "@/theme/SecondaryButton";
+import { BookOpen } from "@icon-park/react";
+import { useRouter } from "next/navigation";
 
 export default function LibraryButton() {
+    const router = useRouter();
+
+    const handleClick = () => router.push("/app/library");
+
     return (
-        <Link
-            href="/app/library"
-            className="mt-6 rounded-md hover:bg-slate-50/10 flex p-3 text-slate-50/60 font-medium text-sm"
+        <SecondaryButton
+            onClick={handleClick}
+            className="font-bold text-sm w-full px-3 py-2"
         >
-            My Library
-        </Link>
+            <BookOpen strokeWidth={5} className="mr-3 text-lg"/> Library
+        </SecondaryButton>
     )
 }

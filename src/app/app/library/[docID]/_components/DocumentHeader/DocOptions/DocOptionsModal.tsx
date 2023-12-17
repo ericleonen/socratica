@@ -6,7 +6,7 @@ import { updateThreatenDelete } from "@/store/docSlice";
 import { usePathDocID } from "@/utils/routing";
 import PopUp from "@/components/PopUp";
 import { Trigger } from "@/types";
-import { Fragment, useRef } from "react";
+import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import Worksheet from "../../Worksheet";
 import { useDocTitle } from "@/db/docs";

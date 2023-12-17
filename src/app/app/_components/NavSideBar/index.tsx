@@ -1,19 +1,31 @@
 "use client"
 
-import Logo from "@/components/Logo";
-import NewDocButton from "./NewDocButton";
 import LibraryList from "./LibraryList";
-import BuyTokensButton from "./BuyTokensButton";
+import NewDocButton from "./NewDocButton";
+import NavButton from "./NavButton";
+import { Config, Help, Search } from "@icon-park/react";
+import AccountButton from "./AccountButton";
+import SearchButton from "./SearchButton";
 
 export default function NavSideBar() {
     return (
-        <div className="h-full flex flex-col px-3 bg-theme-black w-64 shadow-lg sticky">
-            <div className="flex px-3 items-center h-14">
-                <Logo />
-                <BuyTokensButton/>
+        <div className="sticky flex flex-col w-72 h-full p-3 shadow-lg bg-stone-100">
+            <AccountButton />
+            <div className="my-5 w-full flex flex-col">
+                <NewDocButton/>
+                <SearchButton />
+                <NavButton 
+                    href="/app/help"
+                    icon={Help}
+                    text="Help"
+                />
+                <NavButton 
+                    href="/app/settings"
+                    icon={Config}
+                    text="Settings"
+                />
+                <LibraryList />
             </div>
-            <NewDocButton />
-            <LibraryList />
         </div>
     );
 }

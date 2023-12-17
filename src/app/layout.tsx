@@ -1,20 +1,20 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Inter as ThemeFont } from 'next/font/google'
 import './globals.css'
-import { LayoutType } from '@/types'
+import { LayoutProps } from '@/types'
 import ReduxProvider from './app/_components/ReduxProvider'
 
-const inter = Inter({ subsets: ['latin'] })
+const font = ThemeFont({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
   title: 'Socratica',
   description: 'Learn with questions',
 };
 
-export default function RootLayout({ children }: LayoutType) {
+export default function RootLayout({ children }: LayoutProps) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={font.className}>
         <ReduxProvider>
           <div className="h-screen w-screen">
             {children}

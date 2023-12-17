@@ -9,23 +9,21 @@ import SearchButton from "./SearchButton";
 
 export default function NavSideBar() {
     return (
-        <div className="sticky flex flex-col w-72 h-full p-3 shadow-lg bg-stone-100">
+        <div className="sticky flex flex-col w-72 h-full p-3 pb-0 shadow-lg bg-stone-100">
             <AccountButton />
-            <div className="my-5 w-full flex flex-col">
-                <NewDocButton/>
-                <SearchButton />
-                <NavButton 
-                    href="/app/help"
-                    icon={Help}
-                    text="Help"
-                />
-                <NavButton 
-                    href="/app/settings"
-                    icon={Config}
-                    text="Settings"
-                />
-                <LibraryList />
-            </div>
+            <NewDocButton/>
+            <SearchButton />
+            <NavButton 
+                href="/app/help"
+                icon={Help}
+                text="Help"
+            />
+            <NavButton 
+                href="/app/settings"
+                icon={Config}
+                text="Settings"
+            />
+            <LibraryList />
         </div>
     );
 }

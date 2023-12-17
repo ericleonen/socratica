@@ -1,7 +1,4 @@
 import { useSelector } from "react-redux";
-import DocumentItem from "./DocumentItem";
-import LibraryButton from "./LibraryButton";
-import Skeleton from "@/components/Skeleton";
 import { RootState } from "@/store";
 import { ResourceStatus } from "@/store/types";
 import { DocMetadataMap } from "@/store/docsMetadatasSlice";
@@ -22,12 +19,12 @@ export default function LibraryList() {
     const [showRecent, setShowRecent] = useState(false);
     const toggleRecent = () => setTimeout(
         () => setShowRecent(showRecent => !showRecent),
-        150
+        200
     );
 
     return (
-        <div className="flex flex-col flex-grow w-full mt-8">
-            <div className="px-3 flex items-center w-full">
+        <div className="flex flex-col flex-grow w-full mt-8 overflow-hidden">
+            <div className={`py-1 pl-3 flex items-center w-full border-slate-200 ${showRecent && "border-b-2"}`}>
                 <p className="text-sm tracking-wider font-bold text-slate-400">MY DOCUMENTS</p>
                 <SecondaryButton 
                     onClick={toggleRecent}
@@ -36,7 +33,7 @@ export default function LibraryList() {
                     <Icon type={Down} className={`text-lg text-slate-400 transition-transform ${showRecent ? "rotate-0" : "rotate-90"}`} />
                 </SecondaryButton>
             </div>
-            {
+            <div className="w-full flex-grow overflow-y-scroll pb-5">{
                 docsMetadatasStatus === "succeeded" && showRecent ? <>{
                     Object.keys(docsMetadatas).map(ID => 
                         <NavButton
@@ -49,34 +46,7 @@ export default function LibraryList() {
                 }</> : <>
                 
                 </>
-            }
-            {/* {
-                docsMetadatasStatus ==="succeeded" ? 
-                Object.keys(docsMetadatas).map((ID) => {
-                    return (
-                        <DocumentItem
-                            key={ID}
-                            title={docsMetadatas[ID].title}
-                            ID={ID}
-                            current={currDocID === ID}
-                        />
-                    )
-                }) : (
-                    <div className="flex flex-col pl-3 pr-2">{
-                        Array.from(Array(3)).map((_, j) => {
-                            return (
-                                <Skeleton 
-                                    key={`doc_skeleton_${j}`}
-                                    dark 
-                                    className="mt-2 mb-3 text-sm"
-                                >
-                                    ...
-                                </Skeleton>
-                            )
-                        })
-                    }</div>
-                )
-            } */}
+            }</div>
         </div>
     );
 }

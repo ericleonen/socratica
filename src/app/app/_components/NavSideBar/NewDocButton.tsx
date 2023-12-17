@@ -1,7 +1,6 @@
 import { useCreateDoc } from "@/db/docs";
 import Icon from "@/theme/Icon";
 import PrimaryButton from "@/theme/PrimaryButton";
-import PrimaryText from "@/theme/PrimaryText";
 import { LoadingFour, PlusCross } from "@icon-park/react";
 
 export default function NewDocButton() {
@@ -10,6 +9,7 @@ export default function NewDocButton() {
     return (
         <PrimaryButton 
             onClick={createDoc}
+            className="mt-5"
         >{
             inProgress ? <>
                 <Icon type={LoadingFour}  className="mr-3 animate-spin"/>

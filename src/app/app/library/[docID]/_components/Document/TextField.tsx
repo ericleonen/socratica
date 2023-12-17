@@ -26,7 +26,7 @@ export default function TextField() {
                 saveDoc();
             }}
             placeholder="Paste some interesting text here..."
-            className="placeholder:text-slate-400/90 mt-6 w-full resize-none bg-transparent focus:outline-none text-theme-black"
+            className="placeholder:text-slate-400/90 mt-6 w-full resize-none bg-transparent focus:outline-none text-slate-700"
         />
     ) : (
         <Skeleton className="mt-6 w-full">Loading...</Skeleton>

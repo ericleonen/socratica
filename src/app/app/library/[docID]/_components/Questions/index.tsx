@@ -4,13 +4,13 @@ import Question from "./Question";
 import { RootState, useAppDispatch } from "@/store";
 import { useGenerateQuestions } from "@/db/docs";
 import { ResourceStatus } from "@/store/types";
-import { LayoutType } from "@/types";
+import { LayoutProps } from "@/types";
 import Skeleton from "@/components/Skeleton";
 import { Fragment, useState } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { HyperFocusedContext } from "./HyperFocusedContext";
 
-const Container = ({ children }: LayoutType) => <div className="flex-grow h-full px-10 shadow-2xl w-min py-16 overflow-y-scroll">{children}</div>
+const Container = ({ children }: LayoutProps) => <div className="border-l-2 border-slate-400 bg-stone-100 flex-grow h-full px-10 py-16 overflow-y-scroll w-min">{children}</div>
 
 export default function Questions() {
     const status = useSelector<RootState, ResourceStatus>(

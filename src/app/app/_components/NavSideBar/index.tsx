@@ -9,7 +9,7 @@ import SearchButton from "./SearchButton";
 
 export default function NavSideBar() {
     return (
-        <div className="sticky flex flex-col w-72 h-full p-3 pb-0 shadow-lg bg-stone-100">
+        <div className="sticky flex flex-col w-72 h-full p-3 pb-0 bg-stone-100 border-r-2 border-slate-400">
             <AccountButton />
             <NewDocButton/>
             <SearchButton />

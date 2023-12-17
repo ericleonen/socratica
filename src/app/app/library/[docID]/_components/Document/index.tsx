@@ -11,10 +11,12 @@ export default function Document() {
     );
 
     return (
-        <div className="flex flex-col px-16 overflow-y-scroll relative">
-            <div className="flex-grow mt-16 w-[720px] border-2 border-slate-300 border-b-0 shadow-md rounded-t-md bg-theme-white-lighter p-24 pb-12">
-                <TitleField />
-                { questions ? <TextDisplay /> : <TextField /> }
+        <div className="p-16 overflow-y-scroll bg-yellow-50">
+            <div className="flex flex-col w-[734.4px] h-[950.4px] mx-auto">
+                <div className="flex-grow w-full p-[86.4px] border-[3px] border-b-[5px] rounded-xl bg-white border-slate-700">
+                    <TitleField />
+                    { questions ? <TextDisplay /> : <TextField /> }
+                </div>
             </div>
         </div>
     )

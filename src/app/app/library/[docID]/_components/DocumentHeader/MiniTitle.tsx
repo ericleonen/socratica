@@ -12,7 +12,7 @@ export default function MiniTitle() {
 
     return status === "succeeded" ? (
         <p 
-            className="px-2 py-1 text-theme-black rounded-md overflow-hidden whitespace-nowrap text-ellipsis max-w-md"
+            className="px-2 py-1 text-slate-700 font-bold rounded-md overflow-hidden whitespace-nowrap text-ellipsis max-w-md"
         >
             {title || "Untitled"}
         </p>

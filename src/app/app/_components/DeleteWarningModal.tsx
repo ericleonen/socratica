@@ -48,7 +48,7 @@ export default function DeleteWarningModal() {
                     </SecondaryButton>
                     <PrimaryButton 
                         onClick={deleteAndClose}
-                        className="bg-red-500/70 hover:bg-red-500"
+                        className="bg-red-500/70 hover:bg-red-500/90"
                     >
                         Yes, delete
                     </PrimaryButton>

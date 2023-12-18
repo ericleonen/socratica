@@ -18,8 +18,11 @@ export type Doc = {
 export type Question = {
     question: string,
     answer: string,
-    contextInterval: [number, number]
+    contextInterval: [number, number],
+    type: QuestionType
 }
+
+export type QuestionType = "comprehension" | "research" | "big idea";
 
 // users/{userID}/docsMetadatas/{docID}
 export type DocMetadata = {

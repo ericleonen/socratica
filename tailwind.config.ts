@@ -20,14 +20,18 @@ const config: Config = {
       transparent: 'transparent',
       current: 'currentColor',
       black: colors.black,
-      white: colors.white,
+      white: "#fdfdfd",
       gray: colors.gray,
       slate: colors.slate,
       indigo: colors.indigo,
       yellow: colors.yellow,
       amber: colors.amber,
       stone: colors.stone,
-      red: colors.red
+      red: colors.red,
+      blue: colors.blue,
+      sky: colors.sky,
+      emerald: colors.emerald,
+      violet: colors.violet
     }
   },
   plugins: [],

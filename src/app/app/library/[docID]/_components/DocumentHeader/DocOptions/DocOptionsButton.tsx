@@ -1,5 +1,7 @@
 import TooltipProvider from "@/components/TooltipProvider";
-import { EllipsisHorizontalIcon } from "@heroicons/react/20/solid";
+import Icon from "@/theme/Icon";
+import SecondaryButton from "@/theme/SecondaryButton";
+import { More } from "@icon-park/react";
 
 type DocOptionsButtonProps = {
     onClick: () => void
@@ -11,12 +13,11 @@ export default function DocOptionsButton({ onClick }: DocOptionsButtonProps) {
             text="Document options"
             className="right-0 translate-y-1"
         >
-            <button 
+            <SecondaryButton
                 onClick={onClick}
-                className="ml-3 px-1 rounded-md hover:bg-gray-200/70 text-theme-black"
             >
-                <EllipsisHorizontalIcon className="w-6 h-6"/>
-            </button>
+                <Icon type={More} className="text-2xl"/>
+            </SecondaryButton>
         </TooltipProvider>
     )
 }

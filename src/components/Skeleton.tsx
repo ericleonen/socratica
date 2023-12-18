@@ -1,12 +1,11 @@
 type SkeletonProps = {
     className: string,
-    dark?: boolean
     children?: React.ReactNode
 }
 
-export default function Skeleton({ className, dark, children }: SkeletonProps) {
+export default function Skeleton({ className, children }: SkeletonProps) {
     return (
-        <div className={`animate-pulse rounded-full ${className} ${dark ? "bg-slate-800" : "bg-gray-200"} text-transparent opacity-80`}>
+        <div className={`animate-pulse rounded-md text-transparent bg-slate-200 ${className}`}>
             {children}
         </div>
     )

@@ -25,8 +25,9 @@ export default function TooltipProvider({ text, className, containerClassName, c
                 enter="transition-opacity duration-25"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"
+                className={`bg-slate-700 text-white z-[100] absolute rounded-md text-xs font-bold text-theme-white py-2 px-3 whitespace-nowrap ${className}`}
             >
-                <div className={`bg-slate-700 text-white/90 z-[100] absolute rounded-md text-xs text-theme-white py-2 px-3 whitespace-nowrap ${className}`}>{text}</div>
+                {text}
             </Transition>
         </div>
     )

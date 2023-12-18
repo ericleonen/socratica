@@ -10,6 +10,7 @@ import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import Worksheet from "../../Worksheet";
 import { useDocTitle } from "@/db/docs";
+import { CopyOne, Delete, PrinterOne } from "@icon-park/react";
 
 type DocOptionsModal = {
     close: Trigger
@@ -25,16 +26,16 @@ export default function DocOptionsModal({ close }: DocOptionsModal) {
     const worksheetRef = useRef(null);
     const printWorksheet = useReactToPrint({
         content: () => worksheetRef.current,
-        documentTitle: `${title} Worksheet by Socratica`
+        documentTitle: `${title} Worksheet by Highlights`
     });
 
     return (<>
         <div className="hidden">
             <Worksheet ref={worksheetRef} />
         </div>
-        <PopUp className="duration-75 bg-theme-white-lighter rounded-md p-2 w-[16rem] fixed right-4 top-16 shadow-2xl border-2">
+        <PopUp className="duration-75 bg-white rounded-md p-2 w-[16rem] fixed right-4 top-16 border-2 border-b-4 border-slate-700">
             <DocOptionButton
-                icon={<ClipboardDocumentIcon className="w-5 h-5"/>}
+                icon={CopyOne}
                 onClick={() => {
                     copyText();
                     close();
@@ -43,7 +44,7 @@ export default function DocOptionsModal({ close }: DocOptionsModal) {
                 Copy document text
             </DocOptionButton>
             <DocOptionButton
-                icon={<PrinterIcon className="w-5 h-5"/>}
+                icon={PrinterOne}
                 onClick={() => {
                     printWorksheet();
                     close();
@@ -52,13 +53,14 @@ export default function DocOptionsModal({ close }: DocOptionsModal) {
                 Print worksheet
             </DocOptionButton>
             <DocOptionButton
-                icon={<TrashIcon className="w-5 h-5 text-red-500"/>}
+                icon={Delete}
                 onClick={() => {
                     deleteDoc();
                     close();
                 }}
+                color="text-red-500"
             >
-                <span className="text-red-500">Delete</span>
+                Delete
             </DocOptionButton>
         </PopUp>
     </>);

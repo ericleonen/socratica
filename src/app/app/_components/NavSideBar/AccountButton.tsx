@@ -9,7 +9,7 @@ export default function AccountButton() {
     return (
         <SecondaryButton
             onClick={handleClick}
-            className="w-full"
+            className="mr-auto"
         >
             <div className="rounded-full h-8 w-8 border-[3px] border-slate-400 mr-2 bg-gray-300" />
             <div className="flex flex-col items-start">

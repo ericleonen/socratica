@@ -1,7 +1,8 @@
 import { RootState } from "@/store";
 import { SavingStatus } from "@/store/types";
+import Icon from "@/theme/Icon";
 import { useFormattedLastSaved } from "@/utils/format";
-import { ArrowPathIcon, CheckCircleIcon, ExclamationTriangleIcon } from "@heroicons/react/24/outline";
+import { CheckOne, Error, LoadingFour } from "@icon-park/react";
 import { useSelector } from "react-redux";
 
 export default function SaveInfo() {
@@ -11,21 +12,18 @@ export default function SaveInfo() {
     )
 
     return (
-        <div className="text-slate-400 flex items-center">{
+        <div className="text-slate-700/70 flex items-center font-medium mr-2">{
             status === "saved" && lastSaved ? (<>
-                <CheckCircleIcon className="h-5 w-5 mr-2"/> {lastSaved}
+                <Icon type={CheckOne} className="mr-2"/> {lastSaved}
             </>) :
             status === "failed" ? (<>
-                <ExclamationTriangleIcon className="h-5 w-5 mr-2" /> Failed to save
+                <Icon type={Error} className="mr-2" /> Failed to save
             </>) :
             status === "deleting" ? (<>
-                <ArrowPathIcon className="h-5 w-4 animate-spin mr-2"/> Deleting
+                <Icon type={LoadingFour} className="mr-2 animate-spin" /> Deleting
             </>) :
-            status === "saving" ? (<>
-                <ArrowPathIcon className="h-5 w-4 animate-spin mr-2"/> Saving
-            </>) :
-            status === "unsaved" ? (<>
-                <ExclamationTriangleIcon className="h-5 w-4 mr-2"/> Unsaved
+            status === "saving" || status === "unsaved" ? (<>
+                <Icon type={LoadingFour} className="mr-2 animate-spin" /> Saving
             </>) :
             ""
         }</div>

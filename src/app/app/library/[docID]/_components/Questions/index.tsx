@@ -10,7 +10,7 @@ import { Fragment, useState } from "react";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import { HyperFocusedContext } from "./HyperFocusedContext";
 
-const Container = ({ children }: LayoutProps) => <div className="border-l-2 border-slate-400 bg-stone-100 flex-grow h-full px-10 py-16 overflow-y-scroll w-min">{children}</div>
+const Container = ({ children }: LayoutProps) => <div className="rounded-lg border-2 border-slate-400 bg-stone-100 h-full px-10 py-16 overflow-y-scroll w-[30rem]">{children}</div>
 
 export default function Questions() {
     const status = useSelector<RootState, ResourceStatus>(

@@ -1,6 +1,6 @@
-import { LayoutType } from "@/types";
+import { LayoutProps } from "@/types";
 
-export default function LibraryLayout({ children }: LayoutType) {
+export default function LibraryLayout({ children }: LayoutProps) {
     return (
         <div className="flex-grow">
             {children}

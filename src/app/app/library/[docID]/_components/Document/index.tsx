@@ -3,7 +3,9 @@ import TextField from "./TextField";
 import TitleField from "./TitleField";
 import { RootState } from "@/store";
 import TextDisplay from "./TextDisplay";
+import { MIN_PAPER_DIMS } from "@/config";
 
+const { height, width } = MIN_PAPER_DIMS;
 
 export default function Document() {
     const questions = useSelector<RootState, boolean>(
@@ -11,12 +13,13 @@ export default function Document() {
     );
 
     return (
-        <div className="p-16 overflow-y-scroll bg-yellow-50">
-            <div className="flex flex-col w-[734.4px] h-[950.4px] mx-auto">
-                <div className="flex-grow w-full p-[86.4px] border-[3px] border-b-[5px] rounded-xl bg-white border-slate-700">
-                    <TitleField />
-                    { questions ? <TextDisplay /> : <TextField /> }
-                </div>
+        <div className="overflow-y-scroll flex-grow py-16">
+            <div 
+                style={{ minHeight: `${height}px`, width: `${width}px` }}
+                className="h-auto p-24 border-2 border-b-4 rounded-md border-slate-700 bg-white mx-auto"
+            >
+                <TitleField />
+                { questions ? <TextDisplay /> : <TextField /> }
             </div>
         </div>
     )

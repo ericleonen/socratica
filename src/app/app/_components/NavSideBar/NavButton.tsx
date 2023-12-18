@@ -22,7 +22,7 @@ export default function NavButton({ icon, href, text, className }: NavButtonProp
             className={`font-bold w-full px-3 py-2 mt-2 ${active && "bg-amber-200 hover:bg-yellow-300"} ${className || ""}`}
         >
             <Icon type={icon} className="mr-3"/>
-            {text}
+            <p className="overflow-hidden whitespace-nowrap text-ellipsis w-full text-left">{text}</p>
         </SecondaryButton>
     )
 }

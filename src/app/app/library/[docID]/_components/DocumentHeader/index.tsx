@@ -12,7 +12,7 @@ export default function DocumentHeader() {
     )
 
     return (
-        <div className="py-3 w-full flex items-center bg-stone-100 px-3 z-10 border-b-2 border-slate-400">
+        <div className="py-3 w-full flex items-center bg-yellow-50 px-3 z-10 border-b-2 border-slate-700">
             <MiniTitle />
             {
                 status === "succeeded" ? (

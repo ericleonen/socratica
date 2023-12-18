@@ -26,7 +26,8 @@ const config: Config = {
       indigo: colors.indigo,
       yellow: colors.yellow,
       amber: colors.amber,
-      stone: colors.stone
+      stone: colors.stone,
+      red: colors.red
     }
   },
   plugins: [],

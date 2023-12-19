@@ -117,115 +117,11 @@ export function formatAbsoluteDate(timestamp: Timestamp) {
     }
 }
 
-/**
- * Converts a body of text into sentences
- * @param text string to split into sentences
- * @param locale optional string denoting the text's language (default english)
- * @returns a string array of sentences
- */
-export function segmentTextIntoSentences(text: string, locale: string = "en") {
+export function sentencify(text: string, locale: string = "en"): string[] {
     const segmenter = new Intl.Segmenter(locale, { granularity: "sentence" });
-    const sentences = Array.from(segmenter.segment(text)).map(({ segment }) => segment);
+    const sentences = Array.from(
+        segmenter.segment(text)).map(({ segment }) => segment
+    );
 
     return sentences;
-}
-
-/**
- * Creates a similarity matrix of sentences
- * @param sentences a string array of sentences
- * @returns a similarity matrix of sentences
- */
-export async function generateSentenceSimilarities(model: any, sentences: string[]) {
-    const embeddings = (await model(sentences, {
-        pooling: "mean",
-        normalize: true
-    })).tolist();
-
-    const m = matrix(embeddings);
-    const similarities = multiply(m , transpose(m));
-
-    return similarities;
-}
-
-/**
- * Generates a list of paragraphs
- * @param sentences a string array of sentences
- * @param similarities a similarity matrix
- * @returns an array of Paragraphs where each content is at least MIN_PARAGRAPH_LENGTH 
- *          (if possible)
- */
-export function generateParagraphs(sentences: string[], similarities: Matrix) {
-    const x = matrix(zeros(similarities.size()));
-    const N = sentences.length;
-
-    for (let i = 0; i < N - 1; i++) {
-        const replacement = similarities.subset(index(i, [i + 1, N - 1]));
-        x.subset(index(i, [0, N - 2 - i]), replacement)
-    }
-
-    const weights = dotDivide(1, add(1, map(linspace(-10, 10, N), exp)) as Matrix);
-    const weightedSimilarities = multiply(x, transpose(weights));
-    const babyParagraphs: Paragraph[] = [];
-    let currStart = 0;
-
-    for (let i = 1; i < N - 1; i++) {
-        const left = weightedSimilarities.get([i - 1]);
-        const curr = weightedSimilarities.get([i]);
-        const right = weightedSimilarities.get([i + 1]);
-
-        if (curr < Math.min(left, right)) {
-
-            babyParagraphs.push({ 
-                start: currStart,
-                end: i, 
-                content: sentences.slice(currStart, i + 1).join("")
-            });
-
-            currStart = i + 1;
-        }
-    }
-
-    if (currStart <= N - 1) {
-        babyParagraphs.push({
-            start: currStart,
-            end: N - 1,
-            content: sentences.slice(currStart, N).join("")
-        });
-    }
-
-    const paragraphs: Paragraph[] = [];
-
-    for (let i = 0; i < babyParagraphs.length; i++) {
-        if (babyParagraphs[i].content.length < MIN_PARAGRAPH_LENGTH) {
-            let content = babyParagraphs[i].content;
-            let start = babyParagraphs[i].start;
-            let end = babyParagraphs[i].end;
-
-            const leftSimilarity = start > 0 ? similarities.get([start, start - 1]) : null;
-            const rightSimilarity = end < N - 1 ? similarities.get([end, end + 1]) : null;
-            
-            if (i === 0 || (end < N - 1 && rightSimilarity > leftSimilarity)) {
-                // merge continuously right
-                while (i < babyParagraphs.length - 1 && content.length < MIN_PARAGRAPH_LENGTH) {
-                    i++;
-                    content += babyParagraphs[i].content;
-                    end = babyParagraphs[i].end;
-                }
-
-                paragraphs.push({
-                    start,
-                    end,
-                    content
-                });
-            } else {
-                // merge with previous paragraph (if there is one)
-                paragraphs[paragraphs.length - 1].content += content;
-                paragraphs[paragraphs.length - 1].end = end;
-            }
-        } else {
-            paragraphs.push(babyParagraphs[i]);
-        }
-    }
-
-    return paragraphs;
 }

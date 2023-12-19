@@ -1,12 +1,13 @@
-import { Doc, Question } from "@/db/schemas"
+import { Doc, Question, QuestionType } from "@/db/schemas"
 import { ResourceStatus, SavingStatus, UserDocID } from "./types"
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { db } from "@/firebase"
 import { doc, getDoc } from "firebase/firestore"
+import { sentencify } from "@/utils/format"
 
 export type DocState = {
-    text: string,
-    questions: Question[],
+    text: string[],
+    questions: Question[][],
     status: ResourceStatus,
     error: string,
     savingStatus: SavingStatus,
@@ -16,7 +17,7 @@ export type DocState = {
 }
 
 const initialState: DocState = {
-    text: "",
+    text: [""],
     questions: [],
     status: "idle",
     error: "",
@@ -31,7 +32,16 @@ const docSlice = createSlice({
     initialState,
     reducers: {
         updateText: (state, action) => {
-            state.text = action.payload as string;
+            state.text[0] = action.payload as string;
+        },
+        sectionifyText: (state, action) => {
+            type Payload = [number, number][];
+            const sentences = sentencify(state.text[0]);
+            state.text = [];
+
+            (action.payload as Payload).forEach(interval => {
+                state.text.push(sentences.slice(interval[0], interval[1] + 1).join(""));
+            });
         },
         updateSavingStatus: (state, action) => {
             state.savingStatus = action.payload as SavingStatus;
@@ -44,18 +54,35 @@ const docSlice = createSlice({
             state.focusQuestion = action.payload as number;
         },
         blurQuestionFocus: (state) => { state.focusQuestion = -1 },
+        addQuestionSections: (state, action) => {
+            state.questions = Array.from(Array(action.payload as number)).map(
+                () => []
+            );
+        },
         addQuestion: (state, action) => {
-            state.questions.push(action.payload as Question);
+            type Payload = {
+                section: number,
+                questionData: {
+                    type: QuestionType,
+                    question: string,
+                    answer: string
+                }
+            }
+
+            const { section, questionData } = action.payload as Payload;
+
+            state.questions[section].push(questionData);
         },
         updateQuestionAnswer: (state, action) => {
             type Payload = {
                 answer: string,
+                section: number
                 index: number
             };
 
-            const { answer, index } = action.payload as Payload;
+            const { answer, section, index } = action.payload as Payload;
 
-            state.questions[index].answer = answer;
+            state.questions[section][index].answer = answer;
         },
         updateQuestionsStatus: (state, action) => {
             state.questionsStatus = action.payload as ResourceStatus;
@@ -66,12 +93,13 @@ const docSlice = createSlice({
         updateQuestion: (state, action) => {
             type Payload = {
                 question: string,
+                section: number,
                 index: number
             };
 
-            const { question, index } = action.payload as Payload;
+            const { question, section, index } = action.payload as Payload;
 
-            state.questions[index].question = question;
+            state.questions[section][index].question = question;
         }
     },
     extraReducers: (builder) => {
@@ -114,7 +142,9 @@ export const {
     addQuestion,
     updateQuestionsStatus,
     updateThreatenDelete,
-    updateQuestion
+    updateQuestion,
+    addQuestionSections,
+    sectionifyText
 } = docSlice.actions;
 
 export default docSlice;

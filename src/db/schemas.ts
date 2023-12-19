@@ -11,14 +11,13 @@ export type User = {
 
 // users/{userID}/docs/{docID}
 export type Doc = {
-    text: string,
-    questions: Question[]
+    text: string[],
+    questions: Question[][]
 }
 
 export type Question = {
     question: string,
     answer: string,
-    contextInterval: [number, number],
     type: QuestionType
 }
 

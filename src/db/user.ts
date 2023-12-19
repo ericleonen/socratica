@@ -56,3 +56,27 @@ export function useUser() {
 
     }, [userStatus, authUser, authLoading, authError]);
 }
+
+/**
+ * Hook that provides the user's ID
+ * @returns the current userID string
+ */
+export function useUserID() {
+    const userID = useSelector<RootState, string>(
+        state => state.user.ID
+    );
+
+    return userID;
+}
+
+/**
+ * Hook that provides the status of the user's info
+ * @returns a ResourceStatus of the user's info
+ */
+export function useUserStatus() {
+    const status = useSelector<RootState, ResourceStatus>(
+        state => state.user.status
+    );
+
+    return status;
+}

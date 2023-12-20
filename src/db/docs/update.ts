@@ -10,6 +10,7 @@ import { db } from "@/firebase";
 import { useEffect, useState } from "react";
 import { AUTOSAVE_DELAY } from "@/config";
 import { Trigger } from "@/types";
+import { Question, QuestionType } from "../schemas";
 
 /**
  * If no questions have been generated, is a hook that provides the current text and a text setter.
@@ -54,29 +55,37 @@ export function useEditableTitle(): [string, (newTitle: string) => void] {
 }
 
 /**
- * Hook that provides the current question, a non-saving question setter, a question resetter,
- * and a trigger to save the question
+ * Hook that provides the current question, the type, a non-saving question setter, a non-saving
+ * type setter, a question resetter, and a trigger to save the question
  * @param section 
  * @param index 
- * @returns a question string, a question setter, and Triggers for reverting and saving
+ * @returns a question string, a QuestionType, a question setter, a type setter and Triggers
+ *          for reverting and saving
  */
 export function useEditableQuestion(section: number, index: number): [
     string,
+    QuestionType,
     (question: string) => void,
+    (type: QuestionType) => void,
     Trigger,
     Trigger
 ] {
-    const currQuestion = useQuestions()[section][index].question;
+    const currQuestion = useQuestions()[section][index];
 
     const saveDoc = useSaveDoc();
     const dispatch = useAppDispatch();
 
-    const [question, setQuestion] = useState(currQuestion);
+    const [question, setQuestion] = useState(currQuestion.question);
+    const [type, setType] = useState<QuestionType>(currQuestion.type);
 
-    const revertQuestion = () => setQuestion(currQuestion);
+    const revertQuestion = () => {
+        setQuestion(currQuestion.question);
+        setType(currQuestion.type);
+    };
 
     const saveQuestion = () => {
         dispatch(updateQuestion({
+            type,
             question,
             section,
             index
@@ -84,7 +93,7 @@ export function useEditableQuestion(section: number, index: number): [
         saveDoc();
     }
 
-    return [question, setQuestion, revertQuestion, saveQuestion];
+    return [question, type, setQuestion, setType, revertQuestion, saveQuestion];
 }
 
 /**
@@ -132,7 +141,7 @@ export function useSaveDoc() {
             const docRef = doc(db, "users", userID, "docs", docID);
             await setDoc(docRef, {
                 text, 
-                questions
+                questions: {...questions}
             });
 
             const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);

@@ -3,12 +3,9 @@
 import LibraryList from "./LibraryList";
 import NewDocButton from "./NewDocButton";
 import NavButton from "./NavButton";
-import { Config, DoubleLeft, DoubleRight, Help, Search } from "@icon-park/react";
+import { Config, DoubleLeft, DoubleRight, Help } from "@icon-park/react";
 import AccountButton from "./AccountButton";
 import SearchButton from "./SearchButton";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
-import { ResourceStatus } from "@/store/types";
 import SkeletonList from "@/components/SkeletonList";
 import Skeleton from "@/components/Skeleton";
 import { Transition } from "@headlessui/react";
@@ -16,11 +13,10 @@ import { useState } from "react";
 import SecondaryButton from "@/theme/SecondaryButton";
 import Icon from "@/theme/Icon";
 import TooltipProvider from "@/components/TooltipProvider";
+import { useDocsMetadatasStatus } from "@/db/docs/read";
 
 export default function NavSideBar() {
-    const status = useSelector<RootState, ResourceStatus>(
-        state => state.docsMetadatas.status
-    );
+    const status = useDocsMetadatasStatus();
     const [showMain, setShowMain] = useState(false);
     const [showMini, setShowMini] = useState(true);
 
@@ -38,6 +34,7 @@ export default function NavSideBar() {
         >
             <TooltipProvider 
                 text="Open sidebar"
+                disabled={!showMini}
                 className="left-3 z-50 top-[100%] translate-y-1"
             >
                 <SecondaryButton
@@ -63,6 +60,7 @@ export default function NavSideBar() {
                 <AccountButton />
                 <TooltipProvider 
                     text="Close sidebar"
+                    disabled={!showMain}
                     className="right-0 translate-y-1"
                 >
                     <SecondaryButton 

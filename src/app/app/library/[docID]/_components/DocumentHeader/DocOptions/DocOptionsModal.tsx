@@ -1,16 +1,15 @@
 import { DocOptionButton } from "./DocOptionButton";
-import { ClipboardDocumentIcon, PrinterIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useCopyText } from "@/utils/input";
 import { useAppDispatch } from "@/store";
-import { updateThreatenDelete } from "@/store/docSlice";
 import { usePathDocID } from "@/utils/routing";
 import PopUp from "@/components/PopUp";
 import { Trigger } from "@/types";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import Worksheet from "../../Worksheet";
-import { useDocTitle } from "@/db/docs";
 import { CopyOne, Delete, PrinterOne } from "@icon-park/react";
+import { updateThreateningDelete } from "@/store/docSlice";
+import { useTitle } from "@/db/docs/read";
 
 type DocOptionsModal = {
     close: Trigger
@@ -18,10 +17,9 @@ type DocOptionsModal = {
 
 export default function DocOptionsModal({ close }: DocOptionsModal) {
     const dispatch = useAppDispatch();
-    const docID = usePathDocID();
-    const deleteDoc = () => dispatch(updateThreatenDelete(docID));
+    const deleteDoc = () => dispatch(updateThreateningDelete(true));
     const copyText = useCopyText();
-    const title = useDocTitle()[0];
+    const title = useTitle();
 
     const worksheetRef = useRef(null);
     const printWorksheet = useReactToPrint({

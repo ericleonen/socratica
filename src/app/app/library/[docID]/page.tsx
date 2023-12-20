@@ -2,7 +2,7 @@
 
 import DocumentHeader from "./_components/DocumentHeader";
 import Document from "./_components/Document";
-import { useDoc } from "@/db/docs";
+import { useDoc } from "@/db/docs/read";
 import Questions from "./_components/Questions";
 
 export default function DocPage() {

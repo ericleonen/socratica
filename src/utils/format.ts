@@ -6,6 +6,7 @@ import { Paragraph } from "@/types";
 import { matrix, multiply, transpose, Matrix, zeros, index, dotDivide, add, map, exp } from "mathjs";
 import { linspace } from "./math";
 import { MIN_PARAGRAPH_LENGTH } from "@/config";
+import { useDocsMetadatasMap } from "@/db/docs/read";
 
 /**
  * Converts a seconds number to a date
@@ -49,9 +50,7 @@ const MONTHS = [
  */
 export function useFormattedLastSaved() {
     const docID = usePathDocID() as string;
-    const lastSaved = useSelector<RootState, Timestamp>(
-        state => state.docsMetadatas.map[docID]?.lastSaved
-    );
+    const lastSaved = useDocsMetadatasMap()[docID]?.lastSaved;
     
     if (lastSaved) {
         const lastSavedDate = secondsToDate(lastSaved.seconds);

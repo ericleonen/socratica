@@ -1,21 +1,17 @@
 import Skeleton from "@/components/Skeleton";
-import { useAutoSaveDoc, useDocText } from "@/db/docs";
-import { RootState } from "@/store";
-import { ResourceStatus } from "@/store/types";
+import { useDocStatus } from "@/db/docs/read";
+import { useAutoSaveDoc, useEditableText } from "@/db/docs/update";
 import { handleChange, useAutoSizeTextArea } from "@/utils/input";
 import { useRef } from "react";
-import { useSelector } from "react-redux";
 
 export default function TextField() {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const [text, setText] = useDocText();
-    const status = useSelector<RootState, ResourceStatus>(
-        state => state.doc.status
-    );
+    const [text, setText] = useEditableText();
+    const status = useDocStatus();
 
     useAutoSizeTextArea(textareaRef.current, text);
 
-    const saveDoc = useAutoSaveDoc(text);
+    const allowSave = useAutoSaveDoc(text);
 
     return status === "succeeded" ? (
         <textarea
@@ -23,7 +19,7 @@ export default function TextField() {
             value={text}
             onChange={(e) => {
                 handleChange(setText)(e);
-                saveDoc();
+                allowSave();
             }}
             placeholder="Paste some interesting text here..."
             className="placeholder:text-slate-700/70 mt-6 w-full resize-none bg-transparent focus:outline-none text-slate-700"

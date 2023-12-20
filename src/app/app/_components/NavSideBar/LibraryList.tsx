@@ -1,22 +1,12 @@
-import { useSelector } from "react-redux";
-import { RootState } from "@/store";
-import { ResourceStatus } from "@/store/types";
-import { DocMetadataMap } from "@/store/docsMetadatasSlice";
-import NavButton from "../NavButton";
+import NavButton from "./NavButton";
 import { Down, Notes } from "@icon-park/react";
 import SecondaryButton from "@/theme/SecondaryButton";
 import Icon from "@/theme/Icon";
 import { useState } from "react";
-import Skeleton from "@/components/Skeleton";
-import SkeletonList from "@/components/SkeletonList";
+import { useDocsMetadatasMap } from "@/db/docs/read";
 
 export default function LibraryList() {
-    const docsMetadatas = useSelector<RootState, DocMetadataMap>(
-        state => state.docsMetadatas.map
-    );
-    const docsMetadatasStatus = useSelector<RootState, ResourceStatus>(
-        state => state.docsMetadatas.status
-    );
+    const docsMetadatas = useDocsMetadatasMap();
 
     const [showRecent, setShowRecent] = useState(true);
     const toggleRecent = () => setTimeout(

@@ -1,3 +1,5 @@
+"use client"
+
 import { RootState, useAppDispatch } from "@/store";
 import { useSelector } from "react-redux";
 import { useUserID } from "../user";
@@ -25,6 +27,18 @@ export function useDoc() {
             }));
         }
     }, [userID, docID]);
+}
+
+/**
+ * Hook that provides the status of the current doc
+ * @returns a ResourceStatus of the current doc
+ */
+export function useDocStatus() {
+    const status = useSelector<RootState, ResourceStatus>(
+        state => state.doc.status
+    );
+
+    return status;
 }
 
 /**
@@ -66,6 +80,8 @@ export function useDocsMetadatasMap() {
     const map = useSelector<RootState, DocMetadataMap>(
         state => state.docsMetadatas.map
     );
+
+    return map;
 }
 
 /**

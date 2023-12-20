@@ -1,24 +1,18 @@
 import PopUp from "@/components/PopUp";
 import Shadow from "@/components/Shadow";
-import { useDeleteDoc } from "@/db/docs";
-import { RootState, useAppDispatch } from "@/store";
-import { updateThreatenDelete } from "@/store/docSlice";
+import { useDeleteDoc } from "@/db/docs/delete";
+import { useTitle } from "@/db/docs/read";
+import { useAppDispatch } from "@/store";
+import { updateThreateningDelete } from "@/store/docSlice";
 import PrimaryButton from "@/theme/PrimaryButton";
 import SecondaryButton from "@/theme/SecondaryButton";
-import { useSelector } from "react-redux";
 
 export default function DeleteWarningModal() {
-    const docID = useSelector<RootState, string>(
-        state => state.doc.threatenDelete
-    )
-    const deleteDoc = useDeleteDoc(docID);
+    const title = useTitle();
+    const deleteDoc = useDeleteDoc();
     const dispatch = useAppDispatch();
 
-    const close = () => dispatch(updateThreatenDelete(""));
-
-    const title = useSelector<RootState, string>(
-        state => state.docsMetadatas.map[docID].title
-    );
+    const close = () => dispatch(updateThreateningDelete(false));
 
     const deleteAndClose = () => {
         setTimeout(() => {
@@ -48,7 +42,7 @@ export default function DeleteWarningModal() {
                     </SecondaryButton>
                     <PrimaryButton 
                         onClick={deleteAndClose}
-                        className="bg-red-500/70 hover:bg-red-500/90"
+                        colors="bg-red-500/70 hover:bg-red-500/90"
                     >
                         Yes, delete
                     </PrimaryButton>

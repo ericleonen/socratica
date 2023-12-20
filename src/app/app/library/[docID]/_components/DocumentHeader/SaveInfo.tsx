@@ -1,15 +1,11 @@
-import { RootState } from "@/store";
-import { SavingStatus } from "@/store/types";
+import { useSavingStatus } from "@/db/docs/read";
 import Icon from "@/theme/Icon";
 import { useFormattedLastSaved } from "@/utils/format";
 import { CheckOne, Error, LoadingFour } from "@icon-park/react";
-import { useSelector } from "react-redux";
 
 export default function SaveInfo() {
     const lastSaved = useFormattedLastSaved() as string;
-    const status = useSelector<RootState, SavingStatus>(
-        state => state.doc.savingStatus
-    )
+    const status = useSavingStatus();
 
     return (
         <div className="text-slate-700/70 flex items-center font-medium mr-2">{

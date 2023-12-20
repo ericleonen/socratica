@@ -13,7 +13,7 @@ export type DocState = {
     savingStatus: SavingStatus,
     questionsStatus: ResourceStatus,
     focusQuestion: number,
-    threatenDelete: string
+    threateningDelete: boolean
 }
 
 const initialState: DocState = {
@@ -24,7 +24,7 @@ const initialState: DocState = {
     savingStatus: "saved",
     questionsStatus: "idle",
     focusQuestion: -1,
-    threatenDelete: ""
+    threateningDelete: false
 }
 
 const docSlice = createSlice({
@@ -50,10 +50,6 @@ const docSlice = createSlice({
             state.error = (action.payload as Error).message;
         },
         clearDoc: () => initialState,
-        focusOnQuestion: (state, action) => {
-            state.focusQuestion = action.payload as number;
-        },
-        blurQuestionFocus: (state) => { state.focusQuestion = -1 },
         addQuestionSections: (state, action) => {
             state.questions = Array.from(Array(action.payload as number)).map(
                 () => []
@@ -62,11 +58,7 @@ const docSlice = createSlice({
         addQuestion: (state, action) => {
             type Payload = {
                 section: number,
-                questionData: {
-                    type: QuestionType,
-                    question: string,
-                    answer: string
-                }
+                questionData: Question
             }
 
             const { section, questionData } = action.payload as Payload;
@@ -87,8 +79,8 @@ const docSlice = createSlice({
         updateQuestionsStatus: (state, action) => {
             state.questionsStatus = action.payload as ResourceStatus;
         },
-        updateThreatenDelete: (state, action) => {
-            state.threatenDelete = action.payload as string;
+        updateThreateningDelete: (state, action) => {
+            state.threateningDelete = action.payload as boolean;
         },
         updateQuestion: (state, action) => {
             type Payload = {
@@ -111,7 +103,7 @@ const docSlice = createSlice({
                 const { text, questions } = action.payload as Doc;
 
                 state.text = text;
-                state.questions = questions;
+                state.questions = Object.values(questions);
                 state.status = "succeeded";
             })
             .addCase(fetchDoc.rejected, (state, action) => {
@@ -136,12 +128,10 @@ export const {
     updateSavingStatus,
     updateError,
     clearDoc,
-    focusOnQuestion,
-    blurQuestionFocus,
     updateQuestionAnswer,
     addQuestion,
     updateQuestionsStatus,
-    updateThreatenDelete,
+    updateThreateningDelete,
     updateQuestion,
     addQuestionSections,
     sectionifyText

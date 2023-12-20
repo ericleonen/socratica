@@ -12,7 +12,7 @@ type TooltipProviderProps = {
 export default function TooltipProvider({ text, className, containerClassName, children, disabled }: TooltipProviderProps) {
     const [show, setShow] = useState(false);
     
-    return disabled ? children : (
+    return (
         <div className={`relative ${containerClassName}`}>
             <div
                 onMouseOver={() => setShow(true)}
@@ -21,7 +21,7 @@ export default function TooltipProvider({ text, className, containerClassName, c
                 {children}
             </div>
             <Transition
-                show={show}
+                show={show && !disabled}
                 enter="transition-opacity duration-25"
                 enterFrom="opacity-0"
                 enterTo="opacity-100"

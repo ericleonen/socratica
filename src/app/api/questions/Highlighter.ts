@@ -110,9 +110,9 @@ export default async function* generate(
         i += SECTIONS_PER_BIG_IDEA
     ) {
         if (i + SECTIONS_PER_BIG_IDEA >= sections.length) {
-            bigIdeaIndices.push(sections.length);
+            bigIdeaIndices.push(sections.length - 1);
         } else {
-            bigIdeaIndices.push(i + 1);
+            bigIdeaIndices.push(i);
         }
     }
 
@@ -123,9 +123,9 @@ export default async function* generate(
         data: intervals
     });
     
-    for (let i = 1; i <= sections.length; i++) {
+    for (let i = 0; i < sections.length; i++) {
         if (TEST_MODE) {
-            for (let j = 0; j < numCompQuestions[i - 1]; j++) {
+            for (let j = 0; j < numCompQuestions[i]; j++) {
                 await sleep(2000);
                 yield JSON.stringify({
                     type: "newQuestion",
@@ -169,16 +169,16 @@ export default async function* generate(
             continue;
         }
 
-        const section = sections[i - 1];
+        const section = sections[i];
 
         const compGenerator = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-1106",
             messages: [{
                 role: "user",
-                content: numCompQuestions[i - 1] === 1 ? (
+                content: numCompQuestions[i] === 1 ? (
                     `Generate a comprehension question about the following text:\n${section}`
                 ) : (
-                    `Generate an enumerated list of ${numCompQuestions[i - 1]} comprehension
+                    `Generate an enumerated list of ${numCompQuestions[i]} comprehension
                      questions about the following text:\n${section}`
                 )
                             

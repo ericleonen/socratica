@@ -1,3 +1,4 @@
+import { useText } from "@/db/docs/read";
 import { RootState } from "@/store";
 import { ChangeEvent, useEffect } from "react";
 import { useSelector } from "react-redux";
@@ -29,9 +30,7 @@ export function useAutoSizeTextArea(textAreaRef: HTMLTextAreaElement | null, val
 }
 
 export function useCopyText() {
-    const text = useSelector<RootState, string>(
-        state => state.doc.text
-    );
+    const text = useText().join("");
 
     return () => {
         navigator.clipboard.writeText(text);

@@ -1,14 +1,9 @@
 import Skeleton from "@/components/Skeleton";
-import { useDocTitle } from "@/db/docs";
-import { RootState } from "@/store";
-import { ResourceStatus } from "@/store/types";
-import { useSelector } from "react-redux";
+import { useDocsMetadatasStatus, useTitle } from "@/db/docs/read";
 
 export default function MiniTitle() {
-    const [title, setTitle] = useDocTitle();
-    const status = useSelector<RootState, ResourceStatus>(
-        state => state.docsMetadatas.status
-    )
+    const title = useTitle();
+    const status = useDocsMetadatasStatus();
 
     return status === "succeeded" ? (
         <p 

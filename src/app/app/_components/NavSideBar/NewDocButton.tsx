@@ -1,4 +1,4 @@
-import { useCreateDoc } from "@/db/docs";
+import { useCreateDoc } from "@/db/docs/create";
 import Icon from "@/theme/Icon";
 import PrimaryButton from "@/theme/PrimaryButton";
 import { LoadingFour, PlusCross } from "@icon-park/react";

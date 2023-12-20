@@ -4,7 +4,7 @@ import { addQuestion, addQuestionSections, sectionifyText, updateError, updateQu
 import { addMetadata } from "@/store/docsMetadatasSlice";
 import { Timestamp, addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useQuestions, useText } from "./read";
 import { useSaveDoc } from "./update";
@@ -67,10 +67,9 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
  * @returns a Trigger to generate questions about the current doc
  */
 export function useGenerateQuestions() {
-    const text = useText();
+    const text = useText()[0];
     const hasQuestions = useQuestions().length > 0;
     
-    const saveDoc = useSaveDoc();
     const dispatch = useAppDispatch();
 
     return async () => {
@@ -93,19 +92,17 @@ export function useGenerateQuestions() {
             if (!questionsRes.body) return;
 
             const reader = questionsRes.body.getReader();
-            dispatch(updateSavingStatus("unsaved"));
 
             while (true) {
                 const { done, value } = await reader.read();
 
                 if (done) {
-                    dispatch(updateQuestionsStatus("idle"));
-                    saveDoc();
+                    dispatch(updateQuestionsStatus("succeeded"));
                     break;
                 };
 
                 let chunk = new TextDecoder('utf-8').decode(value);
-                const update = JSON.parse(chunk);
+                const update = JSON.parse(`${chunk}`);
                 
                 switch (update.type) {
                     case "sectionIntervals":
@@ -113,11 +110,10 @@ export function useGenerateQuestions() {
                         dispatch(sectionifyText(update.data));
                         break;
                     case "newQuestion":
-                        dispatch(addQuestion(update.type.data));
+                        dispatch(addQuestion(update.data));
                         break;
                     default:
                         throw new Error(`Invalid update received: ${update.type}`);
-                        break;
                 }
             }
         } catch (err) {

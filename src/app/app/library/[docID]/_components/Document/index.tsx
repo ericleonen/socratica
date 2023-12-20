@@ -11,7 +11,7 @@ export default function Document() {
     const hasQuestions = useQuestions().length > 0;
 
     return (
-        <div className="overflow-y-scroll flex-grow py-16">
+        <div className="overflow-y-scroll flex-grow py-16 relative">
             <div 
                 style={{ 
                     minHeight: `${height}px`, 

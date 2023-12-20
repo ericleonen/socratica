@@ -12,7 +12,7 @@ export type DocState = {
     error: string,
     savingStatus: SavingStatus,
     questionsStatus: ResourceStatus,
-    focusQuestion: number,
+    focusSection: number,
     threateningDelete: boolean
 }
 
@@ -23,7 +23,7 @@ const initialState: DocState = {
     error: "",
     savingStatus: "saved",
     questionsStatus: "idle",
-    focusQuestion: -1,
+    focusSection: 0,
     threateningDelete: false
 }
 
@@ -49,7 +49,7 @@ const docSlice = createSlice({
         updateError: (state, action) => {
             state.error = (action.payload as Error).message;
         },
-        clearDoc: () => initialState,
+        clearDoc: () => ({...initialState}),
         addQuestionSections: (state, action) => {
             state.questions = Array.from(Array(action.payload as number)).map(
                 () => []
@@ -92,19 +92,29 @@ const docSlice = createSlice({
             const { question, section, index } = action.payload as Payload;
 
             state.questions[section][index].question = question;
+        },
+        updateFocusSection: (state, action) => {
+            state.focusSection = action.payload as number;
         }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchDoc.pending, (state) => {
-                state.status = "loading";
+            .addCase(fetchDoc.pending, () => {
+                const newState = {...initialState};
+                newState.status = "loading";
+                
+                return newState;
             })
             .addCase(fetchDoc.fulfilled, (state, action) => {
                 const { text, questions } = action.payload as Doc;
 
-                state.text = text;
-                state.questions = Object.values(questions);
-                state.status = "succeeded";
+                const newState = {...initialState};
+
+                newState.text = text;
+                newState.questions = Object.values(questions);
+                newState.status = "succeeded";
+
+                return newState;
             })
             .addCase(fetchDoc.rejected, (state, action) => {
                 state.status = "failed";
@@ -134,7 +144,8 @@ export const {
     updateThreateningDelete,
     updateQuestion,
     addQuestionSections,
-    sectionifyText
+    sectionifyText,
+    updateFocusSection
 } = docSlice.actions;
 
 export default docSlice;

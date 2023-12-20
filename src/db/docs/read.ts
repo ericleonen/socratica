@@ -76,6 +76,10 @@ export function useDocsMetadatas() {
     }, [status, userID]);
 }
 
+/**
+ * Hook that provides the doc metadatas
+ * @returns the DocMetadataMap of the current user
+ */
 export function useDocsMetadatasMap() {
     const map = useSelector<RootState, DocMetadataMap>(
         state => state.docsMetadatas.map
@@ -134,4 +138,12 @@ export function useQuestionsStatus() {
     );
 
     return status;
+}
+
+export function useFocusSection() {
+    const section = useSelector<RootState, number>(
+        state => state.doc.focusSection
+    );
+
+    return section;
 }

@@ -5,13 +5,13 @@ import { Left, Right } from "@icon-park/react"
 
 type QuestionsNavigationProps = {
     section: number,
-    setSection: (callback: (prevSection: number) => number) => void,
+    setSection: (section: number) => void,
     numSections: number
 }
 
 export default function QuestionsNavigation({ section, setSection, numSections }: QuestionsNavigationProps) {
-    const goBack = () => setSection(prevSection => Math.max(0, prevSection - 1));
-    const goForward = () => setSection(prevSection => Math.min(numSections - 1, prevSection + 1));
+    const goBack = () => setSection(Math.max(0, section - 1));
+    const goForward = () => setSection(Math.min(numSections - 1, section + 1));
 
     return (
         <div className="shrink-0 w-full h-16 flex items-center px-4">

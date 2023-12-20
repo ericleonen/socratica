@@ -5,14 +5,14 @@ import PanelResizer from "./PanelResizer";
 import QuestionsNavigation from "./QuestionsNavigation";
 import GenerateQuestions from "./GenerateQuestions";
 import { useDocStatus, useQuestions, useQuestionsStatus } from "@/db/docs/read";
-import { useSaveDoc } from "@/db/docs/update";
+import { useEditableFocusSection, useSaveDoc } from "@/db/docs/update";
 import { useAppDispatch } from "@/store";
 import { updateQuestionsStatus } from "@/store/docSlice";
 import Question from "./Question";
 
 export default function Questions() {
     const [width, setWidth] = useState(384); // in px
-    const [section, setSection] = useState(0);
+    const [section, setSection] = useEditableFocusSection();
     const status = useDocStatus();
     const questions = useQuestions();
     const questionsStatus = useQuestionsStatus();
@@ -54,7 +54,7 @@ export default function Questions() {
                             >{
                                 questions[sectionIndex].map((_, questionIndex) =>
                                     <Question 
-                                        key={`question_${questionIndex}`}
+                                        key={`question_${sectionIndex}_${questionIndex}`}
                                         section={sectionIndex}
                                         index={questionIndex}
                                     />

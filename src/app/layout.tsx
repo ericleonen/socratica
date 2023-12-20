@@ -7,7 +7,7 @@ import ReduxProvider from './app/_components/ReduxProvider'
 const font = ThemeFont({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: 'Socratica',
+  title: 'Highlights',
   description: 'Learn with questions',
 };
 

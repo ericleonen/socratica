@@ -1,6 +1,6 @@
 import { RootState, useAppDispatch } from "@/store";
-import { useQuestions, useQuestionsStatus, useSavingStatus, useText, useTitle } from "./read";
-import { updateError, updateQuestion, updateQuestionAnswer, updateSavingStatus, updateText } from "@/store/docSlice";
+import { useFocusSection, useQuestions, useQuestionsStatus, useSavingStatus, useText, useTitle } from "./read";
+import { updateError, updateFocusSection, updateQuestion, updateQuestionAnswer, updateSavingStatus, updateText } from "@/store/docSlice";
 import { useSelector } from "react-redux";
 import { updateLastSaved, updateTitle } from "@/store/docsMetadatasSlice";
 import { usePathDocID } from "@/utils/routing";
@@ -187,4 +187,19 @@ export function useAutoSaveDoc(dependency: string) {
     return async () => {
         dispatch(updateSavingStatus("unsaved"));
     }
+}
+
+/**
+ * Hook that provides the current state of the focus section
+ * @return the focus section index and a setter
+ */
+export function useEditableFocusSection(): [number, (newSection: number) => void] {
+    const focuseSection = useFocusSection();
+
+    const dispatch = useAppDispatch();
+
+    return [
+        focuseSection,
+        (newSection: number) => dispatch(updateFocusSection(newSection))
+    ]
 }

@@ -12,6 +12,7 @@ import Question from "./Question";
 
 export default function Questions() {
     const [width, setWidth] = useState(384); // in px
+    const [height, setHeight] = useState<number | null>(null);
     const [section, setSection] = useEditableFocusSection();
     const status = useDocStatus();
     const questions = useQuestions();
@@ -42,7 +43,8 @@ export default function Questions() {
                     <div 
                         style={{ 
                             width: `${width * questions.length}px`,
-                            marginLeft: `-${width * section}px`
+                            marginLeft: `-${width * section}px`,
+                            height: height ? `${height}px` : "auto"
                         }}
                         className="shrink-0 flex overflow-hidden transition-all"
                     >{
@@ -50,13 +52,18 @@ export default function Questions() {
                             <div 
                                 key={`questionSection_${sectionIndex}`}
                                 style={{ width: `${width}px` }}
-                                className="px-4 shrink-0"
+                                className="px-4 shrink-0 relative"
                             >{
                                 questions[sectionIndex].map((_, questionIndex) =>
                                     <Question 
                                         key={`question_${sectionIndex}_${questionIndex}`}
                                         section={sectionIndex}
                                         index={questionIndex}
+                                        setHeight={
+                                            sectionIndex === section && 
+                                            questionIndex === questions[sectionIndex].length - 1 ?
+                                            setHeight : undefined
+                                        }
                                     />
                                 )
                             }</div>

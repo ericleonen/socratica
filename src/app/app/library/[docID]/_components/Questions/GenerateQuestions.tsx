@@ -3,10 +3,10 @@ import PrimaryButton from "@/theme/PrimaryButton"
 import Icon from "@/theme/Icon"
 import { LoadingFour, Magic } from "@icon-park/react"
 import { useGenerateQuestions } from "@/db/docs/create"
-import { useQuestionsStatus, useText } from "@/db/docs/read"
+import { useQuestionsGeneratingStatus, useText } from "@/db/docs/read"
 
 export default function GenerateQuestions() {
-    const status = useQuestionsStatus();
+    const status = useQuestionsGeneratingStatus();
     const disabled = useText().join("").length < MIN_SECTION_LENGTH;
 
     const generate = useGenerateQuestions();

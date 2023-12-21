@@ -2,13 +2,13 @@ import TextField from "./TextField";
 import TitleField from "./TitleField";
 import TextDisplay from "./TextDisplay";
 import { PAPER_DIMS, PAPER_MARGINS } from "@/config";
-import { useQuestions } from "@/db/docs/read";
+import { useHasQuestions, useQuestions } from "@/db/docs/read";
 
 const { height, width } = PAPER_DIMS;
 const margins = PAPER_MARGINS
 
 export default function Document() {
-    const hasQuestions = useQuestions().length > 0;
+    const hasQuestions = useHasQuestions();
 
     return (
         <div className="overflow-y-scroll flex-grow py-16 relative">

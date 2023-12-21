@@ -4,27 +4,29 @@ import { useEffect, useState } from "react";
 import PanelResizer from "./PanelResizer";
 import QuestionsNavigation from "./QuestionsNavigation";
 import GenerateQuestions from "./GenerateQuestions";
-import { useDocStatus, useQuestions, useQuestionsStatus } from "@/db/docs/read";
-import { useEditableFocusSection, useSaveDoc } from "@/db/docs/update";
+import { useDocLoadingStatus, useQuestions, useQuestionsGeneratingStatus } from "@/db/docs/read";
+import { useEditableFocusSection, useSaveQuestions, useSaveText } from "@/db/docs/update";
 import { useAppDispatch } from "@/store";
-import { updateQuestionsStatus } from "@/store/docSlice";
 import Question from "./Question";
+import { questionsActions } from "@/store/questionsSlice";
 
 export default function Questions() {
     const [width, setWidth] = useState(384); // in px
     const [height, setHeight] = useState<number | null>(null);
     const [section, setSection] = useEditableFocusSection();
-    const status = useDocStatus();
+    const status = useDocLoadingStatus();
     const questions = useQuestions();
-    const questionsStatus = useQuestionsStatus();
+    const questionsStatus = useQuestionsGeneratingStatus();
 
     const dispatch = useAppDispatch();
-    const saveDoc = useSaveDoc();
+    const saveQuestions = useSaveQuestions();
+    const saveText = useSaveText();
 
     useEffect(() => {
         if (questionsStatus === "succeeded") {
-            saveDoc();
-            dispatch(updateQuestionsStatus("idle"));
+            saveQuestions();
+            saveText();
+            dispatch(questionsActions.setGeneratingStatus("idle"));
         }
     }, [questionsStatus]);
 
@@ -47,28 +49,29 @@ export default function Questions() {
                             height: height ? `${height}px` : "auto"
                         }}
                         className="shrink-0 flex overflow-hidden transition-all"
-                    >{
-                        questions.map((_, sectionIndex) =>
-                            <div 
-                                key={`questionSection_${sectionIndex}`}
-                                style={{ width: `${width}px` }}
-                                className="px-4 shrink-0 relative"
-                            >{
-                                questions[sectionIndex].map((_, questionIndex) =>
-                                    <Question 
-                                        key={`question_${sectionIndex}_${questionIndex}`}
-                                        section={sectionIndex}
-                                        index={questionIndex}
-                                        setHeight={
-                                            sectionIndex === section && 
-                                            questionIndex === questions[sectionIndex].length - 1 ?
-                                            setHeight : undefined
-                                        }
-                                    />
-                                )
-                            }</div>
-                        )
-                    }</div>
+                    >
+                        {
+                            questions.map((_, sectionIndex) =>
+                                <div 
+                                    key={`questionSection_${sectionIndex}`}
+                                    style={{ width: `${width}px` }}
+                                    className="px-4 shrink-0 relative"
+                                >{
+                                    questions[sectionIndex].map((_, questionIndex) =>
+                                        <Question 
+                                            key={`question_${sectionIndex}_${questionIndex}`}
+                                            {...{sectionIndex, questionIndex}}
+                                            setHeight={
+                                                sectionIndex === section && 
+                                                questionIndex === questions[sectionIndex].length - 1 ?
+                                                setHeight : undefined
+                                            }
+                                        />
+                                    )
+                                }</div>
+                            )
+                        }
+                    </div>
                 </>
             }</> : <>
             

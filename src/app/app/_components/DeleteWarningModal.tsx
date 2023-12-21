@@ -3,7 +3,7 @@ import Shadow from "@/components/Shadow";
 import { useDeleteDoc } from "@/db/docs/delete";
 import { useTitle } from "@/db/docs/read";
 import { useAppDispatch } from "@/store";
-import { updateThreateningDelete } from "@/store/docSlice";
+import { docActions } from "@/store/docSlice";
 import PrimaryButton from "@/theme/PrimaryButton";
 import SecondaryButton from "@/theme/SecondaryButton";
 
@@ -12,7 +12,7 @@ export default function DeleteWarningModal() {
     const deleteDoc = useDeleteDoc();
     const dispatch = useAppDispatch();
 
-    const close = () => dispatch(updateThreateningDelete(false));
+    const close = () => { dispatch(docActions.cancelDelete()) };
 
     const deleteAndClose = () => {
         setTimeout(() => {

@@ -13,10 +13,10 @@ import { useState } from "react";
 import SecondaryButton from "@/theme/SecondaryButton";
 import Icon from "@/theme/Icon";
 import TooltipProvider from "@/components/TooltipProvider";
-import { useDocsMetadatasStatus } from "@/db/docs/read";
+import { useDocsMetadatasLoadingStatus } from "@/db/docs/read";
 
 export default function NavSideBar() {
-    const status = useDocsMetadatasStatus();
+    const status = useDocsMetadatasLoadingStatus();
     const [showMain, setShowMain] = useState(false);
     const [showMini, setShowMini] = useState(true);
 

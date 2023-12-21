@@ -1,21 +1,17 @@
 import Skeleton from "@/components/Skeleton";
-import { useDocStatus } from "@/db/docs/read";
-import { useAutoSaveDoc, useEditableText } from "@/db/docs/update";
-import { handleChange, useAutoSizeTextArea } from "@/utils/input";
-import { useRef } from "react";
+import { useDocLoadingStatus } from "@/db/docs/read";
+import { useAutoSaveText, useEditableText } from "@/db/docs/update";
+import { autoResize, handleChange } from "@/utils/input";
 
 export default function TextField() {
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [text, setText] = useEditableText();
-    const status = useDocStatus();
+    const status = useDocLoadingStatus();
 
-    useAutoSizeTextArea(textareaRef.current, text);
-
-    const allowSave = useAutoSaveDoc(text);
+    const allowSave = useAutoSaveText();
 
     return status === "succeeded" ? (
         <textarea
-            ref={textareaRef}
+            ref={elem => autoResize(elem)}
             value={text}
             onChange={(e) => {
                 handleChange(setText)(e);

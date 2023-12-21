@@ -1,25 +1,25 @@
 import { DocOptionButton } from "./DocOptionButton";
 import { useCopyText } from "@/utils/input";
 import { useAppDispatch } from "@/store";
-import { usePathDocID } from "@/utils/routing";
 import PopUp from "@/components/PopUp";
 import { Trigger } from "@/types";
 import { useRef } from "react";
 import { useReactToPrint } from "react-to-print";
 import Worksheet from "../../Worksheet";
 import { CopyOne, Delete, PrinterOne } from "@icon-park/react";
-import { updateThreateningDelete } from "@/store/docSlice";
 import { useTitle } from "@/db/docs/read";
+import { docActions } from "@/store/docSlice";
 
 type DocOptionsModal = {
     close: Trigger
 }
 
 export default function DocOptionsModal({ close }: DocOptionsModal) {
-    const dispatch = useAppDispatch();
-    const deleteDoc = () => dispatch(updateThreateningDelete(true));
-    const copyText = useCopyText();
     const title = useTitle();
+
+    const dispatch = useAppDispatch();
+    const deleteDoc = () => { dispatch(docActions.threatenDelete()) };
+    const copyText = useCopyText();
 
     const worksheetRef = useRef(null);
     const printWorksheet = useReactToPrint({

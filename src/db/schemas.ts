@@ -21,7 +21,13 @@ export type Question = {
     type: QuestionType
 }
 
-export type QuestionType = "comprehension" | "research" | "big idea";
+export type QuestionType = "comprehension" | "research" | "big idea" | "loading";
+
+export type QuestionsMap = {
+    [section: number]: {
+        [question: number]: Question
+    }
+}
 
 // users/{userID}/docsMetadatas/{docID}
 export type DocMetadata = {

@@ -1,12 +1,6 @@
-import { useSelector } from "react-redux";
+import { useDocsMetadatas, useLastSaved } from "@/db/docs/read";
 import { usePathDocID } from "./routing";
-import { RootState } from "@/store";
 import { Timestamp } from "firebase/firestore";
-import { Paragraph } from "@/types";
-import { matrix, multiply, transpose, Matrix, zeros, index, dotDivide, add, map, exp } from "mathjs";
-import { linspace } from "./math";
-import { MIN_PARAGRAPH_LENGTH } from "@/config";
-import { useDocsMetadatasMap } from "@/db/docs/read";
 
 /**
  * Converts a seconds number to a date
@@ -49,8 +43,7 @@ const MONTHS = [
  * @returns a string that gives a relative date
  */
 export function useFormattedLastSaved() {
-    const docID = usePathDocID() as string;
-    const lastSaved = useDocsMetadatasMap()[docID]?.lastSaved;
+    const lastSaved = useLastSaved();
     
     if (lastSaved) {
         const lastSavedDate = secondsToDate(lastSaved.seconds);
@@ -79,8 +72,6 @@ export function useFormattedLastSaved() {
                 return `Last saved ${month} ${day}, ${year}`;
             }
         }
-    } else {
-        return "";
     }
 }
 

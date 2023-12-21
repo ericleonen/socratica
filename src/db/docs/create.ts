@@ -1,14 +1,14 @@
 import { db } from "@/firebase";
 import { RootState, useAppDispatch } from "@/store";
-import { addQuestion, addQuestionSections, sectionifyText, updateError, updateQuestionsStatus, updateSavingStatus } from "@/store/docSlice";
-import { addMetadata } from "@/store/docsMetadatasSlice";
+import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
 import { Timestamp, addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useQuestions, useText } from "./read";
-import { useSaveDoc } from "./update";
 import { MIN_SECTION_LENGTH } from "@/config";
+import { questionsActions } from "@/store/questionsSlice";
+import { docActions } from "@/store/docSlice";
 
 /**
  * Hook that provides a function to create a new doc. Opens the doc in the app after creation
@@ -31,7 +31,7 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
             const docsRef = collection(db, "users", userID, "docs");
             const newDocRef = await addDoc(docsRef, {
                 text: [""],
-                questions: []
+                questions: {}
             });
 
             const docID = newDocRef.id;
@@ -43,7 +43,7 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
                 lastSaved: timestamp
             });
 
-            dispatch(addMetadata({
+            dispatch(docsMetadatasActions.add({
                 docID,
                 title,
                 lastSaved: timestamp.toJSON()
@@ -51,11 +51,12 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
 
             router.push(`/app/library/${docID}`, { scroll: false });
 
-            dispatch(updateSavingStatus("saved"));
             setInProgress(false);
         } catch (err) {
+            const error = err as Error;
+
             setInProgress(false);
-            dispatch(updateError(err as Error));
+            dispatch(docsMetadatasActions.setError(error.message));
         }
     }
 
@@ -67,7 +68,7 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
  * @returns a Trigger to generate questions about the current doc
  */
 export function useGenerateQuestions() {
-    const text = useText()[0];
+    const text = useText().join("");
     const hasQuestions = useQuestions().length > 0;
     
     const dispatch = useAppDispatch();
@@ -80,7 +81,7 @@ export function useGenerateQuestions() {
                 throw new Error("Questions have already been generated");
             }
 
-            dispatch(updateQuestionsStatus("loading"));
+            dispatch(questionsActions.setGeneratingStatus("loading"));
             const questionsRes = await fetch("/api/questions", {
                 method: "POST",
                 headers: {
@@ -97,28 +98,35 @@ export function useGenerateQuestions() {
                 const { done, value } = await reader.read();
 
                 if (done) {
-                    dispatch(updateQuestionsStatus("succeeded"));
+                    dispatch(questionsActions.setGeneratingStatus("succeeded"));
                     break;
                 };
 
                 let chunk = new TextDecoder('utf-8').decode(value);
-                const update = JSON.parse(`${chunk}`);
+                const update = JSON.parse(chunk);
                 
                 switch (update.type) {
                     case "sectionIntervals":
-                        dispatch(addQuestionSections(update.data.length));
-                        dispatch(sectionifyText(update.data));
+                    const intervals = update.data;
+
+                        dispatch(questionsActions.scaffoldSections(intervals.length));
+                        dispatch(docActions.sectionifyText(intervals));
+                        break;
+                    case "numQuestions":
+                        dispatch(questionsActions.scaffoldQuestions(update.data));
                         break;
                     case "newQuestion":
-                        dispatch(addQuestion(update.data));
+                        dispatch(questionsActions.setQuestion(update.data));
                         break;
                     default:
                         throw new Error(`Invalid update received: ${update.type}`);
                 }
             }
         } catch (err) {
-            dispatch(updateQuestionsStatus("failed"));
-            dispatch(updateError(err as Error));
+            const error = err as Error;
+
+            dispatch(questionsActions.setGeneratingStatus("failed"));
+            dispatch(questionsActions.setError(error.message));
         }
     }
 }

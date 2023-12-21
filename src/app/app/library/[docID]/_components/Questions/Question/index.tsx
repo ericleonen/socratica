@@ -1,16 +1,16 @@
 import QuestionField from "./QuestionField"
 import AnswerField from "./AnswerField"
-import { useQuestionsStatus } from "@/db/docs/read"
+import { useQuestionType } from "@/db/docs/read"
 import PopUp from "@/components/PopUp"
 
 export type QuestionProps = {
-    section: number,
-    index: number,
+    sectionIndex: number,
+    questionIndex: number,
     setHeight?: (height: number | null) => void
 }
 
-export default function Question({ section, index, setHeight }: QuestionProps) {
-    const generating = useQuestionsStatus() === "loading";
+export default function Question({ sectionIndex, questionIndex, setHeight }: QuestionProps) {
+    const loading = useQuestionType(sectionIndex, questionIndex) === "loading";
 
     const adjustHeight = (elem: HTMLDivElement | null) => {
         if (elem && setHeight) {
@@ -18,18 +18,20 @@ export default function Question({ section, index, setHeight }: QuestionProps) {
         }
     }
 
-    return !generating ? (
+    return !loading ? (
         <div 
             ref={adjustHeight}
             className="shrink-0 flex flex-col border-2 border-b-4 border-slate-700 rounded-md overflow-hidden mb-8"
         >
-            <QuestionField {...{section, index}} />
-            <AnswerField {...{section, index}} />
+            <QuestionField {...{sectionIndex, questionIndex}} />
+            <AnswerField {...{sectionIndex, questionIndex}} />
         </div>
     ) : (
-        <PopUp>
-            <QuestionField {...{section, index}} />
-            <AnswerField {...{section, index}} />
-        </PopUp>
+        <div ref={adjustHeight}>
+            <PopUp className="shrink-0 flex flex-col border-2 border-b-4 border-slate-700 rounded-md overflow-hidden mb-8">
+                <QuestionField {...{sectionIndex, questionIndex}} />
+                <AnswerField {...{sectionIndex, questionIndex}} />
+            </PopUp>
+        </div>
     )
 }

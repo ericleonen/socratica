@@ -3,16 +3,18 @@ import { Down, Notes } from "@icon-park/react";
 import SecondaryButton from "@/theme/SecondaryButton";
 import Icon from "@/theme/Icon";
 import { useState } from "react";
-import { useDocsMetadatasMap } from "@/db/docs/read";
+import { useDocsMetadatas } from "@/db/docs/read";
 
 export default function LibraryList() {
-    const docsMetadatas = useDocsMetadatasMap();
+    const docsMetadatas = useDocsMetadatas();
 
     const [showRecent, setShowRecent] = useState(true);
-    const toggleRecent = () => setTimeout(
-        () => setShowRecent(showRecent => !showRecent),
-        200
-    );
+    const toggleRecent = () => {
+        setTimeout(
+            () => setShowRecent(showRecent => !showRecent),
+            200
+        );
+    }
 
     const sortedIDs = Object.keys(docsMetadatas).toSorted((ID1: string, ID2: string) => {
         return docsMetadatas[ID2].lastSaved.seconds - docsMetadatas[ID1].lastSaved.seconds;

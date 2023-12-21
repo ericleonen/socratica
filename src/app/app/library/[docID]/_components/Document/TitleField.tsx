@@ -1,17 +1,14 @@
 "use client"
 
 import Skeleton from "@/components/Skeleton";
-import { useDocsMetadatasStatus } from "@/db/docs/read";
-import { useAutoSaveDoc, useEditableTitle } from "@/db/docs/update";
-import { handleChange, useAutoSizeTextArea } from "@/utils/input";
-import { KeyboardEvent, useRef } from "react"
+import { useDocsMetadatasLoadingStatus } from "@/db/docs/read";
+import { useAutoSaveTitle, useEditableTitle } from "@/db/docs/update";
+import { autoResize, handleChange } from "@/utils/input";
+import { KeyboardEvent } from "react"
 
 export default function TitleField() {
     const [title, setTitle] = useEditableTitle();
-    const status = useDocsMetadatasStatus();
-
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-    useAutoSizeTextArea(textareaRef.current, title);
+    const status = useDocsMetadatasLoadingStatus();
 
     const preventEnter = (e: KeyboardEvent) => {
         if (e.key === "Enter") {
@@ -19,11 +16,11 @@ export default function TitleField() {
         }
     }
 
-    const allowSave = useAutoSaveDoc(title);
+    const allowSave = useAutoSaveTitle();
 
     return status === "succeeded" ? (
         <textarea
-            ref={textareaRef}
+            ref={elem => autoResize(elem)}
             value={title}
             onChange={(e) => {
                 handleChange(setTitle)(e);

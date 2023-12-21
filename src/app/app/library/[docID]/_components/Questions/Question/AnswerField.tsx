@@ -1,18 +1,18 @@
-import { useAutoSaveDoc, useEditableAnswer } from "@/db/docs/update";
+import { useAutoSaveAnswer, useEditableAnswer } from "@/db/docs/update";
 import { QuestionProps } from ".";
-import { handleChange, useAutoSizeTextArea } from "@/utils/input";
-import { useRef } from "react";
+import { autoResize, handleChange } from "@/utils/input";
+import { useQuestionType } from "@/db/docs/read";
 
-export default function AnswerField({ section, index }: QuestionProps) {
-    const [answer, setAnswer] = useEditableAnswer(section, index);
-    const allowSave = useAutoSaveDoc(answer);
+export default function AnswerField({ sectionIndex, questionIndex }: QuestionProps) {
+    const [answer, setAnswer] = useEditableAnswer(sectionIndex, questionIndex);
+    const disabled = useQuestionType(sectionIndex, questionIndex) === "loading";
 
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
-    useAutoSizeTextArea(textareaRef.current, answer);
+    const allowSave = useAutoSaveAnswer(sectionIndex, questionIndex);
 
     return (
         <textarea 
-            ref={textareaRef}
+            disabled={disabled}
+            ref={elem => autoResize(elem)}
             value={answer}
             onChange={(e) => {
                 handleChange(setAnswer)(e);

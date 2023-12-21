@@ -20,13 +20,11 @@ export function handleChange(setValue: (value: any) => void, parseAsInt: boolean
     };
 }
 
-export function useAutoSizeTextArea(textAreaRef: HTMLTextAreaElement | null, value: string) {
-    useEffect(() => {
-        if (textAreaRef) {
-            textAreaRef.style.height = "0px";
-            textAreaRef.style.height = `${textAreaRef.scrollHeight}px`;
-        }
-    }, [textAreaRef, value]);
+export function autoResize(textarea: HTMLTextAreaElement | null) {
+    if (!textarea) return;
+
+    textarea.style.height = "0px";
+    textarea.style.height = `${textarea.scrollHeight}px`;
 }
 
 export function useCopyText() {

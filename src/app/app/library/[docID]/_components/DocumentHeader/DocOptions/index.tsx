@@ -2,10 +2,10 @@ import { useState } from "react";
 import DocOptionsButton from "./DocOptionsButton";
 import DocOptionsModal from "./DocOptionsModal";
 import Shadow from "@/components/Shadow";
-import { useDocsMetadatasStatus } from "@/db/docs/read";
+import { useDocsMetadatasLoadingStatus } from "@/db/docs/read";
 
 export default function DocOptions() {
-    const status = useDocsMetadatasStatus();
+    const status = useDocsMetadatasLoadingStatus();
 
     const [open, setOpen] = useState(false);
     const close = () => setOpen(false);

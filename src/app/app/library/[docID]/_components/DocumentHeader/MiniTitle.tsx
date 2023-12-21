@@ -1,9 +1,9 @@
 import Skeleton from "@/components/Skeleton";
-import { useDocsMetadatasStatus, useTitle } from "@/db/docs/read";
+import { useDocsMetadatasLoadingStatus, useTitle } from "@/db/docs/read";
 
 export default function MiniTitle() {
     const title = useTitle();
-    const status = useDocsMetadatasStatus();
+    const status = useDocsMetadatasLoadingStatus();
 
     return status === "succeeded" ? (
         <p 
@@ -12,6 +12,6 @@ export default function MiniTitle() {
             {title || "Untitled"}
         </p>
     ) : (
-        <Skeleton className="my-1">Mini title loading...</Skeleton>
+        <Skeleton className="my-1">...</Skeleton>
     )
 }

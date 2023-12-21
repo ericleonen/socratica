@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import { Pipeline } from "@xenova/transformers";
 import { Matrix, add, dotDivide, exp, index, map, matrix, multiply, transpose, zeros } from "mathjs";
 import { linspace } from "./helpers";
-import { CHARS_PER_COMP, MIN_PARAGRAPH_LENGTH, MIN_SECTION_LENGTH, SECTIONS_PER_BIG_IDEA, TEST_MODE } from "@/config";
+import { CHARS_PER_COMP, MIN_SECTION_LENGTH, SECTIONS_PER_BIG_IDEA, TEST_MODE } from "@/config";
 
 function sleep(time: number) {
     return new Promise((resolve) => {
@@ -76,7 +76,7 @@ export async function sectionify(sentences: string[], embedder: Pipeline) {
             
             if (i === 0 || (end < N - 1 && rightSimilarity > leftSimilarity)) {
                 // merge continuously right
-                while (i < babySections.length - 1 && content.length < MIN_PARAGRAPH_LENGTH) {
+                while (i < babySections.length - 1 && content.length < MIN_SECTION_LENGTH) {
                     i++;
                     content += babySections[i].content;
                     end = babySections[i].end;
@@ -101,6 +101,11 @@ export async function sectionify(sentences: string[], embedder: Pipeline) {
 export default async function* generate(
     sections: string[], intervals: [number, number][], openai: OpenAI
 ) {
+    yield JSON.stringify({
+        type: "sectionIntervals",
+        data: intervals
+    });
+
     const numCompQuestions = sections.map(({ length }) => Math.floor(length / CHARS_PER_COMP));
 
     const bigIdeaIndices = [];
@@ -117,68 +122,79 @@ export default async function* generate(
     }
 
     let currBigIdeaContext = "";
-
-    yield JSON.stringify({
-        type: "sectionIntervals",
-        data: intervals
-    });
     
-    for (let i = 0; i < sections.length; i++) {
+    for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
+        await sleep(1000);
+
+        yield JSON.stringify({
+            type: "numQuestions",
+            data: {
+                sectionIndex,
+                numQuestions: 
+                    numCompQuestions[sectionIndex] // comprehension qs
+                    + 1 // research qs
+                    + (bigIdeaIndices.includes(sectionIndex) ? 1 : 0) // big idea qs
+            }
+        });
+
+        let questionIndex = 0;
+
         if (TEST_MODE) {
-            for (let j = 0; j < numCompQuestions[i]; j++) {
+            for (let j = 0; j < numCompQuestions[sectionIndex]; j++) {
                 await sleep(2000);
                 yield JSON.stringify({
                     type: "newQuestion",
                     data: {
-                        section: i,
-                        questionData: {
-                            type: "comprehension",
-                            question: "You understand this?",
-                            answer: "",
-                        }
+                        sectionIndex,
+                        questionIndex,
+                        type: "comprehension",
+                        question: "You understand this?",
                     }
                 });
+
+                questionIndex++;
             }
             await sleep(2000);
             yield JSON.stringify({
                 type: "newQuestion",
                 data: {
-                    section: i,
-                    questionData: {
-                        type: "research",
-                        question: "Can you find this?",
-                        answer: "",
-                    }
+                    sectionIndex,
+                    questionIndex,
+                    type: "research",
+                    question: "Can you find this?",
                 }
             });
-            if (bigIdeaIndices.includes(i)) {
+
+            questionIndex++;
+
+            if (bigIdeaIndices.includes(sectionIndex)) {
                 await sleep(2000);
                 yield JSON.stringify({
                     type: "newQuestion",
                     data: {
-                        section: i,
-                        questionData: {
-                            type: "big idea",
-                            question: "What's the big idea?",
-                            answer: "",
-                        }
+                        sectionIndex,
+                        questionIndex,
+                        type: "big idea",
+                        question: "What's the big idea?",
                     }
                 });
+
+                questionIndex++;
             }
 
             continue;
         }
 
-        const section = sections[i];
+        const section = sections[sectionIndex];
 
         const compGenerator = await openai.chat.completions.create({
             model: "gpt-3.5-turbo-1106",
             messages: [{
                 role: "user",
-                content: numCompQuestions[i] === 1 ? (
+                content: numCompQuestions[sectionIndex] === 1 ? (
                     `Generate a comprehension question about the following text:\n${section}`
                 ) : (
-                    `Generate an enumerated list of ${numCompQuestions[i]} comprehension
+                    `Generate an enumerated list of ${numCompQuestions[sectionIndex]} comprehension
                      questions about the following text:\n${section}`
                 )
                             
@@ -193,14 +209,14 @@ export default async function* generate(
                 yield JSON.stringify({
                     type: "newQuestion",
                     data: {
-                        section: i,
-                        questionData: {
-                            type: "comprehension",
-                            question: line.replace(`${parseInt(line)}.`, "").trim(),
-                            answer: "",
-                        }
+                        sectionIndex,
+                        questionIndex,
+                        type: "comprehension",
+                        question: line.replace(`${parseInt(line)}.`, "").trim(),
                     }
                 });
+
+                questionIndex++;
             }
         }
         
@@ -217,20 +233,20 @@ export default async function* generate(
             yield JSON.stringify({
                 type: "newQuestion",
                 data: {
-                    section: i,
-                    questionData: {
-                        type: "research",
-                        question: researchRes,
-                        answer: ""
-                    }
+                    sectionIndex,
+                    questionIndex,
+                    type: "research",
+                    question: researchRes,
                 }
-            })
+            });
+
+            questionIndex++;
         }
 
         currBigIdeaContext += section;
 
         let bigIdeaRes: string | null = null;
-        if (bigIdeaIndices.includes(i)) {
+        if (bigIdeaIndices.includes(sectionIndex)) {
             const bigIdeaGenerator = await openai.chat.completions.create({
                 model: "gpt-3.5-turbo-1106",
                 messages: [{
@@ -246,14 +262,14 @@ export default async function* generate(
             yield JSON.stringify({
                 type: "newQuestion",
                 data: {
-                    section: i,
-                    questionData: {
-                        type: "big idea",
-                        question: bigIdeaRes,
-                        answer: ""
-                    }
+                    sectionIndex,
+                    questionIndex,
+                    type: "big idea",
+                    question: bigIdeaRes,
                 }
-            })
+            });
+
+            questionIndex++;
         }
     }
 }

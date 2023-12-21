@@ -2,7 +2,7 @@ import { DocMetadata } from "@/db/schemas"
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
 import { Timestamp, collection, getDocs } from "firebase/firestore"
 import { db } from "@/firebase"
-import { ResourceStatus } from "./types"
+import { ResourceStatus, SavingStatus } from "./types"
 
 export type DocMetadataMap = {
     [docID: string]: DocMetadata
@@ -10,13 +10,15 @@ export type DocMetadataMap = {
 
 export type DocsMetadatasState = {
     map: DocMetadataMap,
-    status: ResourceStatus,
+    loadingStatus: ResourceStatus,
+    savingStatus: SavingStatus,
     error: string
 }
 
 const initialState: DocsMetadatasState = {
     map: {},
-    status: "idle",
+    loadingStatus: "idle",
+    savingStatus: "saved",
     error: ""
 }
 
@@ -24,7 +26,7 @@ const docsMetadatasSlice = createSlice({
     name: "docsMetadatas",
     initialState,
     reducers: {
-        updateTitle: (state, action) => {
+        setTitle: (state, action) => {
             type Payload = { 
                 docID: string, 
                 title: string
@@ -35,18 +37,7 @@ const docsMetadatasSlice = createSlice({
                 state.map[docID].title = title;
             }
         },
-        updateLastSaved: (state, action) => {
-            type Payload = {
-                docID: string,
-                lastSaved: Timestamp
-            }
-            const { docID, lastSaved } = action.payload as Payload;
-
-            if (state.map.hasOwnProperty(docID)) {
-                state.map[docID].lastSaved = lastSaved;
-            }
-        },
-        addMetadata: (state, action) => {
+        add: (state, action) => {
             type Payload = {
                 docID: string,
                 title: string,
@@ -59,25 +50,42 @@ const docsMetadatasSlice = createSlice({
                 lastSaved
             };
         },
-        removeMetadata: (state, action) => {
+        remove: (state, action) => {
             const key = action.payload as string;
 
             if (state.map.hasOwnProperty(key)) {
                 delete state.map[key];
             }
+        },
+        setSavingStatus: (state, action) => {
+            state.savingStatus = action.payload as SavingStatus;
+        },
+        setLastSaved: (state, action) => {
+            type Payload = {
+                docID: string,
+                lastSaved: Timestamp
+            }
+            const { docID, lastSaved } = action.payload as Payload;
+
+            if (state.map.hasOwnProperty(docID)) {
+                state.map[docID].lastSaved = lastSaved;
+            }
+        },
+        setError: (state, action) => {
+            state.error = action.payload as string;
         }
     },
     extraReducers: (builder) => {
         builder
             .addCase(fetchDocsMetadatas.pending, (state) => {
-                state.status = "loading";
+                state.loadingStatus = "loading";
             })
             .addCase(fetchDocsMetadatas.fulfilled, (state, action) => {
                 state.map = action.payload;
-                state.status = "succeeded";
+                state.loadingStatus = "succeeded";
             })
             .addCase(fetchDocsMetadatas.rejected, (state, action) => {
-                state.status = "failed";
+                state.loadingStatus = "failed";
                 state.error = action.error.message as string;
             })
     }
@@ -103,11 +111,6 @@ export const fetchDocsMetadatas = createAsyncThunk(
     }
 );
 
-export const { 
-    updateTitle, 
-    updateLastSaved,
-    addMetadata, 
-    removeMetadata
-} = docsMetadatasSlice.actions;
+export const docsMetadatasActions = docsMetadatasSlice.actions;
 
 export default docsMetadatasSlice;

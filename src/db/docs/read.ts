@@ -7,43 +7,58 @@ import { ResourceStatus, SavingStatus } from "@/store/types";
 import { useEffect } from "react";
 import { DocMetadataMap, fetchDocsMetadatas } from "@/store/docsMetadatasSlice";
 import { usePathDocID } from "@/utils/routing";
-import { fetchDoc } from "@/store/docSlice";
-import { Question } from "../schemas";
+import { Question, QuestionType } from "../schemas";
+import { db } from "@/firebase";
+import { Timestamp, doc, getDoc } from "firebase/firestore";
+import { docActions } from "@/store/docSlice";
+import { questionsActions } from "@/store/questionsSlice";
 
-/**
- * Hook that makes the current doc data accessible to the app
- */
-export function useDoc() {
+// DOCS
+// ==========
+export function useLoadDoc() {
     const userID = useUserID();
-    const docID = usePathDocID();
+    const docID = usePathDocID() as string;
 
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (userID && docID) {
-            dispatch(fetchDoc({
-                userID,
-                docID
-            }));
-        }
+        if (!userID || !docID) return;
+
+        dispatch(docActions.clear());
+        dispatch(questionsActions.clear());
+        dispatch(docActions.setLoadingStatus("loading"));
+        dispatch(questionsActions.setLoadingStatus("loading"));
+
+        const docRef = doc(db, "users", userID, "docs", docID);
+        getDoc(docRef)
+        .then(docRes => {
+            const data = docRes.data();
+
+            if (data) {
+                dispatch(docActions.setText(data.text));
+                dispatch(questionsActions.setQuestions(data.questions));
+
+                dispatch(docActions.setLoadingStatus("succeeded"));
+                dispatch(questionsActions.setLoadingStatus("succeeded"));
+            } else {
+                throw new Error("Document doesn't exist");
+            }
+        }).catch((err: Error) => {
+            dispatch(docActions.setLoadingStatus("failed"));
+            dispatch(questionsActions.setLoadingStatus("failed"));
+            dispatch(docActions.setError(err.message));
+        })
     }, [userID, docID]);
 }
 
-/**
- * Hook that provides the status of the current doc
- * @returns a ResourceStatus of the current doc
- */
-export function useDocStatus() {
+export function useDocLoadingStatus() {
     const status = useSelector<RootState, ResourceStatus>(
-        state => state.doc.status
+        state => state.doc.loadingStatus
     );
 
     return status;
 }
 
-/**
- * Hook that provides the current sectionified text
- */
 export function useText() {
     const text = useSelector<RootState, string[]>(
         state => state.doc.text
@@ -52,20 +67,85 @@ export function useText() {
     return text;
 }
 
+export function useDocSavingStatus() {
+    const status = useSelector<RootState, SavingStatus>(
+        state => state.doc.savingStatus
+    );
+
+    return status;
+}
+
+// QUESTIONS
+// ==========
 export function useQuestions() {
     const questions = useSelector<RootState, Question[][]>(
-        state => state.doc.questions
+        state => state.questions.data
     );
 
     return questions;
 }
 
-/**
- * Hook that makes the user's docs metadatas accessible in the app
- */
-export function useDocsMetadatas() {
+export function useHasQuestions() {
+    const hasQuestions = useSelector<RootState, boolean>(
+        state => state.questions.data.length > 0
+    );
+
+    return hasQuestions;
+}
+
+export function useQuestionsGeneratingStatus() {
+    const status = useSelector<RootState, ResourceStatus>(
+        state => state.questions.generatingStatus
+    )
+
+    return status;
+}
+
+export function useQuestionsSavingStatus() {
+    const status = useSelector<RootState, SavingStatus>(
+        state => state.questions.savingStatus
+    )
+
+    return status;
+}
+
+export function useFocusSection() {
+    const section = useSelector<RootState, number>(
+        state => state.questions.focusSection
+    );
+
+    return section;
+}
+
+export function useQuestion(sectionIndex: number, questionIndex: number) {
+    const question = useSelector<RootState, Question>(
+        state => state.questions.data[sectionIndex][questionIndex]
+    );
+
+    return question;
+}
+
+export function useQuestionType(sectionIndex: number, questionIndex: number) {
+    const type = useSelector<RootState, QuestionType>(
+        state => state.questions.data[sectionIndex][questionIndex].type
+    );
+
+    return type;
+}
+
+export function useAnswer(sectionIndex: number, questionIndex: number) {
+    const answer = useSelector<RootState, string>(
+        state => state.questions.data[sectionIndex][questionIndex].answer
+    );
+
+    return answer;
+}
+
+// DOCS METADATAS
+// ==========
+export function useLoadDocsMetadatas() {
     const userID = useUserID();
-    const status = useDocsMetadatasStatus();
+    const status = useDocsMetadatasLoadingStatus();
 
     const dispatch = useAppDispatch();
 
@@ -76,11 +156,7 @@ export function useDocsMetadatas() {
     }, [status, userID]);
 }
 
-/**
- * Hook that provides the doc metadatas
- * @returns the DocMetadataMap of the current user
- */
-export function useDocsMetadatasMap() {
+export function useDocsMetadatas() {
     const map = useSelector<RootState, DocMetadataMap>(
         state => state.docsMetadatas.map
     );
@@ -88,23 +164,22 @@ export function useDocsMetadatasMap() {
     return map;
 }
 
-/**
- * Hook that provides the user's docs metadatas' status
- * @returns a ResourceStatus of the docsMetadatas
- */
-export function useDocsMetadatasStatus() {
+export function useDocsMetadatasLoadingStatus() {
     const status = useSelector<RootState, ResourceStatus>(
-        state => state.docsMetadatas.status
+        state => state.docsMetadatas.loadingStatus
     );
 
     return status;
 }
 
-/**
- * Hook that provides the current doc title or an empty string if there is no valid current
- * docID
- * @returns a title string
- */
+export function useDocsMetadatasSavingStatus() {
+    const status = useSelector<RootState, SavingStatus>(
+        state => state.docsMetadatas.savingStatus
+    );
+
+    return status;
+}
+
 export function useTitle() {
     const docID = usePathDocID() as string;
     const title = useSelector<RootState, string>(
@@ -116,34 +191,13 @@ export function useTitle() {
     return title;
 }
 
-/**
- * Hook that provides the saving status of the current doc
- * @returns a SavingStatus of the current doc
- */
-export function useSavingStatus() {
-    const status = useSelector<RootState, SavingStatus>(
-        state => state.doc.savingStatus
+export function useLastSaved() {
+    const docID = usePathDocID() as string;
+    const lastSaved = useSelector<RootState, Timestamp | undefined>(
+        state => state.docsMetadatas.map.hasOwnProperty(docID) ?
+        state.docsMetadatas.map[docID].lastSaved :
+        undefined
     );
 
-    return status;
-}
-
-/**
- * Hook that provides the generation status of the doc's questions
- * @returns a ResourceStatus of the current doc's questions (when generating)
- */
-export function useQuestionsStatus() {
-    const status = useSelector<RootState, ResourceStatus>(
-        state => state.doc.questionsStatus
-    );
-
-    return status;
-}
-
-export function useFocusSection() {
-    const section = useSelector<RootState, number>(
-        state => state.doc.focusSection
-    );
-
-    return section;
+    return lastSaved;
 }

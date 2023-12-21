@@ -1,21 +1,19 @@
 import { useQuestions } from "@/db/docs/read"
 import Question from "./Question";
-import { Transition } from "@headlessui/react";
-import { Division } from "@icon-park/react";
 
 type Section = {
-    section: number
+    sectionIndex: number
 }
 
-export default function Section({ section }: Section) {
-    const questions = useQuestions()[section];
+export default function Section({ sectionIndex }: Section) {
+    const questions = useQuestions()[sectionIndex];
 
     return (
         <div className="px-4">{
-            questions.map((_, index) =>
+            questions.map((_, questionIndex) =>
                 <Question 
-                    key={`question_${index}`}
-                    {...{section, index}}
+                    key={`question_${questionIndex}`}
+                    {...{sectionIndex, questionIndex}}
                 />
             )
         }</div>

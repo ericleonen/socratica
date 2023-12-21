@@ -1,44 +1,252 @@
-import { RootState, useAppDispatch } from "@/store";
-import { useFocusSection, useQuestions, useQuestionsStatus, useSavingStatus, useText, useTitle } from "./read";
-import { updateError, updateFocusSection, updateQuestion, updateQuestionAnswer, updateSavingStatus, updateText } from "@/store/docSlice";
-import { useSelector } from "react-redux";
-import { updateLastSaved, updateTitle } from "@/store/docsMetadatasSlice";
+import { useAppDispatch } from "@/store";
+import { useAnswer, useDocSavingStatus, useDocsMetadatasSavingStatus, useFocusSection, useQuestion, useQuestions, useQuestionsSavingStatus, useText, useTitle } from "./read";
+import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
 import { usePathDocID } from "@/utils/routing";
 import { useUserID } from "../user";
-import { Timestamp, doc, setDoc } from "firebase/firestore";
+import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import { useEffect, useState } from "react";
 import { AUTOSAVE_DELAY } from "@/config";
 import { Trigger } from "@/types";
-import { Question, QuestionType } from "../schemas";
+import { QuestionType, QuestionsMap } from "../schemas";
+import { docActions } from "@/store/docSlice";
+import { questionsActions } from "@/store/questionsSlice";
 
-/**
- * If no questions have been generated, is a hook that provides the current text and a text setter.
- * If questions have been generated, is a hook that provides the joined text sections and a useless
- * text setter (it doesn't do anything)
- * @returns a text string and a (possibly useless) text setter
- */
+// DOCS
+// ==========
 export function useEditableText(): [string, (newText: string) => void] {
-    const text = useText();
+    const text = useText().join("");
     const dispatch = useAppDispatch();
-    const hasQuestions = useSelector<RootState, boolean>(
-        state => state.doc.questions.length > 0
-    );
+    const hasQuestions = useQuestions().length > 0;
 
-    if (!hasQuestions) {
-        return [
-            text[0],
-            (newText: string) => dispatch(updateText(newText))
-        ]
-    } else {
-        return [text.join(""), (newText: string) => {}];
+    return [
+        text,
+        (newText: string) => dispatch(docActions.setText([newText]))
+    ]
+}
+
+export function useSaveText(): Trigger {
+    const userID = useUserID();
+    const docID = usePathDocID() as string;
+    const text = useText();
+
+    const dispatch = useAppDispatch();
+
+    return async () => {
+        try {
+            dispatch(docActions.setSavingStatus("saving"));
+            const lastSaved = Timestamp.now();
+
+            const docRef = doc(db, "users", userID, "docs", docID);
+            await updateDoc(docRef, {
+                text
+            });
+
+            const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
+            await updateDoc(docMetadataRef, {
+                lastSaved
+            });
+
+            dispatch(docsMetadatasActions.setLastSaved({
+                docID,
+                lastSaved: lastSaved.toJSON()
+            }));
+            dispatch(docActions.setSavingStatus("saved"));
+        } catch (err) {
+            const error = (err as Error).message;
+
+            dispatch(docActions.setSavingStatus("failed"));
+            dispatch(docActions.setError(error));
+        }
     }
 }
 
-/**
- * Hook that provides the current title and a title setter
- * @returns a title string and a title setter
- */
+export function useAutoSaveText(): Trigger {
+    const savingStatus = useDocSavingStatus();
+    const text = useText();
+    
+    const dispatch = useAppDispatch();
+    const saveText = useSaveText();
+
+    useEffect(() => {
+        let countdown = -1;
+
+        if (savingStatus === "unsaved") {
+            countdown = window.setTimeout(saveText, AUTOSAVE_DELAY);
+        }
+
+        return () => clearTimeout(countdown);
+    }, [text]);
+
+    return () => { dispatch(docActions.setSavingStatus("unsaved")) };
+}
+
+// QUESTIONS
+// ==========
+export function useSaveQuestions() {
+    const userID = useUserID();
+    const docID = usePathDocID() as string;
+    const questions = useQuestions();
+
+    const questionsMap: QuestionsMap = {};
+
+    // mapify
+    questions.forEach((section, sectionIndex) => {
+        questionsMap[sectionIndex] = {};
+
+        section.forEach((question, questionIndex) => {
+            questionsMap[sectionIndex][questionIndex] = question;
+        })
+    });
+
+    const dispatch = useAppDispatch();
+
+    return async () => {
+        try {
+            dispatch(questionsActions.setSavingStatus("saving"));
+            const lastSaved = Timestamp.now();
+
+            const docRef = doc(db, "users", userID, "docs", docID);
+            await updateDoc(docRef, {
+                questions: questionsMap
+            });
+
+            const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
+            await updateDoc(docMetadataRef, {
+                lastSaved
+            });
+
+        dispatch(docsMetadatasActions.setLastSaved({
+                docID,
+                lastSaved: lastSaved.toJSON()
+            }));
+            dispatch(questionsActions.setSavingStatus("saved"));
+        } catch (err) {
+            const error = err as Error;
+
+            dispatch(questionsActions.setSavingStatus("failed"));
+            dispatch(questionsActions.setError(error.message));
+        }
+    }
+}
+
+export function useSaveQuestion(sectionIndex: number, questionIndex: number) {
+    const userID = useUserID();
+    const docID = usePathDocID() as string;
+
+    const question = useQuestion(sectionIndex, questionIndex);
+
+    const dispatch = useAppDispatch();
+
+    return async () => {
+        try {
+            dispatch(questionsActions.setSavingStatus("saving"));
+            const lastSaved = Timestamp.now();
+
+            const docRef = doc(db, "users", userID, "docs", docID);
+            await updateDoc(docRef, {
+                [`questions.${sectionIndex}.${questionIndex}`]: question
+            });
+
+            const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
+            await updateDoc(docMetadataRef, {
+                lastSaved
+            });
+
+            dispatch(docsMetadatasActions.setLastSaved({
+                docID,
+                lastSaved: lastSaved.toJSON()
+            }));
+            dispatch(questionsActions.setSavingStatus("saved"));
+        } catch (err) {
+            const error = err as Error;
+
+            dispatch(questionsActions.setSavingStatus("failed"));
+            dispatch(questionsActions.setError(error.message));
+        }
+    }
+}
+
+export function useAutoSaveAnswer(sectionIndex: number, questionIndex: number) {
+    const savingStatus = useQuestionsSavingStatus();
+    const answer = useAnswer(sectionIndex, questionIndex);
+    
+    const dispatch = useAppDispatch();
+    const saveAnswer = useSaveQuestion(sectionIndex, questionIndex);
+
+    useEffect(() => {
+        let countdown = -1;
+
+        if (savingStatus === "unsaved") {
+            countdown = window.setTimeout(saveAnswer, AUTOSAVE_DELAY);
+        }
+
+        return () => clearTimeout(countdown);
+    }, [answer]);
+
+    return () => dispatch(questionsActions.setSavingStatus("unsaved"));
+}
+
+export function useEditableQuestionDraft(sectionIndex: number, questionIndex: number): [
+    string, 
+    QuestionType, 
+    (newQuestion: string) => void, 
+    (newType: QuestionType) => void,
+    Trigger
+] {
+    const { question, type } = useQuestion(sectionIndex, questionIndex);
+    const [questionDraft, setQuestionDraft] = useState(question);
+    const [typeDraft, setTypeDraft] = useState(type);
+
+    const dispatch = useAppDispatch();
+
+    return [
+        questionDraft,
+        typeDraft,
+        setQuestionDraft,
+        setTypeDraft,
+        () => {
+            dispatch(questionsActions.setQuestion({
+                sectionIndex,
+                questionIndex,
+                question: questionDraft,
+                type: typeDraft
+            }))
+        }
+    ]   
+}
+
+export function useEditableAnswer(sectionIndex: number, questionIndex: number):
+    [string, (newAnswer: string) => void] 
+{
+    const answer = useAnswer(sectionIndex, questionIndex);
+    
+    const dispatch = useAppDispatch();
+
+    const setAnswer = (newAnswer: string) => {
+        dispatch(questionsActions.setAnswer({
+            sectionIndex,
+            questionIndex,
+            answer: newAnswer
+        }));
+    };
+
+    return [answer, setAnswer];
+}
+
+export function useEditableFocusSection(): [number, (newSection: number) => void] {
+    const focusSection = useFocusSection();
+
+    const dispatch = useAppDispatch();
+
+    return [
+        focusSection,
+        (newSection: number) => dispatch(questionsActions.focusOnSection(newSection))
+    ]
+}
+
+// DOCS METADATAS
+// ==========
 export function useEditableTitle(): [string, (newTitle: string) => void] {
     const docID = usePathDocID();
     const title = useTitle();
@@ -47,159 +255,60 @@ export function useEditableTitle(): [string, (newTitle: string) => void] {
 
     return [
         title,
-        (newTitle: string) => dispatch(updateTitle({
+        (newTitle: string) => dispatch(docsMetadatasActions.setTitle({
             docID,
             title: newTitle
         }))
     ];
 }
 
-/**
- * Hook that provides the current question, the type, a non-saving question setter, a non-saving
- * type setter, a question resetter, and a trigger to save the question
- * @param section 
- * @param index 
- * @returns a question string, a QuestionType, a question setter, a type setter and Triggers
- *          for reverting and saving
- */
-export function useEditableQuestion(section: number, index: number): [
-    string,
-    QuestionType,
-    (question: string) => void,
-    (type: QuestionType) => void,
-    Trigger,
-    Trigger
-] {
-    const currQuestion = useQuestions()[section][index];
-
-    const saveDoc = useSaveDoc();
-    const dispatch = useAppDispatch();
-
-    const [question, setQuestion] = useState(currQuestion.question);
-    const [type, setType] = useState<QuestionType>(currQuestion.type);
-
-    const revertQuestion = () => {
-        setQuestion(currQuestion.question);
-        setType(currQuestion.type);
-    };
-
-    const saveQuestion = () => {
-        dispatch(updateQuestion({
-            type,
-            question,
-            section,
-            index
-        }));
-        saveDoc();
-    }
-
-    return [question, type, setQuestion, setType, revertQuestion, saveQuestion];
-}
-
-/**
- * Hook that provides the current question's answer and an answer setter
- * @param section 
- * @param index 
- * @returns an answer string and setter
- */
-export function useEditableAnswer(section: number, index: number):
-    [string, (newAnswer: string) => void] 
-{
-    const answer = useQuestions()[section][index].answer;
-    
-    const dispatch = useAppDispatch();
-
-    const setAnswer = (newAnswer: string) => {
-        dispatch(updateQuestionAnswer({
-            section,
-            index,
-            answer: newAnswer
-        }));
-    };
-
-    return [answer, setAnswer];
-}
-
-/**
- * Hook that provides a trigger to save the current doc
- * @returns a Trigger that saves the current doc
- */
-export function useSaveDoc() {
+export function useSaveTitle() {
     const userID = useUserID();
     const docID = usePathDocID() as string;
     const title = useTitle();
-    const text = useText();
-    const questions = useQuestions();
-    
+
     const dispatch = useAppDispatch();
 
     return async () => {
         try {
-            dispatch(updateSavingStatus("saving"));
+            dispatch(docsMetadatasActions.setSavingStatus("saving"));
             const lastSaved = Timestamp.now();
 
-            const docRef = doc(db, "users", userID, "docs", docID);
-            await setDoc(docRef, {
-                text, 
-                questions: {...questions}
-            });
-
             const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
-            await setDoc(docMetadataRef, {
+            await updateDoc(docMetadataRef, {
                 title,
                 lastSaved
             });
 
-            dispatch(updateLastSaved({
+            dispatch(docsMetadatasActions.setLastSaved({
                 docID,
                 lastSaved: lastSaved.toJSON()
             }));
-            dispatch(updateSavingStatus("saved"));
+            dispatch(docsMetadatasActions.setSavingStatus("saved"));
         } catch (err) {
-            dispatch(updateSavingStatus("failed"));
-            dispatch(updateError(err as Error));
+            const error = err as Error;
+
+            dispatch(docsMetadatasActions.setSavingStatus("failed"));
+            dispatch(docsMetadatasActions.setError(error.message));
         }
     }
 }
 
-/**
- * Hook that provides a trigger to automatically save the current doc whenever a dependency changes
- * @param dependency the string value in the doc that, when altered triggers the save
- * @returns a trigger that allows saves to happen
- */
-export function useAutoSaveDoc(dependency: string) {
-    const savingStatus = useSavingStatus();
-    const questionsStatus = useQuestionsStatus();
-
-    const saveDoc = useSaveDoc();
+export function useAutoSaveTitle() {
+    const savingStatus = useDocsMetadatasSavingStatus();
+    
     const dispatch = useAppDispatch();
+    const saveTitle = useSaveTitle();
 
     useEffect(() => {
         let countdown = -1;
 
-        if (savingStatus === "unsaved" && ["idle", "succeeded"].includes(questionsStatus)) {
-            countdown = window.setTimeout(saveDoc, AUTOSAVE_DELAY);
+        if (savingStatus === "unsaved") {
+            countdown = window.setTimeout(saveTitle, AUTOSAVE_DELAY);
         }
 
         return () => clearTimeout(countdown);
-    }, [dependency]);
+    }, [saveTitle]);
 
-    return async () => {
-        dispatch(updateSavingStatus("unsaved"));
-    }
-}
-
-/**
- * Hook that provides the current state of the focus section
- * @return the focus section index and a setter
- */
-export function useEditableFocusSection(): [number, (newSection: number) => void] {
-    const focuseSection = useFocusSection();
-
-    const dispatch = useAppDispatch();
-
-    return [
-        focuseSection,
-        (newSection: number) => dispatch(updateFocusSection(newSection))
-    ]
+    return () => dispatch(docsMetadatasActions.setSavingStatus("unsaved"));
 }

@@ -1,151 +1,61 @@
-import { Doc, Question, QuestionType } from "@/db/schemas"
-import { ResourceStatus, SavingStatus, UserDocID } from "./types"
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit"
-import { db } from "@/firebase"
-import { doc, getDoc } from "firebase/firestore"
-import { sentencify } from "@/utils/format"
+import { createSlice } from "@reduxjs/toolkit";
+import { ResourceStatus, SavingStatus } from "./types"
+import { sentencify } from "@/utils/format";
 
 export type DocState = {
     text: string[],
-    questions: Question[][],
-    status: ResourceStatus,
-    error: string,
+    loadingStatus: ResourceStatus,
     savingStatus: SavingStatus,
-    questionsStatus: ResourceStatus,
-    focusSection: number,
+    error: string,
     threateningDelete: boolean
 }
 
 const initialState: DocState = {
-    text: [""],
-    questions: [],
-    status: "idle",
-    error: "",
+    text: [],
+    loadingStatus: "idle",
     savingStatus: "saved",
-    questionsStatus: "idle",
-    focusSection: 0,
+    error: "",
     threateningDelete: false
-}
+};
 
 const docSlice = createSlice({
     name: "doc",
     initialState,
     reducers: {
-        updateText: (state, action) => {
-            state.text[0] = action.payload as string;
+        clear: () => ({...initialState}),
+        setText: (state, action) => {
+            state.text = action.payload as string[];
         },
         sectionifyText: (state, action) => {
             type Payload = [number, number][];
-            const sentences = sentencify(state.text[0]);
-            state.text = [];
 
-            (action.payload as Payload).forEach(interval => {
-                state.text.push(sentences.slice(interval[0], interval[1] + 1).join(""));
-            });
-        },
-        updateSavingStatus: (state, action) => {
-            state.savingStatus = action.payload as SavingStatus;
-        },
-        updateError: (state, action) => {
-            state.error = (action.payload as Error).message;
-        },
-        clearDoc: () => ({...initialState}),
-        addQuestionSections: (state, action) => {
-            state.questions = Array.from(Array(action.payload as number)).map(
-                () => []
+            const intervals = action.payload as Payload;
+            const sentences = sentencify(state.text.join(""));
+
+            console.log(intervals)
+            
+            state.text = intervals.map(interval =>
+                sentences.slice(interval[0], interval[1]).join("")
             );
         },
-        addQuestion: (state, action) => {
-            type Payload = {
-                section: number,
-                questionData: Question
-            }
-
-            const { section, questionData } = action.payload as Payload;
-
-            state.questions[section].push(questionData);
+        setLoadingStatus: (state, action) => {
+            state.loadingStatus = action.payload as ResourceStatus;
         },
-        updateQuestionAnswer: (state, action) => {
-            type Payload = {
-                answer: string,
-                section: number
-                index: number
-            };
-
-            const { answer, section, index } = action.payload as Payload;
-
-            state.questions[section][index].answer = answer;
+        setSavingStatus: (state, action) => {
+            state.savingStatus = action.payload as SavingStatus
         },
-        updateQuestionsStatus: (state, action) => {
-            state.questionsStatus = action.payload as ResourceStatus;
+        setError: (state, action) => {
+            state.error = action.payload as string;
         },
-        updateThreateningDelete: (state, action) => {
-            state.threateningDelete = action.payload as boolean;
+        threatenDelete: (state) => {
+            state.threateningDelete = true;
         },
-        updateQuestion: (state, action) => {
-            type Payload = {
-                question: string,
-                section: number,
-                index: number
-            };
-
-            const { question, section, index } = action.payload as Payload;
-
-            state.questions[section][index].question = question;
-        },
-        updateFocusSection: (state, action) => {
-            state.focusSection = action.payload as number;
+        cancelDelete: (state) => {
+            state.threateningDelete = false;
         }
-    },
-    extraReducers: (builder) => {
-        builder
-            .addCase(fetchDoc.pending, () => {
-                const newState = {...initialState};
-                newState.status = "loading";
-                
-                return newState;
-            })
-            .addCase(fetchDoc.fulfilled, (state, action) => {
-                const { text, questions } = action.payload as Doc;
-
-                const newState = {...initialState};
-
-                newState.text = text;
-                newState.questions = Object.values(questions);
-                newState.status = "succeeded";
-
-                return newState;
-            })
-            .addCase(fetchDoc.rejected, (state, action) => {
-                state.status = "failed";
-                state.error = action.error.message as string;
-            })
-    } 
+    }
 });
 
-export const fetchDoc = createAsyncThunk(
-    "doc/fetchDoc",
-    async ({ userID, docID }: UserDocID) => {
-        const docRef = doc(db, "users", userID, "docs", docID);
-        const docSnap = await getDoc(docRef);
-
-        return docSnap.data();
-    }
-);
-
-export const { 
-    updateText, 
-    updateSavingStatus,
-    updateError,
-    clearDoc,
-    updateQuestionAnswer,
-    addQuestion,
-    updateQuestionsStatus,
-    updateThreateningDelete,
-    updateQuestion,
-    addQuestionSections,
-    sectionifyText,
-    updateFocusSection
-} = docSlice.actions;
+export const docActions = docSlice.actions;
 
 export default docSlice;

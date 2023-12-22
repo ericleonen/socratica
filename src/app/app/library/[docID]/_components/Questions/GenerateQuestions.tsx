@@ -13,7 +13,7 @@ export default function GenerateQuestions() {
 
     return (
         <div className="h-full w-full flex flex-col items-center justify-center">
-            <p className="mb-3 text-slate-700/70 text-center font-medium">You don't have any questions yet</p>
+            <p className="mb-3 text-slate-500 text-center font-medium">You don't have any questions yet</p>
             <PrimaryButton 
                 disabled={disabled}
                 onClick={generate}

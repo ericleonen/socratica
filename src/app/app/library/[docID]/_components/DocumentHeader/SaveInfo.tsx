@@ -21,9 +21,8 @@ export default function SaveInfo() {
         && docsMetadatas === "saved"
     );
 
-
     return (
-        <div className="text-slate-700/70 flex items-center font-medium mr-2">{
+        <div className="text-slate-500 flex items-center font-medium mr-2">{
             allSaved && lastSaved ? (<>
                 <Icon type={CheckOne} className="mr-2"/> {lastSaved}
             </>) :

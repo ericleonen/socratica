@@ -1,6 +1,5 @@
 import { DocOptionButton } from "./DocOptionButton";
 import { useCopyText } from "@/utils/input";
-import { useAppDispatch } from "@/store";
 import PopUp from "@/components/PopUp";
 import { Trigger } from "@/types";
 import { useRef } from "react";
@@ -8,7 +7,7 @@ import { useReactToPrint } from "react-to-print";
 import Worksheet from "../../Worksheet";
 import { CopyOne, Delete, PrinterOne } from "@icon-park/react";
 import { useTitle } from "@/db/docs/read";
-import { docActions } from "@/store/docSlice";
+import { useModalContext } from "@/app/app/_components/modals/ModalContext";
 
 type DocOptionsModal = {
     close: Trigger
@@ -17,8 +16,8 @@ type DocOptionsModal = {
 export default function DocOptionsModal({ close }: DocOptionsModal) {
     const title = useTitle();
 
-    const dispatch = useAppDispatch();
-    const deleteDoc = () => { dispatch(docActions.threatenDelete()) };
+    const { setDeleteModal } = useModalContext();
+    const deleteDoc = () => setDeleteModal(true);
     const copyText = useCopyText();
 
     const worksheetRef = useRef(null);

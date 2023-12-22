@@ -4,6 +4,8 @@ import SecondaryButton from "@/theme/SecondaryButton";
 import Icon from "@/theme/Icon";
 import { useState } from "react";
 import { useDocsMetadatas } from "@/db/docs/read";
+import { usePathname, useRouter } from "next/navigation";
+import { usePathDocID } from "@/utils/routing";
 
 export default function LibraryList() {
     const docsMetadatas = useDocsMetadatas();
@@ -15,6 +17,8 @@ export default function LibraryList() {
             200
         );
     }
+    const router = useRouter();
+    const pathDocID = usePathDocID();
 
     const sortedIDs = Object.keys(docsMetadatas).toSorted((ID1: string, ID2: string) => {
         return docsMetadatas[ID2].lastSaved.seconds - docsMetadatas[ID1].lastSaved.seconds;
@@ -37,7 +41,8 @@ export default function LibraryList() {
                         <NavButton
                             key={ID}
                             text={docsMetadatas[ID].title || "Untitled"}
-                            href={`/app/library/${ID}`}
+                            onClick={() => router.push(`/app/library/${ID}`)}
+                            active={ID === pathDocID}
                             icon={Notes}
                         />    
                     )

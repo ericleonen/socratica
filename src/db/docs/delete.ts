@@ -1,10 +1,9 @@
 import { usePathDocID } from "@/utils/routing";
 import { useUserID } from "../user";
-import { RootState, useAppDispatch } from "@/store";
+import { useAppDispatch } from "@/store";
 import { useRouter } from "next/navigation";
 import { db } from "@/firebase";
 import { doc, deleteDoc } from "firebase/firestore";
-import { useSelector } from "react-redux";
 import { docActions } from "@/store/docSlice";
 import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
 
@@ -34,12 +33,4 @@ export function useDeleteDoc() {
             dispatch(docActions.setError(error.message));
         }
     }
-}
-
-export function useThreateningDelete() {
-    const threateningDelete = useSelector<RootState, boolean>(
-        state => state.doc.threateningDelete
-    );
-
-    return threateningDelete;
 }

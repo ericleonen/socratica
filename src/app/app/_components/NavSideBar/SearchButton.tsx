@@ -1,17 +1,16 @@
-import Icon from "@/theme/Icon";
-import SecondaryButton from "@/theme/SecondaryButton";
 import { Search } from "@icon-park/react";
+import NavButton from "./NavButton";
+import { useModalContext } from "../modals/ModalContext";
 
 export default function SearchButton() {
-    const handleClick = () => {}
+    const { setSearchModal } = useModalContext();
+    const open = () => setSearchModal(true);
 
     return (
-        <SecondaryButton
-            onClick={handleClick}
-            className="font-bold w-full px-3 py-2 mt-2"
-        >
-            <Icon type={Search} className="mr-3"/>
-            Search
-        </SecondaryButton>
+        <NavButton
+            icon={Search}
+            onClick={open}
+            text="Search"
+        />
     )
 }

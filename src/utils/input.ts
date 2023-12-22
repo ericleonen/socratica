@@ -1,5 +1,6 @@
 import { useText } from "@/db/docs/read";
 import { RootState } from "@/store";
+import { Trigger } from "@/types";
 import { ChangeEvent, useEffect } from "react";
 import { useSelector } from "react-redux";
 
@@ -33,4 +34,21 @@ export function useCopyText() {
     return () => {
         navigator.clipboard.writeText(text);
     }
+}
+
+export function useKeyDown(callback: Trigger, key: string) {
+    const onKeyDown = (event: KeyboardEvent) => {
+        if (event.key === key) {
+            event.preventDefault();
+            callback();
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener("keydown", onKeyDown);
+
+        return () => {
+            document.removeEventListener("keydown", onKeyDown);
+        }
+    }, [onKeyDown]);
 }

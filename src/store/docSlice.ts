@@ -46,12 +46,6 @@ const docSlice = createSlice({
         },
         setError: (state, action) => {
             state.error = action.payload as string;
-        },
-        threatenDelete: (state) => {
-            state.threateningDelete = true;
-        },
-        cancelDelete: (state) => {
-            state.threateningDelete = false;
         }
     }
 });

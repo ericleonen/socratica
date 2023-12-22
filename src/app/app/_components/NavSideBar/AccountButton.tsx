@@ -1,14 +1,13 @@
 import SecondaryButton from "@/theme/SecondaryButton";
-import { useRouter } from "next/navigation";
+import { useModalContext } from "../modals/ModalContext";
 
 export default function AccountButton() {
-    const router = useRouter();
-
-    const handleClick = () => router.push("/app/account")
+    const { setAccountModal } = useModalContext();
+    const open = () => setAccountModal(true);
 
     return (
         <SecondaryButton
-            onClick={handleClick}
+            onClick={open}
             className="mr-auto"
         >
             <div className="rounded-full h-8 w-8 border-[3px] border-slate-400 mr-2 bg-gray-300" />

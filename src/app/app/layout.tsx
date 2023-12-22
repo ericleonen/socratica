@@ -5,20 +5,24 @@ import { LayoutProps } from "@/types";
 import NavSideBar from "./_components/NavSideBar";
 import { useLoadDocsMetadatas } from "@/db/docs/read";
 import { useUser } from "@/db/user";
-import DeleteWarningModal from "./_components/DeleteWarningModal";
-import { useThreateningDelete } from "@/db/docs/delete";
+import DeleteModal from "./_components/modals/DeleteModal";
+import ModalContext, { useInitModalContext } from "./_components/modals/ModalContext";
+import SearchModal from "./_components/modals/SearchModal/index";
 
 export default function AppLayout({ children }: LayoutProps) {
     useUser();
     useLoadDocsMetadatas();
 
-    const threateningDelete = useThreateningDelete();
+    const [modals, setModals] = useInitModalContext();
 
     return (
-        <HorizontalLayout screenWidth>
-            <NavSideBar />
-            {children}
-            { threateningDelete && <DeleteWarningModal /> }
-        </HorizontalLayout>
+        <ModalContext.Provider value={setModals}>
+            <HorizontalLayout screenWidth>
+                <NavSideBar />
+                {children}
+                { modals.deleteModal && <DeleteModal /> }
+                { modals.searchModal && <SearchModal /> }
+            </HorizontalLayout>
+        </ModalContext.Provider>
     )
 }

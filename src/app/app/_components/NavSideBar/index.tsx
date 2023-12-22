@@ -2,8 +2,7 @@
 
 import LibraryList from "./LibraryList";
 import NewDocButton from "./NewDocButton";
-import NavButton from "./NavButton";
-import { Config, DoubleLeft, DoubleRight, Help } from "@icon-park/react";
+import { DoubleLeft, DoubleRight } from "@icon-park/react";
 import AccountButton from "./AccountButton";
 import SearchButton from "./SearchButton";
 import SkeletonList from "@/components/SkeletonList";
@@ -14,6 +13,8 @@ import SecondaryButton from "@/theme/SecondaryButton";
 import Icon from "@/theme/Icon";
 import TooltipProvider from "@/components/TooltipProvider";
 import { useDocsMetadatasLoadingStatus } from "@/db/docs/read";
+import HelpButton from "./HelpButton";
+import SettingsButton from "./SettingsButton";
 
 export default function NavSideBar() {
     const status = useDocsMetadatasLoadingStatus();
@@ -74,16 +75,8 @@ export default function NavSideBar() {
                 status === "succeeded" ? <>
                     <NewDocButton/>
                     <SearchButton />
-                    <NavButton 
-                        href="/app/help"
-                        icon={Help}
-                        text="Help"
-                    />
-                    <NavButton 
-                        href="/app/settings"
-                        icon={Config}
-                        text="Settings"
-                    />
+                    <HelpButton />
+                    <SettingsButton />
                     <LibraryList />
                 </> : (
                     <div className="mt-3">

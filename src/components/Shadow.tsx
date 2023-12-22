@@ -13,7 +13,7 @@ export default function Shadow({ transparent, children, onClick }: ShadowProps) 
             appear={true}
             enter="transition-color"
             enterFrom="bg-transparent"
-            enterTo={`${transparent ? "bg-transparent" : "bg-black/80"}`}
+            enterTo={`${transparent ? "bg-transparent" : "bg-amber-500/80"}`}
             onClick={onClick}
             className={`w-screen h-screen fixed left-0 top-0 z-50 hover:cursor-default`}
         >

@@ -245,7 +245,6 @@ export default async function* generate(
 
         currBigIdeaContext += section;
 
-        let bigIdeaRes: string | null = null;
         if (bigIdeaIndices.includes(sectionIndex)) {
             const bigIdeaGenerator = await openai.chat.completions.create({
                 model: "gpt-3.5-turbo-1106",
@@ -255,21 +254,22 @@ export default async function* generate(
                               following text:\n${currBigIdeaContext}`
                 }]
             });
-            bigIdeaRes = bigIdeaGenerator.choices[0].message.content;
+            const bigIdeaRes = bigIdeaGenerator.choices[0].message.content;
             currBigIdeaContext = "";
-        }
-        if (bigIdeaRes) {
-            yield JSON.stringify({
-                type: "newQuestion",
-                data: {
-                    sectionIndex,
-                    questionIndex,
-                    type: "big idea",
-                    question: bigIdeaRes,
-                }
-            });
 
-            questionIndex++;
+            if (bigIdeaRes) {
+                yield JSON.stringify({
+                    type: "newQuestion",
+                    data: {
+                        sectionIndex,
+                        questionIndex,
+                        type: "big idea",
+                        question: bigIdeaRes,
+                    }
+                });
+    
+                questionIndex++;
+            }
         }
     }
 }

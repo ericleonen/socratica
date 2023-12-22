@@ -31,8 +31,6 @@ const docSlice = createSlice({
 
             const intervals = action.payload as Payload;
             const sentences = sentencify(state.text.join(""));
-
-            console.log(intervals)
             
             state.text = intervals.map(interval =>
                 sentences.slice(interval[0], interval[1]).join("")

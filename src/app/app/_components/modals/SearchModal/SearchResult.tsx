@@ -1,6 +1,7 @@
 import Icon from "@/theme/Icon"
 import { Trigger } from "@/types"
 import { Notes } from "@icon-park/react"
+import { useEffect, useRef } from "react"
 
 type SearchResultProps = {
     title: string,
@@ -15,11 +16,22 @@ export default function SearchResult({ title, query, onClick, selected, select }
     const preMatch = title.slice(0, matchIndex);
     const postMatch = title.slice(matchIndex + query.length);
 
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        const button = buttonRef.current;
+
+        if (selected && button) {
+            button.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [selected])
+
     return (
         <button
+            ref={buttonRef}
             onClick={onClick}
             onMouseEnter={select}
-            className={`w-full p-3 rounded-md flex items-center ${selected && "bg-gray-200"}`}
+            className={`w-full p-3 rounded-r-md flex items-center ${selected && "bg-gray-200"}`}
         >
             <Icon type={Notes} className="text-lg mr-3"/>
             {

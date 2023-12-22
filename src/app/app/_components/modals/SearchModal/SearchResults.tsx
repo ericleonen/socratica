@@ -61,7 +61,7 @@ export default function SearchResults({ query, close }: SearchResultsProps) {
     }, "Enter")
  
     return (
-        <div className="flex flex-col h-full flex-grow font-medium text-slate-500 px-5 py-3">
+        <div className="flex flex-col h-full flex-grow font-medium text-slate-500 pr-5 overflow-y-scroll bg-white rounded-md border-2 border-b-4 border-slate-700 mb-1">
             {
                 filteredIDs.map(ID =>
                     <SearchResult 

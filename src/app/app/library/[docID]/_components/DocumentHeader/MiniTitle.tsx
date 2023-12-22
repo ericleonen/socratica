@@ -12,6 +12,6 @@ export default function MiniTitle() {
             {title || "Untitled"}
         </p>
     ) : (
-        <Skeleton className="my-1">...</Skeleton>
+        <Skeleton className="my-1">Everything I'm not made me everythng I am</Skeleton>
     )
 }

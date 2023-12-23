@@ -1,6 +1,7 @@
 import { Question, QuestionType, QuestionsMap } from "@/db/schemas"
 import { ResourceStatus, SavingStatus } from "./types"
 import { createSlice } from "@reduxjs/toolkit";
+import { QuestionID } from "@/types";
 
 export type QuestionsState = {
     data: Question[][],
@@ -66,6 +67,14 @@ const questionsSlice = createSlice({
 
             state.data[sectionIndex][questionIndex].question = question;
             state.data[sectionIndex][questionIndex].type = type;
+        },
+        delete:(state, action) => {
+            const { sectionIndex, questionIndex } = action.payload as QuestionID;
+
+            const section = state.data[sectionIndex];
+            section.splice(questionIndex, 1);
+
+            state.data[sectionIndex] = section;
         },
         setAnswer: (state, action) => {
             type Payload = {

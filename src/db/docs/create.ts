@@ -9,6 +9,7 @@ import { useQuestions, useText } from "./read";
 import { MIN_SECTION_LENGTH } from "@/config";
 import { questionsActions } from "@/store/questionsSlice";
 import { docActions } from "@/store/docSlice";
+import { useSaveQuestions } from "./update";
 
 /**
  * Hook that provides a function to create a new doc. Opens the doc in the app after creation
@@ -72,6 +73,7 @@ export function useGenerateQuestions() {
     const hasQuestions = useQuestions().length > 0;
     
     const dispatch = useAppDispatch();
+    const saveQuestions = useSaveQuestions();
 
     return async () => {
         try {
@@ -99,6 +101,7 @@ export function useGenerateQuestions() {
 
                 if (done) {
                     dispatch(questionsActions.setGeneratingStatus("succeeded"));
+                    saveQuestions();
                     break;
                 };
 

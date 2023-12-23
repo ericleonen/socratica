@@ -12,3 +12,8 @@ export type Paragraph = {
  * Parameterless void-valued function
  */
 export type Trigger = () => (void | Promise<void>);
+
+export type QuestionID = {
+    sectionIndex: number,
+    questionIndex: number
+}

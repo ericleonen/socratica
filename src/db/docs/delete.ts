@@ -6,6 +6,10 @@ import { db } from "@/firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 import { docActions } from "@/store/docSlice";
 import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
+import { QuestionID, Trigger } from "@/types";
+import { useQuestions } from "./read";
+import { questionsActions } from "@/store/questionsSlice";
+import { useSaveQuestions } from "./update";
 
 export function useDeleteDoc() {
     const userID = useUserID();
@@ -32,5 +36,18 @@ export function useDeleteDoc() {
             dispatch(docActions.setSavingStatus("failed"));
             dispatch(docActions.setError(error.message));
         }
+    }
+}
+
+export function useDeleteQuestion(sectionIndex: number, questionIndex: number): Trigger {
+    const dispatch = useAppDispatch();
+    const saveQuestions = useSaveQuestions();
+
+    return () => {
+        dispatch(questionsActions.delete({
+            sectionIndex,
+            questionIndex
+        }));
+        saveQuestions();
     }
 }

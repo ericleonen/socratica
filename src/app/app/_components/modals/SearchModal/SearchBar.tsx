@@ -9,7 +9,7 @@ type SearchBarProps = {
 
 export default function SearchBar({ query, setQuery }: SearchBarProps) {
     return (
-        <div className="flex border-2 border-b-4 overflow-hidden rounded-md w-full border-slate-700 mb-1 items-center">
+        <div className="flex border-2 border-b-4 overflow-hidden rounded-md w-full border-slate-700 mb-3 items-center">
             <Icon type={Search} className="text-lg text-slate-700 border-r-2 border-slate-700 py-6 px-3 bg-amber-200"/>
             <input 
                 autoFocus

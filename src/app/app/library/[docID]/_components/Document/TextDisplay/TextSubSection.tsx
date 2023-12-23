@@ -8,8 +8,6 @@ type TextSubSectionProps = {
 const TextSubSection = React.forwardRef(
     (props: TextSubSectionProps, ref: React.Ref<HTMLSpanElement> | null) => {
         const { value, highlight } = props;
-        
-        console.log(value);
 
         if (value === "\n\n") {
             return <span ref={ref} className="absolute top-0" />;

@@ -19,12 +19,10 @@ export default function Questions() {
     const questionsStatus = useQuestionsGeneratingStatus();
 
     const dispatch = useAppDispatch();
-    const saveQuestions = useSaveQuestions();
     const saveText = useSaveText();
 
     useEffect(() => {
         if (questionsStatus === "succeeded") {
-            saveQuestions();
             saveText();
             dispatch(questionsActions.setGeneratingStatus("idle"));
         }

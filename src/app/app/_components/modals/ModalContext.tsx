@@ -13,7 +13,7 @@ const ModalContext = createContext<ModalContextType>({
     setSearchModal: (value: boolean) => {},
     setHelpModal: (value: boolean) => {},
     setSettingsModal: (value: boolean) => {},
-    setAccountModal: (value: boolean) => {},
+    setAccountModal: (value: boolean) => {}
 });
 
 export function useInitModalContext(): [
@@ -22,7 +22,7 @@ export function useInitModalContext(): [
         searchModal: boolean, 
         helpModal: boolean, 
         settingsModal: boolean, 
-        accountModal: boolean 
+        accountModal: boolean
     },
     ModalContextType
 ] {
@@ -37,7 +37,7 @@ export function useInitModalContext(): [
         searchModal,
         helpModal,
         settingsModal,
-        accountModal,
+        accountModal
     }, {
         setDeleteModal,
         setSearchModal,

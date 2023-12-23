@@ -83,51 +83,64 @@ export function useAutoSaveText(): Trigger {
 
 // QUESTIONS
 // ==========
-export function useSaveQuestions() {
+export function useSaveQuestions(): Trigger {
     const userID = useUserID();
     const docID = usePathDocID() as string;
     const questions = useQuestions();
 
-    const questionsMap: QuestionsMap = {};
-
-    // mapify
-    questions.forEach((section, sectionIndex) => {
-        questionsMap[sectionIndex] = {};
-
-        section.forEach((question, questionIndex) => {
-            questionsMap[sectionIndex][questionIndex] = question;
-        })
-    });
-
     const dispatch = useAppDispatch();
 
-    return async () => {
-        try {
-            dispatch(questionsActions.setSavingStatus("saving"));
-            const lastSaved = Timestamp.now();
+    const [canSave, setCanSave] = useState(false);
 
-            const docRef = doc(db, "users", userID, "docs", docID);
-            await updateDoc(docRef, {
-                questions: questionsMap
-            });
+    useEffect(() => {
+        if (!canSave) return;
 
-            const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
-            await updateDoc(docMetadataRef, {
-                lastSaved
-            });
+        const save = async () => {
+            try {
+                dispatch(questionsActions.setSavingStatus("saving"));
+                const lastSaved = Timestamp.now();
 
-        dispatch(docsMetadatasActions.setLastSaved({
-                docID,
-                lastSaved: lastSaved.toJSON()
-            }));
-            dispatch(questionsActions.setSavingStatus("saved"));
-        } catch (err) {
-            const error = err as Error;
+                const questionsMap: QuestionsMap = {};
 
-            dispatch(questionsActions.setSavingStatus("failed"));
-            dispatch(questionsActions.setError(error.message));
+                // mapify
+                questions.forEach((section, sectionIndex) => {
+                    questionsMap[sectionIndex] = {};
+
+                    section.forEach((question, questionIndex) => {
+                        questionsMap[sectionIndex][questionIndex] = question;
+                    })
+                });
+    
+                const docRef = doc(db, "users", userID, "docs", docID);
+                await updateDoc(docRef, {
+                    questions: questionsMap
+                });
+    
+                const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
+                await updateDoc(docMetadataRef, {
+                    lastSaved
+                });
+    
+            dispatch(docsMetadatasActions.setLastSaved({
+                    docID,
+                    lastSaved: lastSaved.toJSON()
+                }));
+                dispatch(questionsActions.setSavingStatus("saved"));
+            } catch (err) {
+                const error = err as Error;
+    
+                dispatch(questionsActions.setSavingStatus("failed"));
+                dispatch(questionsActions.setError(error.message));
+            }
         }
-    }
+        save().then(() => {
+            setCanSave(false);
+        });
+    }, [canSave]);
+
+    return () => {
+        setCanSave(true);
+    };
 }
 
 export function useSaveQuestion(sectionIndex: number, questionIndex: number) {

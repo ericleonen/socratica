@@ -3,7 +3,7 @@ import { TransferData } from "@icon-park/react";
 
 export default function SearchShortcuts() {
     return (
-        <div className="px-3 py-2 flex items-center border-2 border-b-4 rounded-md border-slate-700 justify-around text-slate-700 font-medium text-xs bg-amber-200">
+        <div className="px-3 py-2 flex items-center border-t-2 border-slate-700 justify-around text-slate-700 font-medium text-xs bg-amber-200">
             <div className="flex items-center">
                 <div className="bg-white mr-2 font-medium border-2 border-b-[3px] p-1 rounded-md border-slate-700">ENTER</div>
                 Open document

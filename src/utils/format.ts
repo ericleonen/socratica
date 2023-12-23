@@ -115,3 +115,7 @@ export function sentencify(text: string, locale: string = "en"): string[] {
 
     return sentences;
 }
+
+export function overwriteClasses(className: string | undefined) {
+    return className ? className.split(" ").map(x => `!${x}`).join(" ") : "";
+}

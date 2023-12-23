@@ -1,6 +1,6 @@
 import OptionsProvider, { Option } from "@/app/app/_components/OptionsProvider";
+import { useModalContext } from "@/app/app/_components/modals/ModalContext";
 import TooltipProvider from "@/components/TooltipProvider";
-import { useDeleteDoc } from "@/db/docs/delete";
 import Icon from "@/theme/Icon";
 import SecondaryButton from "@/theme/SecondaryButton";
 import { useCopyText } from "@/utils/input";
@@ -8,7 +8,8 @@ import { Copy, Delete, More } from "@icon-park/react";
 
 export default function DocOptions() {
     const copyText = useCopyText();
-    const deleteDoc = useDeleteDoc();
+    
+    const { setDeleteModal } = useModalContext();
 
     const options: Option[] = [
         {
@@ -19,7 +20,7 @@ export default function DocOptions() {
         {
             icon: Delete,
             text: "Delete document",
-            onClick: deleteDoc,
+            onClick: () => setDeleteModal(true),
             theme: "danger"
         }
     ];
@@ -32,6 +33,8 @@ export default function DocOptions() {
             >
                 <SecondaryButton
                     onClick={() => {}}
+                    size="mid"
+                    weight="light"
                 >
                     <Icon type={More} className="text-2xl"/>
                 </SecondaryButton>

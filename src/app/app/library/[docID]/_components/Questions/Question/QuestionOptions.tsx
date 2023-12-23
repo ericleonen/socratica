@@ -31,7 +31,9 @@ export default function QuestionOptions({ sectionIndex, questionIndex }: Questio
             >
                 <SecondaryButton 
                     onClick={() => {}}
-                    className="px-0 py-0 invisible group-hover:visible text-slate-700/70 hover:bg-slate-700/10"
+                    size="small"
+                    weight="light"
+                    className="invisible group-hover:visible"
                 >
                     <Icon type={More} className="text-2xl"/>
                 </SecondaryButton>

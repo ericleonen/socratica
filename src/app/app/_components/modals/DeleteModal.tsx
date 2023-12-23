@@ -38,7 +38,7 @@ export default function DeleteWarningModal() {
                 </SecondaryButton>
                 <PrimaryButton 
                     onClick={deleteAndClose}
-                    colors="bg-red-500/70 hover:bg-red-500/90"
+                    theme="danger"
                 >
                     Yes, delete
                 </PrimaryButton>

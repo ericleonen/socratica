@@ -5,29 +5,43 @@ export type User = {
     name: string,
     ID: string
     email: string,
-    authProvider: string,
-    tokens: number
+    authProvider: string
 }
 
 // users/{userID}/docs/{docID}
 export type Doc = {
     text: string[],
-    questions: Question[][]
+    questionIDs: string[][],
+    questions: QuestionsMap
 }
 
+/**
+ * Map of question ID to its data
+ */
+export type QuestionsMap = {
+    [ID: string]: Question
+}
+
+/**
+ * Type of question data
+ */
 export type Question = {
     question: string,
     answer: string,
     type: QuestionType
 }
 
-export type QuestionType = "comprehension" | "research" | "big idea" | "loading";
+/**
+ * Possible question types
+ */
+export type QuestionType = "comprehension" | "research" | "big idea" | "loading" | "deleting";
 
-export type QuestionsMap = {
-    [section: number]: {
-        [question: number]: Question
-    }
-}
+/**
+ * Type of questionIDs field in Firestore
+ */
+export type QuestionIDsMap = {
+    [index: number]: string[]
+};
 
 // users/{userID}/docsMetadatas/{docID}
 export type DocMetadata = {

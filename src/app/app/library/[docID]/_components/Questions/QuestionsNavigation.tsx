@@ -1,15 +1,14 @@
 import TooltipProvider from "@/components/TooltipProvider"
+import { useQuestionIDs } from "@/db/docs/read"
+import { useEditableFocusSection } from "@/db/docs/update"
 import Icon from "@/theme/Icon"
 import SecondaryButton from "@/theme/SecondaryButton"
 import { Left, Right } from "@icon-park/react"
 
-type QuestionsNavigationProps = {
-    section: number,
-    setSection: (section: number) => void,
-    numSections: number
-}
+export default function QuestionsNavigation() {
+    const [section, setSection] = useEditableFocusSection();
+    const numSections = useQuestionIDs().length;
 
-export default function QuestionsNavigation({ section, setSection, numSections }: QuestionsNavigationProps) {
     const goBack = () => setSection(Math.max(0, section - 1));
     const goForward = () => setSection(Math.min(numSections - 1, section + 1));
 
@@ -23,7 +22,6 @@ export default function QuestionsNavigation({ section, setSection, numSections }
                 >
                     <SecondaryButton
                         onClick={goBack}
-                        size="mid"
                         weight="light"
                         className={`${section === 0 && "invisible"}`}
                     >
@@ -39,7 +37,6 @@ export default function QuestionsNavigation({ section, setSection, numSections }
                 >
                     <SecondaryButton
                         onClick={goForward}
-                        size="mid"
                         weight="light"
                         className={`${section === numSections - 1 && "invisible"}`}
                     >

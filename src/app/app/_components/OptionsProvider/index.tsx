@@ -8,15 +8,20 @@ export type Option = {
     icon: React.ElementType,
     text: string,
     onClick: Trigger,
-    theme?: "danger"
+    theme?: "basic" | "danger" | "comprehension" | "research" | "big idea",
 }
 
 type OptionsProviderProps = {
     children: React.ReactNode,
-    options: Option[]
+    options: Option[],
+    disabled?: boolean,
+    className?: string,
+    align?: "right" | "left"
 }
 
-export default function OptionsProvider({ children, options }: OptionsProviderProps) {
+export default function OptionsProvider({ children, options, disabled, className, align }: OptionsProviderProps) {
+    if (!align) align = "right";
+
     const divRef = useRef<HTMLDivElement>(null);
 
     const [show, setShow] = useState(false);
@@ -24,7 +29,7 @@ export default function OptionsProvider({ children, options }: OptionsProviderPr
     return <>
         <div 
             ref={divRef}
-            onClick={() => setShow(true)}
+            onClick={() => { if (!disabled) setShow(true) }}
         >
             {children}
         </div>
@@ -35,11 +40,16 @@ export default function OptionsProvider({ children, options }: OptionsProviderPr
                 onClick={() => setShow(false)}
             >
                 <PopUp 
-                    style={{
-                        top: divRef.current.getBoundingClientRect().bottom,
-                        right: window.innerWidth - divRef.current.getBoundingClientRect().right
-                    }}
-                    className="bg-white rounded-md p-2 w-[16rem] right-4 top-16 border-2 border-b-4 border-slate-700 fixed translate-y-1"
+                    style={
+                        align === "right" ? {
+                            top: divRef.current.getBoundingClientRect().bottom,
+                            right: window.innerWidth - divRef.current.getBoundingClientRect().right
+                        } : {
+                            top: divRef.current.getBoundingClientRect().bottom,
+                            left: divRef.current.getBoundingClientRect().left
+                        }
+                    }
+                    className={`bg-white rounded-md p-2 border-2 border-slate-700 fixed translate-y-1 ${className || ""}`}
                 >{
                     options.map(option =>
                         <Option

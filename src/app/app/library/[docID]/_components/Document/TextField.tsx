@@ -1,13 +1,14 @@
 import Skeleton from "@/components/Skeleton";
 import { useDocLoadingStatus } from "@/db/docs/read";
-import { useAutoSaveText, useEditableText } from "@/db/docs/update";
+import { useAutoSave, useSaveText, useEditableText } from "@/db/docs/update";
 import { autoResize, handleChange } from "@/utils/input";
 
 export default function TextField() {
     const [text, setText] = useEditableText();
     const status = useDocLoadingStatus();
 
-    const allowSave = useAutoSaveText();
+    const saveText = useSaveText();
+    const allowSaves = useAutoSave(saveText, text);
 
     return status === "succeeded" ? (
         <textarea
@@ -15,7 +16,7 @@ export default function TextField() {
             value={text}
             onChange={(e) => {
                 handleChange(setText)(e);
-                allowSave();
+                allowSaves();
             }}
             placeholder="Paste some interesting text here..."
             className="placeholder:text-slate-700/70 h-min mt-6 w-full resize-none bg-transparent focus:outline-none text-slate-700"

@@ -7,7 +7,7 @@ import { ResourceStatus, SavingStatus } from "@/store/types";
 import { useEffect } from "react";
 import { DocMetadataMap, fetchDocsMetadatas } from "@/store/docsMetadatasSlice";
 import { usePathDocID } from "@/utils/routing";
-import { Question, QuestionType } from "../schemas";
+import { Question, QuestionType, QuestionsMap } from "../schemas";
 import { db } from "@/firebase";
 import { Timestamp, doc, getDoc } from "firebase/firestore";
 import { docActions } from "@/store/docSlice";
@@ -31,23 +31,26 @@ export function useLoadDoc() {
 
         const docRef = doc(db, "users", userID, "docs", docID);
         getDoc(docRef)
-        .then(docRes => {
-            const data = docRes.data();
+            .then(docRes => {
+                const data = docRes.data();
+                if (data) {
+                    dispatch(docActions.setText(data.text));
+                    dispatch(questionsActions.setQuestions({
+                        map: data.questions,
+                        IDs: data.questionIDs
+                    }));
 
-            if (data) {
-                dispatch(docActions.setText(data.text));
-                dispatch(questionsActions.setQuestions(data.questions));
-
-                dispatch(docActions.setLoadingStatus("succeeded"));
-                dispatch(questionsActions.setLoadingStatus("succeeded"));
-            } else {
-                throw new Error("Document doesn't exist");
-            }
-        }).catch((err: Error) => {
-            dispatch(docActions.setLoadingStatus("failed"));
-            dispatch(questionsActions.setLoadingStatus("failed"));
-            dispatch(docActions.setError(err.message));
-        })
+                    dispatch(docActions.setLoadingStatus("succeeded"));
+                    dispatch(questionsActions.setLoadingStatus("succeeded"));
+                } else {
+                    throw new Error("Document doesn't exist");
+                }
+            })
+            .catch((err: Error) => {
+                dispatch(docActions.setLoadingStatus("failed"));
+                dispatch(questionsActions.setLoadingStatus("failed"));
+                dispatch(docActions.setError(err.message));
+            })
     }, [userID, docID]);
 }
 
@@ -77,9 +80,17 @@ export function useDocSavingStatus() {
 
 // QUESTIONS
 // ==========
+export function useQuestionIDs() {
+    const questions = useSelector<RootState, string[][]>(
+        state => state.questions.IDs
+    );
+
+    return questions;
+}
+
 export function useQuestions() {
-    const questions = useSelector<RootState, Question[][]>(
-        state => state.questions.data
+    const questions = useSelector<RootState, QuestionsMap>(
+        state => state.questions.map
     );
 
     return questions;
@@ -87,7 +98,7 @@ export function useQuestions() {
 
 export function useHasQuestions() {
     const hasQuestions = useSelector<RootState, boolean>(
-        state => state.questions.data.length > 0
+        state => state.questions.IDs.length > 0
     );
 
     return hasQuestions;
@@ -117,25 +128,25 @@ export function useFocusSection() {
     return section;
 }
 
-export function useQuestion(sectionIndex: number, questionIndex: number) {
+export function useQuestion(ID: string) {
     const question = useSelector<RootState, Question>(
-        state => state.questions.data[sectionIndex][questionIndex]
+        state => state.questions.map[ID]
     );
 
     return question;
 }
 
-export function useQuestionType(sectionIndex: number, questionIndex: number) {
+export function useQuestionType(ID: string) {
     const type = useSelector<RootState, QuestionType>(
-        state => state.questions.data[sectionIndex][questionIndex].type
+        state => state.questions.map[ID].type
     );
 
     return type;
 }
 
-export function useAnswer(sectionIndex: number, questionIndex: number) {
+export function useAnswer(ID: string) {
     const answer = useSelector<RootState, string>(
-        state => state.questions.data[sectionIndex][questionIndex].answer
+        state => state.questions.map[ID].answer
     );
 
     return answer;

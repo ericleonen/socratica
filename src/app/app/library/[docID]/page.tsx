@@ -9,7 +9,7 @@ export default function DocPage() {
     useLoadDoc();
 
     return (
-        <div className="transition-all duration-75 flex flex-col w-full h-full bg-yellow-50">
+        <div className="transition-all duration-75 flex flex-col w-full h-full bg-white">
             <DocumentHeader />
             <div className="flex-grow flex overflow-hidden">
                 <Document />

@@ -32,6 +32,7 @@ export default function DeleteWarningModal() {
             <div className="flex justify-end mt-5">
                 <SecondaryButton 
                     onClick={close}
+                    size="lg"
                     className="mr-3"
                 >
                     Cancel

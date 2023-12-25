@@ -1,7 +1,7 @@
 // Questions API
-export const TEST_MODE = false; // true to generate dummy questions, false for AI questions
+export const TEST_MODE = true; // true to generate dummy questions, false for AI questions
 export const MIN_SECTION_LENGTH = 500;
-export const CHARS_PER_COMP = 250;
+export const CHARS_PER_COMP = 500;
 export const SECTIONS_PER_BIG_IDEA = 3;
 
 

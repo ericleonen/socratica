@@ -15,6 +15,13 @@ const config: Config = {
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
+      boxShadow: {
+        "sm": "2px 2px #334155",
+        "md": "3px 3px #334155"
+      },
+      transitionProperty: {
+        "margin": "margin"
+      }
     },
     colors: {
       transparent: 'transparent',

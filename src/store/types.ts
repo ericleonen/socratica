@@ -1,8 +1,14 @@
+/**
+ * The loading status of a resource
+ */
 export type ResourceStatus = "idle" | "loading" | "succeeded" | "failed";
 
-export type UserDocID = {
-    userID: string,
-    docID: string
-};
+/**
+ * The saving status of a resource
+ */
+export type SavingStatus = "deleting" | "saving" | "saved" | "failed";
 
-export type SavingStatus = "deleting" | "unsaved" | "saving" | "saved" | "failed";
+/**
+ * The life stages of an individual question
+ */
+export type QuestionStatus = "loading" | "ready" | "deleting"

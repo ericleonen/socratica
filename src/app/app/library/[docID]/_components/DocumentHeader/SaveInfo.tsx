@@ -14,7 +14,7 @@ export default function SaveInfo() {
 
     const someFailed = statusArr.includes("failed");
     const deleting = docSavingStatus === "deleting";
-    const someSaving = statusArr.includes("unsaved") || statusArr.includes("saving");
+    const someSaving = statusArr.includes("saving");
     const allSaved = (
         docSavingStatus === questionsSavingStatus
         && questionsSavingStatus === docsMetadatas

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useDocsMetadatas } from "@/db/docs/read";
 import { usePathname, useRouter } from "next/navigation";
 import { usePathDocID } from "@/utils/routing";
+import { Transition } from "@headlessui/react";
 
 export default function LibraryList() {
     const docsMetadatas = useDocsMetadatas();
@@ -26,7 +27,7 @@ export default function LibraryList() {
 
     return (
         <div className="flex flex-col flex-grow w-full mt-8 overflow-hidden">
-            <div className={`py-1 flex items-center w-full border-slate-200 ${showRecent && "border-b-2"}`}>
+            <div className="py-1 flex items-center w-full">
                 <SecondaryButton 
                     onClick={toggleRecent}
                     className="mr-2"
@@ -35,19 +36,20 @@ export default function LibraryList() {
                 </SecondaryButton>
                 <p className="text-sm tracking-wider font-bold text-slate-700/50 uppercase">Documents</p>
             </div>
-            <div className="w-full flex-grow overflow-y-scroll pb-5">{
-                showRecent && <>{
-                    sortedIDs.map(ID => 
-                        <NavButton
-                            key={ID}
-                            text={docsMetadatas[ID].title || "Untitled"}
-                            onClick={() => router.push(`/app/library/${ID}`)}
-                            active={ID === pathDocID}
-                            icon={Notes}
-                        />    
-                    )
-                }</>
-            }</div>
+            <Transition
+                show={showRecent} 
+                className="w-full flex-grow overflow-y-scroll pb-5 border-t-2 border-slate-200"
+            >{
+                sortedIDs.map(ID => 
+                    <NavButton
+                        key={ID}
+                        text={docsMetadatas[ID].title || "Untitled"}
+                        onClick={() => router.push(`/app/library/${ID}`)}
+                        active={ID === pathDocID}
+                        icon={Notes}
+                    />    
+                )
+            }</Transition>
         </div>
     );
 }

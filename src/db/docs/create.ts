@@ -5,11 +5,12 @@ import { Timestamp, addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { useQuestions, useText } from "./read";
+import { useHasQuestions, useText } from "./read";
 import { MIN_SECTION_LENGTH } from "@/config";
 import { questionsActions } from "@/store/questionsSlice";
 import { docActions } from "@/store/docSlice";
 import { useSaveQuestions } from "./update";
+import { Question } from "../schemas";
 
 /**
  * Hook that provides a function to create a new doc. Opens the doc in the app after creation
@@ -32,7 +33,8 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
             const docsRef = collection(db, "users", userID, "docs");
             const newDocRef = await addDoc(docsRef, {
                 text: [""],
-                questions: {}
+                questions: {},
+                questionIDs: {}
             });
 
             const docID = newDocRef.id;
@@ -70,10 +72,9 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
  */
 export function useGenerateQuestions() {
     const text = useText().join("");
-    const hasQuestions = useQuestions().length > 0;
+    const hasQuestions = useHasQuestions();
     
     const dispatch = useAppDispatch();
-    const saveQuestions = useSaveQuestions();
 
     return async () => {
         try {
@@ -95,31 +96,60 @@ export function useGenerateQuestions() {
             if (!questionsRes.body) return;
 
             const reader = questionsRes.body.getReader();
+            let sectionIndex = 0;
+            let questionIndex = 0;
+
+            const loadingID = crypto.randomUUID();
 
             while (true) {
                 const { done, value } = await reader.read();
 
                 if (done) {
                     dispatch(questionsActions.setGeneratingStatus("succeeded"));
-                    saveQuestions();
                     break;
                 };
 
-                let chunk = new TextDecoder('utf-8').decode(value);
-                const update = JSON.parse(chunk);
+                let chunks = new TextDecoder('utf-8').decode(value);
+                const update = JSON.parse(chunks);
                 
                 switch (update.type) {
                     case "sectionIntervals":
-                    const intervals = update.data;
+                        const intervals = update.data as [number, number][];
+                        const numSections = intervals.length;
 
-                        dispatch(questionsActions.scaffoldSections(intervals.length));
+                        dispatch(questionsActions.scaffoldSections(numSections));
                         dispatch(docActions.sectionifyText(intervals));
-                        break;
-                    case "numQuestions":
-                        dispatch(questionsActions.scaffoldQuestions(update.data));
+
+                        dispatch(questionsActions.add({
+                            sectionIndex: 0,
+                            type: "loading",
+                            ID: loadingID
+                        }));
                         break;
                     case "newQuestion":
-                        dispatch(questionsActions.setQuestion(update.data));
+                        const { type, question, ID, last } = update.data;
+
+                        dispatch(questionsActions.add({
+                            questionIndex,
+                            sectionIndex,
+                            type,
+                            question,
+                            ID,
+                            replace: last
+                        }));
+
+                        questionIndex++;
+
+                        if (last) {
+                            sectionIndex++;
+                            questionIndex = 0;
+
+                            dispatch(questionsActions.add({
+                                sectionIndex,
+                                type: "loading",
+                                ID: loadingID
+                            }));
+                        }
                         break;
                     default:
                         throw new Error(`Invalid update received: ${update.type}`);

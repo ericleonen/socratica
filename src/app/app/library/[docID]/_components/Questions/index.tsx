@@ -1,80 +1,49 @@
 "use client"
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import PanelResizer from "./PanelResizer";
 import QuestionsNavigation from "./QuestionsNavigation";
 import GenerateQuestions from "./GenerateQuestions";
-import { useDocLoadingStatus, useQuestions, useQuestionsGeneratingStatus } from "@/db/docs/read";
-import { useEditableFocusSection, useSaveQuestions, useSaveText } from "@/db/docs/update";
-import { useAppDispatch } from "@/store";
-import Question from "./Question";
-import { questionsActions } from "@/store/questionsSlice";
+import { useDocLoadingStatus, useHasQuestions } from "@/db/docs/read";
+import { HeightStateContext, WidthStateContext } from "./DimensionsContext";
+import QuestionSlider from "./QuestionSlider";
+import SkeletonList from "@/components/SkeletonList";
+import Skeleton from "@/components/Skeleton";
 
 export default function Questions() {
-    const [width, setWidth] = useState(384); // in px
-    const [height, setHeight] = useState<number | null>(null);
-    const [section, setSection] = useEditableFocusSection();
+    const [width, setWidth] = useState(384);
+    const [height, setHeight] = useState<number>(0);
+
     const status = useDocLoadingStatus();
-    const questions = useQuestions();
-    const questionsStatus = useQuestionsGeneratingStatus();
+    const hasQuestions = useHasQuestions();
 
-    const dispatch = useAppDispatch();
-    const saveText = useSaveText();
-
-    useEffect(() => {
-        if (questionsStatus === "succeeded") {
-            saveText();
-            dispatch(questionsActions.setGeneratingStatus("idle"));
-        }
-    }, [questionsStatus]);
-
-    return (<>
-        <PanelResizer setWidth={setWidth} />
-        <div 
-            style={{ width: `${width}px` }}
-            className="h-full border-slate-700 border-l-2 flex flex-col overflow-y-scroll overflow-x-hidden"
-        >{
-            status === "succeeded" ? <>{
-                questions.length === 0 ? <GenerateQuestions /> : <>
-                    <QuestionsNavigation
-                        numSections={questions.length}
-                        {...{section, setSection}} 
-                    />
-                    <div 
-                        style={{ 
-                            width: `${width * questions.length}px`,
-                            marginLeft: `-${width * section}px`,
-                            height: height ? `${height}px` : "auto"
-                        }}
-                        className="shrink-0 flex overflow-hidden transition-all"
-                    >
-                        {
-                            questions.map((_, sectionIndex) =>
-                                <div 
-                                    key={`questionSection_${sectionIndex}`}
-                                    style={{ width: `${width}px` }}
-                                    className="px-4 shrink-0 relative"
-                                >{
-                                    questions[sectionIndex].map((_, questionIndex) =>
-                                        <Question 
-                                            key={`question_${sectionIndex}_${questionIndex}`}
-                                            {...{sectionIndex, questionIndex}}
-                                            setHeight={
-                                                sectionIndex === section && 
-                                                questionIndex === questions[sectionIndex].length - 1 ?
-                                                setHeight : undefined
-                                            }
-                                        />
-                                    )
-                                }</div>
-                            )
-                        }
-                    </div>
-                </>
-            }</> : <>
-            
-            </>
-        }
-        </div>
-    </>)
+    return (
+        <WidthStateContext.Provider value={{ width, setWidth }}>
+            <HeightStateContext.Provider value={{ height, setHeight }}>
+                <PanelResizer />
+                <div 
+                    style={{ width: `${width}px` }}
+                    className="h-full border-slate-700 border-l-2 flex flex-col overflow-y-scroll overflow-x-hidden"
+                >{
+                    status !== "succeeded" ? (
+                        <div className="h-full flex flex-col w-full p-3">
+                            <Skeleton className="h-16"/>
+                            <SkeletonList 
+                                count={3}
+                                className="mt-8 h-20"
+                            />
+                        </div>
+                    ) : hasQuestions ? (
+                        <div className="flex-grow">
+                            <QuestionsNavigation />
+                            <QuestionSlider />
+                        </div>
+                    ) : (
+                        <GenerateQuestions />
+                    )
+                }
+                </div>
+            </HeightStateContext.Provider>
+        </WidthStateContext.Provider>
+    )
 }

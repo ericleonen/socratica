@@ -1,38 +1,66 @@
 import { useAppDispatch } from "@/store";
-import { useAnswer, useDocSavingStatus, useDocsMetadatasSavingStatus, useFocusSection, useQuestion, useQuestions, useQuestionsSavingStatus, useText, useTitle } from "./read";
+import { useAnswer, useFocusSection, useQuestion, useQuestionIDs, useQuestions, useText, useTitle } from "./read";
 import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
 import { usePathDocID } from "@/utils/routing";
 import { useUserID } from "../user";
 import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AUTOSAVE_DELAY } from "@/config";
 import { Trigger } from "@/types";
-import { QuestionType, QuestionsMap } from "../schemas";
+import { QuestionIDsMap, QuestionType } from "../schemas";
 import { docActions } from "@/store/docSlice";
 import { questionsActions } from "@/store/questionsSlice";
 
+// GENERIC
+// ==========
+export function useSave(saveCallback: Trigger): Trigger {
+    const [canSave, setCanSave] = useState(false);
+
+    useEffect(() => {
+        if (!canSave) return;
+
+        saveCallback();
+        setCanSave(false);
+
+    }, [canSave]);
+
+    return () => setCanSave(true);
+}
+
+export function useAutoSave(saveCallback: Trigger, dependency: string, delay: number = AUTOSAVE_DELAY) {
+    const [allowSaves, setAllowSaves] = useState(false);
+
+    useEffect(() => {
+        if (!allowSaves) return;
+
+        const timeout = setTimeout(saveCallback, delay);
+
+        return () => clearTimeout(timeout);
+    }, [allowSaves, dependency]);
+
+    return () => setAllowSaves(true);
+}
+ 
 // DOCS
 // ==========
 export function useEditableText(): [string, (newText: string) => void] {
-    const text = useText().join("");
+    const text = useText();
     const dispatch = useAppDispatch();
-    const hasQuestions = useQuestions().length > 0;
 
     return [
-        text,
+        text.join(""),
         (newText: string) => dispatch(docActions.setText([newText]))
     ]
 }
 
 export function useSaveText(): Trigger {
     const userID = useUserID();
-    const docID = usePathDocID() as string;
+    const docID = usePathDocID();
     const text = useText();
 
     const dispatch = useAppDispatch();
-
-    return async () => {
+    const saveCallback = useCallback(async () => {
         try {
             dispatch(docActions.setSavingStatus("saving"));
             const lastSaved = Timestamp.now();
@@ -58,27 +86,10 @@ export function useSaveText(): Trigger {
             dispatch(docActions.setSavingStatus("failed"));
             dispatch(docActions.setError(error));
         }
-    }
-}
+    }, [userID, docID, text.join("")]);
+    const saveText = useSave(saveCallback);
 
-export function useAutoSaveText(): Trigger {
-    const savingStatus = useDocSavingStatus();
-    const text = useText();
-    
-    const dispatch = useAppDispatch();
-    const saveText = useSaveText();
-
-    useEffect(() => {
-        let countdown = -1;
-
-        if (savingStatus === "unsaved") {
-            countdown = window.setTimeout(saveText, AUTOSAVE_DELAY);
-        }
-
-        return () => clearTimeout(countdown);
-    }, [text]);
-
-    return () => { dispatch(docActions.setSavingStatus("unsaved")) };
+    return saveText;
 }
 
 // QUESTIONS
@@ -86,79 +97,26 @@ export function useAutoSaveText(): Trigger {
 export function useSaveQuestions(): Trigger {
     const userID = useUserID();
     const docID = usePathDocID() as string;
+    const questionIDs = useQuestionIDs();
     const questions = useQuestions();
 
     const dispatch = useAppDispatch();
-
-    const [canSave, setCanSave] = useState(false);
-
-    useEffect(() => {
-        if (!canSave) return;
-
-        const save = async () => {
-            try {
-                dispatch(questionsActions.setSavingStatus("saving"));
-                const lastSaved = Timestamp.now();
-
-                const questionsMap: QuestionsMap = {};
-
-                // mapify
-                questions.forEach((section, sectionIndex) => {
-                    questionsMap[sectionIndex] = {};
-
-                    section.forEach((question, questionIndex) => {
-                        questionsMap[sectionIndex][questionIndex] = question;
-                    })
-                });
-    
-                const docRef = doc(db, "users", userID, "docs", docID);
-                await updateDoc(docRef, {
-                    questions: questionsMap
-                });
-    
-                const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
-                await updateDoc(docMetadataRef, {
-                    lastSaved
-                });
-    
-            dispatch(docsMetadatasActions.setLastSaved({
-                    docID,
-                    lastSaved: lastSaved.toJSON()
-                }));
-                dispatch(questionsActions.setSavingStatus("saved"));
-            } catch (err) {
-                const error = err as Error;
-    
-                dispatch(questionsActions.setSavingStatus("failed"));
-                dispatch(questionsActions.setError(error.message));
-            }
-        }
-        save().then(() => {
-            setCanSave(false);
-        });
-    }, [canSave]);
-
-    return () => {
-        setCanSave(true);
-    };
-}
-
-export function useSaveQuestion(sectionIndex: number, questionIndex: number) {
-    const userID = useUserID();
-    const docID = usePathDocID() as string;
-
-    const question = useQuestion(sectionIndex, questionIndex);
-
-    const dispatch = useAppDispatch();
-
-    return async () => {
+    const saveCallback = useCallback(async () => {
         try {
             dispatch(questionsActions.setSavingStatus("saving"));
             const lastSaved = Timestamp.now();
 
+            const questionIDsMap: QuestionIDsMap = {};
+
+            // mapify
+            questionIDs.forEach((sectionIDs, sectionIndex) => {
+                questionIDsMap[sectionIndex] = sectionIDs;
+            });
+
             const docRef = doc(db, "users", userID, "docs", docID);
             await updateDoc(docRef, {
-                [`questions.${sectionIndex}.${questionIndex}`]: question
+                questions,
+                questionIDs: questionIDsMap
             });
 
             const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
@@ -177,37 +135,58 @@ export function useSaveQuestion(sectionIndex: number, questionIndex: number) {
             dispatch(questionsActions.setSavingStatus("failed"));
             dispatch(questionsActions.setError(error.message));
         }
-    }
+    }, [userID, docID, JSON.stringify(questionIDs), JSON.stringify(questions)]);
+    const saveQuestions = useSave(saveCallback);
+
+    return saveQuestions;
 }
 
-export function useAutoSaveAnswer(sectionIndex: number, questionIndex: number) {
-    const savingStatus = useQuestionsSavingStatus();
-    const answer = useAnswer(sectionIndex, questionIndex);
-    
+export function useSaveQuestion(ID: string) {
+    const userID = useUserID();
+    const docID = usePathDocID() as string;
+    const question = useQuestion(ID);
+
     const dispatch = useAppDispatch();
-    const saveAnswer = useSaveQuestion(sectionIndex, questionIndex);
+    const saveCallback = useCallback(async () => {
+        try {
+            dispatch(questionsActions.setSavingStatus("saving"));
+            const lastSaved = Timestamp.now();
 
-    useEffect(() => {
-        let countdown = -1;
+            const docRef = doc(db, "users", userID, "docs", docID);
+            await updateDoc(docRef, {
+                [`questions.${ID}`]: question
+            });
 
-        if (savingStatus === "unsaved") {
-            countdown = window.setTimeout(saveAnswer, AUTOSAVE_DELAY);
+            const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
+            await updateDoc(docMetadataRef, {
+                lastSaved
+            });
+
+            dispatch(docsMetadatasActions.setLastSaved({
+                docID,
+                lastSaved: lastSaved.toJSON()
+            }));
+            dispatch(questionsActions.setSavingStatus("saved"));
+        } catch (err) {
+            const error = err as Error;
+
+            dispatch(questionsActions.setSavingStatus("failed"));
+            dispatch(questionsActions.setError(error.message));
         }
+    }, [userID, docID, JSON.stringify(question)]);
+    const saveQuestion = useSave(saveCallback);
 
-        return () => clearTimeout(countdown);
-    }, [answer]);
-
-    return () => dispatch(questionsActions.setSavingStatus("unsaved"));
+    return saveQuestion;
 }
 
-export function useEditableQuestionDraft(sectionIndex: number, questionIndex: number): [
+export function useEditableQuestionDraft(ID: string): [
     string, 
     QuestionType, 
     (newQuestion: string) => void, 
     (newType: QuestionType) => void,
     Trigger
 ] {
-    const { question, type } = useQuestion(sectionIndex, questionIndex);
+    const { question, type } = useQuestion(ID);
     const [questionDraft, setQuestionDraft] = useState(question);
     const [typeDraft, setTypeDraft] = useState(type);
 
@@ -220,8 +199,7 @@ export function useEditableQuestionDraft(sectionIndex: number, questionIndex: nu
         setTypeDraft,
         () => {
             dispatch(questionsActions.setQuestion({
-                sectionIndex,
-                questionIndex,
+                ID,
                 question: questionDraft,
                 type: typeDraft
             }))
@@ -229,17 +207,16 @@ export function useEditableQuestionDraft(sectionIndex: number, questionIndex: nu
     ]   
 }
 
-export function useEditableAnswer(sectionIndex: number, questionIndex: number):
+export function useEditableAnswer(ID: string):
     [string, (newAnswer: string) => void] 
 {
-    const answer = useAnswer(sectionIndex, questionIndex);
+    const answer = useAnswer(ID);
     
     const dispatch = useAppDispatch();
 
     const setAnswer = (newAnswer: string) => {
-        dispatch(questionsActions.setAnswer({
-            sectionIndex,
-            questionIndex,
+        dispatch(questionsActions.setQuestion({
+            ID,
             answer: newAnswer
         }));
     };
@@ -277,12 +254,11 @@ export function useEditableTitle(): [string, (newTitle: string) => void] {
 
 export function useSaveTitle() {
     const userID = useUserID();
-    const docID = usePathDocID() as string;
+    const docID = usePathDocID();
     const title = useTitle();
 
     const dispatch = useAppDispatch();
-
-    return async () => {
+    const saveCallback = useCallback(async () => {
         try {
             dispatch(docsMetadatasActions.setSavingStatus("saving"));
             const lastSaved = Timestamp.now();
@@ -304,24 +280,8 @@ export function useSaveTitle() {
             dispatch(docsMetadatasActions.setSavingStatus("failed"));
             dispatch(docsMetadatasActions.setError(error.message));
         }
-    }
-}
+    }, [userID, docID, title]);
+    const saveTitle = useSave(saveCallback);
 
-export function useAutoSaveTitle() {
-    const savingStatus = useDocsMetadatasSavingStatus();
-    
-    const dispatch = useAppDispatch();
-    const saveTitle = useSaveTitle();
-
-    useEffect(() => {
-        let countdown = -1;
-
-        if (savingStatus === "unsaved") {
-            countdown = window.setTimeout(saveTitle, AUTOSAVE_DELAY);
-        }
-
-        return () => clearTimeout(countdown);
-    }, [saveTitle]);
-
-    return () => dispatch(docsMetadatasActions.setSavingStatus("unsaved"));
+    return saveTitle;
 }

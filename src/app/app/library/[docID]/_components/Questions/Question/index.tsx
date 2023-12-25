@@ -1,37 +1,38 @@
 import QuestionField from "./QuestionField"
 import AnswerField from "./AnswerField"
-import { useQuestionType } from "@/db/docs/read"
-import PopUp from "@/components/PopUp"
+import { useQuestions } from "@/db/docs/read"
+import { useContext, useEffect, useRef } from "react"
+import { HeightStateContext } from "../DimensionsContext"
 
-export type QuestionProps = {
-    sectionIndex: number,
-    questionIndex: number,
-    setHeight?: (height: number | null) => void
+type QuestionProps = {
+    ID: string,
+    isBottom: boolean
 }
 
-export default function Question({ sectionIndex, questionIndex, setHeight }: QuestionProps) {
-    const loading = useQuestionType(sectionIndex, questionIndex) === "loading";
+export type QuestionIDProp = { ID: string };
 
-    const adjustHeight = (elem: HTMLDivElement | null) => {
-        if (elem && setHeight) {
-            setHeight(elem.offsetTop + elem.offsetHeight + 32)
-        }
-    }
+export default function Question({ ID, isBottom }: QuestionProps) {
+    const questions = useQuestions();
 
-    return !loading ? (
+    const { setHeight } = useContext(HeightStateContext);
+
+    const divRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const div = divRef.current;
+        if (div && isBottom) {
+            setHeight(div.offsetTop + div.offsetHeight + 32)
+        };
+    }, [ID, isBottom, JSON.stringify(questions)]);
+
+    return (
         <div 
-            ref={adjustHeight}
-            className="shrink-0 flex flex-col border-2 border-b-4 border-slate-700 rounded-md overflow-hidden mb-8"
+            ref={divRef}
         >
-            <QuestionField {...{sectionIndex, questionIndex}} />
-            <AnswerField {...{sectionIndex, questionIndex}} />
-        </div>
-    ) : (
-        <div ref={adjustHeight}>
-            <PopUp className="shrink-0 flex flex-col border-2 border-b-4 border-slate-700 rounded-md overflow-hidden mb-8">
-                <QuestionField {...{sectionIndex, questionIndex}} />
-                <AnswerField {...{sectionIndex, questionIndex}} />
-            </PopUp>
+            <div className="shrink-0 flex flex-col border-2 border-slate-700 shadow-sm rounded-md overflow-hidden mb-8">
+                <QuestionField {...{ID}} />
+                <AnswerField {...{ID}} />
+            </div>
         </div>
     )
 }

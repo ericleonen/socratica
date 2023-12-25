@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { Pipeline } from "@xenova/transformers";
 import { Matrix, add, dotDivide, exp, index, map, matrix, multiply, transpose, zeros } from "mathjs";
-import { linspace } from "./helpers";
+import { generateIDs, linspace } from "./helpers";
 import { CHARS_PER_COMP, MIN_SECTION_LENGTH, SECTIONS_PER_BIG_IDEA, TEST_MODE } from "@/config";
 
 function sleep(time: number) {
@@ -126,60 +126,44 @@ export default async function* generate(
     for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
         await sleep(1000);
 
-        yield JSON.stringify({
-            type: "numQuestions",
-            data: {
-                sectionIndex,
-                numQuestions: 
-                    numCompQuestions[sectionIndex] // comprehension qs
-                    + 1 // research qs
-                    + (bigIdeaIndices.includes(sectionIndex) ? 1 : 0) // big idea qs
-            }
-        });
-
-        let questionIndex = 0;
-
         if (TEST_MODE) {
             for (let j = 0; j < numCompQuestions[sectionIndex]; j++) {
                 await sleep(2000);
                 yield JSON.stringify({
                     type: "newQuestion",
                     data: {
-                        sectionIndex,
-                        questionIndex,
                         type: "comprehension",
                         question: "You understand this?",
+                        ID: crypto.randomUUID(),
+                        last: false
                     }
                 });
-
-                questionIndex++;
             }
+
+            const isBigIdea = bigIdeaIndices.includes(sectionIndex);
+
             await sleep(2000);
             yield JSON.stringify({
                 type: "newQuestion",
                 data: {
-                    sectionIndex,
-                    questionIndex,
                     type: "research",
                     question: "Can you find this?",
+                    ID: crypto.randomUUID(),
+                    last: !isBigIdea
                 }
             });
 
-            questionIndex++;
-
-            if (bigIdeaIndices.includes(sectionIndex)) {
+            if (isBigIdea) {
                 await sleep(2000);
                 yield JSON.stringify({
                     type: "newQuestion",
                     data: {
-                        sectionIndex,
-                        questionIndex,
                         type: "big idea",
                         question: "What's the big idea?",
+                        ID: crypto.randomUUID(),
+                        last: true
                     }
                 });
-
-                questionIndex++;
             }
 
             continue;
@@ -209,14 +193,10 @@ export default async function* generate(
                 yield JSON.stringify({
                     type: "newQuestion",
                     data: {
-                        sectionIndex,
-                        questionIndex,
                         type: "comprehension",
                         question: line.replace(`${parseInt(line)}.`, "").trim(),
                     }
                 });
-
-                questionIndex++;
             }
         }
         
@@ -233,14 +213,10 @@ export default async function* generate(
             yield JSON.stringify({
                 type: "newQuestion",
                 data: {
-                    sectionIndex,
-                    questionIndex,
                     type: "research",
                     question: researchRes,
                 }
             });
-
-            questionIndex++;
         }
 
         currBigIdeaContext += section;
@@ -261,14 +237,10 @@ export default async function* generate(
                 yield JSON.stringify({
                     type: "newQuestion",
                     data: {
-                        sectionIndex,
-                        questionIndex,
                         type: "big idea",
                         question: bigIdeaRes,
                     }
                 });
-    
-                questionIndex++;
             }
         }
     }

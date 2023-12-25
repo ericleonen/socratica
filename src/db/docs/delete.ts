@@ -6,8 +6,7 @@ import { db } from "@/firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 import { docActions } from "@/store/docSlice";
 import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
-import { QuestionID, Trigger } from "@/types";
-import { useQuestions } from "./read";
+import { Trigger } from "@/types";
 import { questionsActions } from "@/store/questionsSlice";
 import { useSaveQuestions } from "./update";
 
@@ -29,6 +28,8 @@ export function useDeleteDoc() {
             await deleteDoc(docMetadataRef);
 
             dispatch(docsMetadatasActions.remove(docID));
+            dispatch(docActions.clear());
+            dispatch(questionsActions.clear());
 
             router.push("/app");
         } catch (err) {
@@ -39,15 +40,21 @@ export function useDeleteDoc() {
     }
 }
 
-export function useDeleteQuestion(sectionIndex: number, questionIndex: number): Trigger {
+export function useDeleteQuestion(ID: string): Trigger {
     const dispatch = useAppDispatch();
     const saveQuestions = useSaveQuestions();
 
     return () => {
-        dispatch(questionsActions.delete({
-            sectionIndex,
-            questionIndex
+        dispatch(questionsActions.setQuestion({
+            ID,
+            type: "deleting"
         }));
-        saveQuestions();
+
+        setTimeout(() => {
+            dispatch(questionsActions.delete({
+                ID
+            }));
+            //saveQuestions();
+        }, 300);
     }
 }

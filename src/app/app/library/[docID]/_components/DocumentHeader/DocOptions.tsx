@@ -26,15 +26,18 @@ export default function DocOptions() {
     ];
 
     return (
-        <OptionsProvider options={options}>
+        <OptionsProvider
+            options={options}
+            className="shadow-sm"
+        >
             <TooltipProvider 
                 text="Document options"
                 className="right-0 translate-y-1"
             >
                 <SecondaryButton
                     onClick={() => {}}
-                    size="mid"
                     weight="light"
+                    size="sm"
                 >
                     <Icon type={More} className="text-2xl"/>
                 </SecondaryButton>

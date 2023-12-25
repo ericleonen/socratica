@@ -2,7 +2,7 @@
 
 import Skeleton from "@/components/Skeleton";
 import { useDocsMetadatasLoadingStatus } from "@/db/docs/read";
-import { useAutoSaveTitle, useEditableTitle } from "@/db/docs/update";
+import { useSaveTitle, useAutoSave, useEditableTitle } from "@/db/docs/update";
 import { autoResize, handleChange } from "@/utils/input";
 import { KeyboardEvent } from "react"
 
@@ -16,7 +16,8 @@ export default function TitleField() {
         }
     }
 
-    const allowSave = useAutoSaveTitle();
+    const saveTitle = useSaveTitle();
+    const allowSaves = useAutoSave(saveTitle, title);
 
     return status === "succeeded" ? (
         <textarea
@@ -24,13 +25,13 @@ export default function TitleField() {
             value={title}
             onChange={(e) => {
                 handleChange(setTitle)(e);
-                allowSave();
+                allowSaves();
             }}
             onKeyDown={preventEnter}
             placeholder="Untitled"
             className={`overflow-hidden h-min placeholder:text-slate-700/70 w-full resize-none text-4xl bg-transparent focus:outline-none font-bold text-slate-700`}
         />
     ) : (
-        <Skeleton className="text-4xl h-[42px]">Hey mama, I know I act the fool</Skeleton>
+        <Skeleton className="text-4xl h-[42px] w-full">Hey mama, I know I act the fool</Skeleton>
     )
 }

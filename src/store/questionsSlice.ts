@@ -1,10 +1,11 @@
-import { Question, QuestionType, QuestionsMap } from "@/db/schemas"
+import { QuestionIDsMap, QuestionType, QuestionsMap } from "@/db/schemas"
 import { ResourceStatus, SavingStatus } from "./types"
 import { createSlice } from "@reduxjs/toolkit";
 import { QuestionID } from "@/types";
 
 export type QuestionsState = {
-    data: Question[][],
+    map: QuestionsMap,
+    IDs: string[][],
     loadingStatus: ResourceStatus,
     generatingStatus: ResourceStatus,
     savingStatus: SavingStatus,
@@ -13,7 +14,8 @@ export type QuestionsState = {
 }
 
 const initialState: QuestionsState = {
-    data: [],
+    map: {},
+    IDs: [],
     loadingStatus: "idle",
     generatingStatus: "idle",
     savingStatus: "saved",
@@ -27,64 +29,96 @@ const questionsSlice = createSlice({
     reducers: {
         clear: () => ({...initialState}),
         setQuestions: (state, action) => {
-            const map = action.payload as QuestionsMap;
+            type Payload = {
+                map: QuestionsMap,
+                IDs: QuestionIDsMap,
+            }
+            const { map, IDs } = action.payload as Payload;
 
-            state.data = Object.values(map).map(
-                section => Object.values(section)
-            );
+            state.map = map;
+            // converts the IDs map of arrays to a nested array
+            state.IDs = Object.values(IDs);
         },
         scaffoldSections: (state, action) => {
             const numSections = action.payload as number;
 
-            state.data = [];
+            state.IDs = [];
             for (let i = 0; i < numSections; i++) {
-                state.data.push([]);
+                state.IDs.push([]);
             }
         },
-        scaffoldQuestions: (state, action) => {
+        add: (state, action) => {
             type Payload = {
+                questionIndex?: number,
                 sectionIndex: number,
-                numQuestions: number
+                ID: string,
+                type: QuestionType,
+                question?: string,
+                replace?: boolean
             }
-            const { sectionIndex, numQuestions } = action.payload as Payload;
+            const { questionIndex, sectionIndex, ID, type, question, replace } = action.payload as Payload;
 
-            for (let i = 0; i < numQuestions; i++) {
-                state.data[sectionIndex].push({
-                    type: "loading",
-                    question: "",
-                    answer: ""
-                });
+            state.map[ID] = {
+                question: question || "",
+                type,
+                answer: ""
+            }
+
+            if (sectionIndex < 0 || sectionIndex >= state.IDs.length) return state;
+
+            if (typeof questionIndex === "number") {
+                if (replace) {
+                    state.IDs[sectionIndex][questionIndex] = ID;
+                } else {
+                    state.IDs[sectionIndex].splice(questionIndex, 0, ID);
+                }
+            } else {
+                state.IDs[sectionIndex].push(ID);
             }
         },
         setQuestion: (state, action) => {
             type Payload = {
-                sectionIndex: number,
-                questionIndex: number,
-                question: string,
-                type: QuestionType
+                ID: string,
+                question?: string,
+                answer?: string,
+                type?: QuestionType
             }
-            const { sectionIndex, questionIndex, question, type } = action.payload as Payload;
+            const { ID, question, answer, type } = action.payload as Payload;
 
-            state.data[sectionIndex][questionIndex].question = question;
-            state.data[sectionIndex][questionIndex].type = type;
+            if (typeof question === "string") {
+                state.map[ID].question = question;
+            }
+            if (typeof answer === "string") {
+                state.map[ID].answer = answer;
+            }
+            if (type) {
+                state.map[ID].type = type;
+            }
+            
         },
         delete:(state, action) => {
-            const { sectionIndex, questionIndex } = action.payload as QuestionID;
-
-            const section = state.data[sectionIndex];
-            section.splice(questionIndex, 1);
-
-            state.data[sectionIndex] = section;
-        },
-        setAnswer: (state, action) => {
             type Payload = {
-                sectionIndex: number,
-                questionIndex: number,
-                answer: string
+                sectionIndex?: number,
+                ID: string
             }
-            const { sectionIndex, questionIndex, answer } = action.payload as Payload;
 
-            state.data[sectionIndex][questionIndex].answer = answer;
+            const { sectionIndex, ID } = action.payload as Payload;
+
+            if (state.map.hasOwnProperty(ID)) {
+                delete state.map[ID];
+            }
+
+            if (typeof sectionIndex === "number") {
+                if (sectionIndex > 0 && sectionIndex < state.IDs.length) {
+                    state.IDs[sectionIndex] = state.IDs[sectionIndex].filter(
+                        questionID => questionID !== ID
+                    )
+                }
+            } else {
+                state.IDs = state.IDs.map(sectionIDs =>
+                    sectionIDs.filter(questionID => questionID !== ID)
+                );
+            }
         },
         setLoadingStatus: (state, action) => {
             state.loadingStatus = action.payload as ResourceStatus;

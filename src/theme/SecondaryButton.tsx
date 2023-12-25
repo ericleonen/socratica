@@ -4,15 +4,33 @@ type SecondaryButtonProps = {
     onClick: Trigger
     className?: string,
     children: React.ReactNode,
-    size?: "small" | "mid",
-    weight?: "light"
+    size?: "sm" | "md" | "lg" | "xl",
+    weight?: "light" | "normal" | "heavy",
 }
 
 export default function SecondaryButton({ onClick, className, children, size, weight }: SecondaryButtonProps) {
+    if (!weight) weight = "normal";
+    if (!size) size = "md";
+    
     return (
         <button 
             onClick={() => onClick()}
-            className={`rounded text-slate-500 ${weight === "light" ? "hover:bg-black/10" : "hover:bg-gray-200"} ${size === "small" ? "px-0" : size === "mid" ? "p-1" : "px-2 py-1"} font-medium flex items-center ${className}`}
+            className={`
+                rounded font-medium flex items-center
+                ${
+                    weight === "heavy"  ? "bg-amber-200 hover:bg-amber-300 text-slate-700" :
+                    weight === "normal" ? "hover:bg-gray-200 text-slate-500" :
+                    weight === "light" && "hover:bg-black/10 text-slate-500"
+                                         
+                }
+                ${
+                    size === "xl" ? "px-3 py-2" :
+                    size === "lg"  ? "px-2 py-1" :
+                    size === "md" ? "p-1" :
+                    size === "sm" && "p-0"
+                }
+                ${className || ""}
+            `}
         >
             {children}
         </button>

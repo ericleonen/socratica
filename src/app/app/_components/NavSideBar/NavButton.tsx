@@ -1,7 +1,6 @@
 import Icon from "@/theme/Icon";
 import SecondaryButton from "@/theme/SecondaryButton";
 import { Trigger } from "@/types";
-import { usePathname, useRouter } from "next/navigation";
 
 type NavButtonProps = {
     icon: React.ElementType,
@@ -15,7 +14,9 @@ export default function NavButton({ icon, onClick, text, active, className }: Na
     return (
         <SecondaryButton
             onClick={onClick}
-            className={`font-bold w-full px-3 py-2 mt-2 ${active && "bg-amber-200 hover:bg-amber-300 text-slate-700"} ${className || ""}`}
+            size="xl"
+            weight={active ? "heavy" : "normal"}
+            className={`w-full mt-2 ${className || ""}`}
         >
             <Icon type={icon} className="mr-3"/>
             <p className="overflow-hidden whitespace-nowrap text-ellipsis w-full text-left">{text}</p>

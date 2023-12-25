@@ -40,7 +40,6 @@ export default function NavSideBar() {
             >
                 <SecondaryButton
                     onClick={() => setShowMini(false)}
-                    size="mid"
                     className="mx-auto my-3"
                 >
                     <Icon type={DoubleRight} className="text-xl"/>
@@ -67,7 +66,6 @@ export default function NavSideBar() {
                 >
                     <SecondaryButton 
                         onClick={() => setShowMain(false)}
-                        size="mid"
                     >
                         <Icon type={DoubleLeft} className="text-xl" />
                     </SecondaryButton>

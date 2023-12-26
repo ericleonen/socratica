@@ -1,7 +1,6 @@
 import { QuestionIDsMap, QuestionType, QuestionsMap } from "@/db/schemas"
 import { ResourceStatus, SavingStatus } from "./types"
 import { createSlice } from "@reduxjs/toolkit";
-import { QuestionID } from "@/types";
 
 export type QuestionsState = {
     map: QuestionsMap,
@@ -104,9 +103,7 @@ const questionsSlice = createSlice({
 
             const { sectionIndex, ID } = action.payload as Payload;
 
-            if (state.map.hasOwnProperty(ID)) {
-                delete state.map[ID];
-            }
+            delete state.map[ID];
 
             if (typeof sectionIndex === "number") {
                 if (sectionIndex > 0 && sectionIndex < state.IDs.length) {

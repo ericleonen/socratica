@@ -8,7 +8,6 @@ import { docActions } from "@/store/docSlice";
 import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
 import { Trigger } from "@/types";
 import { questionsActions } from "@/store/questionsSlice";
-import { useSaveQuestions } from "./update";
 
 export function useDeleteDoc() {
     const userID = useUserID();
@@ -42,7 +41,6 @@ export function useDeleteDoc() {
 
 export function useDeleteQuestion(ID: string): Trigger {
     const dispatch = useAppDispatch();
-    const saveQuestions = useSaveQuestions();
 
     return () => {
         dispatch(questionsActions.setQuestion({
@@ -54,7 +52,7 @@ export function useDeleteQuestion(ID: string): Trigger {
             dispatch(questionsActions.delete({
                 ID
             }));
-            //saveQuestions();
+            dispatch(questionsActions.setSavingStatus("deleting"));
         }, 300);
     }
 }

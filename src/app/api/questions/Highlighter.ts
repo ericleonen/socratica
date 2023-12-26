@@ -99,11 +99,11 @@ export async function sectionify(sentences: string[], embedder: Pipeline) {
 }
 
 export default async function* generate(
-    sections: string[], intervals: [number, number][], openai: OpenAI
+    sections: string[], openai: OpenAI
 ) {
     yield JSON.stringify({
-        type: "sectionIntervals",
-        data: intervals
+        type: "textSections",
+        data: sections
     });
 
     const numCompQuestions = sections.map(({ length }) => Math.floor(length / CHARS_PER_COMP));

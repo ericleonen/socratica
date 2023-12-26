@@ -5,7 +5,7 @@ import { usePathDocID } from "@/utils/routing";
 import { useUserID } from "../user";
 import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AUTOSAVE_DELAY } from "@/config";
 import { Trigger } from "@/types";
 import { QuestionIDsMap, QuestionType } from "../schemas";
@@ -28,7 +28,11 @@ export function useSave(saveCallback: Trigger): Trigger {
     return () => setCanSave(true);
 }
 
-export function useAutoSave(saveCallback: Trigger, dependency: string, delay: number = AUTOSAVE_DELAY) {
+export function useAutoSave(
+    saveCallback: Trigger, 
+    dependency: any, 
+    delay: number = AUTOSAVE_DELAY,
+) {
     const [allowSaves, setAllowSaves] = useState(false);
 
     useEffect(() => {
@@ -180,31 +184,41 @@ export function useSaveQuestion(ID: string) {
 }
 
 export function useEditableQuestionDraft(ID: string): [
-    string, 
-    QuestionType, 
-    (newQuestion: string) => void, 
-    (newType: QuestionType) => void,
-    Trigger
+    string, QuestionType,
+    (newQuestion: string) => void, (newType: QuestionType) => void,
+    Trigger, Trigger
 ] {
     const { question, type } = useQuestion(ID);
-    const [questionDraft, setQuestionDraft] = useState(question);
-    const [typeDraft, setTypeDraft] = useState(type);
+    const origQuestion = useMemo(() => ({ question, type }), [ID]);
 
     const dispatch = useAppDispatch();
+    const saveQuestion = useSaveQuestion(ID);
+
+    const setQuestion = (newQuestion: string) => {
+        dispatch(questionsActions.setQuestion({
+            ID,
+            question: newQuestion
+        }));
+    }
+    const setType = (newType: string) => {
+        dispatch(questionsActions.setQuestion({
+            ID,
+            type: newType
+        }));
+    }
+    const revert = () => {
+        dispatch(questionsActions.setQuestion({
+            ID,
+            question: origQuestion.question,
+            type: origQuestion.type
+        }));
+    }
 
     return [
-        questionDraft,
-        typeDraft,
-        setQuestionDraft,
-        setTypeDraft,
-        () => {
-            dispatch(questionsActions.setQuestion({
-                ID,
-                question: questionDraft,
-                type: typeDraft
-            }))
-        }
-    ]   
+        question, type,
+        setQuestion, setType,
+        saveQuestion, revert
+    ]
 }
 
 export function useEditableAnswer(ID: string):

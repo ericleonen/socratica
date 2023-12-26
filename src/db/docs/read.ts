@@ -152,6 +152,14 @@ export function useAnswer(ID: string) {
     return answer;
 }
 
+export function useNumQuestions() {
+    const numQuestions = useSelector<RootState, number>(
+        state => state.questions.IDs.flat().length
+    );
+
+    return numQuestions;
+}
+
 // DOCS METADATAS
 // ==========
 export function useLoadDocsMetadatas() {

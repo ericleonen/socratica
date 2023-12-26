@@ -79,10 +79,13 @@ export default function NavSideBar() {
                     <SettingsButton />
                     <LibraryList />
                 </> : (
-                    <div className="mt-3">
-                        <SkeletonList count={4} className="px-3 py-2 mt-2 w-full"/>
-                        <Skeleton className="w-full text-sm py-1 mt-10">spooky</Skeleton>
-                        <SkeletonList count={3} className="px-3 py-2 mt-2 w-full"/>
+                    <div className="flex flex-col">
+                        <Skeleton className="py-2 mt-6">.</Skeleton>
+                        <SkeletonList count={3} className="mt-3 py-1 w-2/3"/>
+                        <Skeleton className="mt-12">.</Skeleton>
+                        <div className="flex flex-col mt-2">
+                            <SkeletonList count={3} className="mt-3 py-1 w-2/3"/>
+                        </div>
                     </div>
                 )
             }

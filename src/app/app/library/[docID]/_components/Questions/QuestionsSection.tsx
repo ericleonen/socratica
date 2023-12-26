@@ -1,8 +1,10 @@
 import { useContext } from "react"
 import Question from "./Question"
-import { HeightStateContext, WidthStateContext } from "./DimensionsContext"
+import { WidthStateContext } from "./DimensionsContext"
 import Icon from "@/theme/Icon"
 import { LoadingFour } from "@icon-park/react"
+import { Transition } from "@headlessui/react"
+import { useQuestionsGeneratingStatus } from "@/db/docs/read"
 
 type QuestionsSectionsProps = {
     sectionIDs: string[],
@@ -11,25 +13,34 @@ type QuestionsSectionsProps = {
 
 export default function QuestionsSection({ sectionIDs, focus }: QuestionsSectionsProps) {
     const { width } = useContext(WidthStateContext);
+    const generatingStatus = useQuestionsGeneratingStatus();
     
     return (
         <div
             style={{ width: `${width}px` }}
-            className="px-3 h-full"
-        >{
+            className="px-3"
+        >
+            <Transition
+                show={focus}
+                leave="delay-150"
+            >{
             sectionIDs.length === 0 ? (
-                <div className="flex items-center text-slate-500 justify-center">
-                    <Icon type={LoadingFour} className="animate-spin mr-2" />
-                    <p className="font-medium">Section loading</p>
-                </div>
+                <div className="flex items-center text-slate-500 justify-center">{
+                    generatingStatus === "loading" ? <>
+                        <Icon type={LoadingFour} className="animate-spin mr-2" />
+                        <p className="font-medium">Section loading</p>
+                    </> : (
+                        <p className="font-medium">This section is empty</p>
+                    )
+                }</div>
             ) : 
-            sectionIDs.map((ID, questionIndex) => 
+            sectionIDs.map(ID => 
                 <Question
                     key={ID}
                     {...{ID}}
-                    isBottom={focus && questionIndex === sectionIDs.length - 1}
                 />
             )
-        }</div>
+            }</Transition>
+        </div>
     )
 }

@@ -12,20 +12,19 @@ import OptionsProvider, { Option } from "@/app/app/_components/OptionsProvider";
 
 export default function QuestionField({ ID }: QuestionIDProp) {
     const [
-        questionDraft, typeDraft, 
-        setQuestionDraft, setTypeDraft,
-        writeQuestion
+        question, type, 
+        setQuestion, setType,
+        saveQuestion, revert
     ] = useEditableQuestionDraft(ID);
-    const { question, type } = useQuestion(ID);
 
     const [editMode, setEditMode] = useState(false);
     const cancelEdit = () => {
         setEditMode(false);
-        setQuestionDraft(question);
+        revert();
     }
     const saveEdit = () => {
         setEditMode(false);
-        writeQuestion();
+        saveQuestion();
     }
 
     const themes = {
@@ -65,19 +64,19 @@ export default function QuestionField({ ID }: QuestionIDProp) {
         {
             icon: BookOne,
             text: "comprehension",
-            onClick: () => setTypeDraft("comprehension"),
+            onClick: () => setType("comprehension"),
             theme: "comprehension"
         },
         {
             icon: ThinkingProblem,
             text: "research",
-            onClick: () => setTypeDraft("research"),
+            onClick: () => setType("research"),
             theme: "research"
         },
         {
             icon: World,
             text: "big idea",
-            onClick: () => setTypeDraft("big idea"),
+            onClick: () => setType("big idea"),
             theme: "big idea"
         }
     ]
@@ -92,19 +91,19 @@ export default function QuestionField({ ID }: QuestionIDProp) {
             textarea.focus();
             textarea.setSelectionRange(textarea.value.length, textarea.value.length);
         }
-    }, [editMode, questionDraft, question]);
+    }, [editMode, question]);
 
     return (
-        <div className={`group flex flex-col font-bold pl-6 pr-3 py-3 border-b-2 border-slate-700 ${themes[editMode ? typeDraft : type].background}`}>
+        <div className={`group flex flex-col font-bold pl-6 pr-3 py-3 border-b-2 border-slate-700 ${themes[type].background}`}>
             <div className="flex items-center">
                 <OptionsProvider 
                     options={questionTypeOptions}
                     disabled={!editMode}
                     align="left"
                 >
-                    <div className={`text-xs flex items-center p-1 rounded-md ${themes[editMode ? typeDraft : type].labelText} ${editMode ? themes[editMode ? typeDraft : type].save : "pointer-events-none"}`}>
-                        <Icon type={themes[editMode ? typeDraft : type].icon} className={`mr-2 text-base ${["loading", "deleting"].includes(type) && "animate-spin"}`}/>
-                        <span className="tracking-wide uppercase mr-2">{editMode ? typeDraft : type}</span>
+                    <div className={`text-xs flex items-center p-1 rounded-md ${themes[type].labelText} ${editMode ? themes[type].save : "pointer-events-none"}`}>
+                        <Icon type={themes[type].icon} className={`mr-2 text-base ${["loading", "deleting"].includes(type) && "animate-spin"}`}/>
+                        <span className="tracking-wide uppercase mr-2">{type}</span>
                         { editMode && <Icon type={Down} className="text-base"/> }
                     </div>
                 </OptionsProvider>
@@ -113,13 +112,13 @@ export default function QuestionField({ ID }: QuestionIDProp) {
                 </div>
             </div>
             { 
-                ["loading", "deleting"].includes(type) ?
+                type === "loading" ?
                 <Skeleton className="mt-1">...</Skeleton> : <>
                     <textarea 
                         disabled={!editMode}
                         ref={textareaRef}
-                        value={editMode ? questionDraft: question}
-                        onChange={handleChange(setQuestionDraft)}
+                        value={question}
+                        onChange={handleChange(setQuestion)}
                         className="text-slate-700 mt-1 pl-1 pr-3 focus:outline-none resize-none bg-transparent"
                     />
                     {
@@ -136,7 +135,7 @@ export default function QuestionField({ ID }: QuestionIDProp) {
                                 onClick={saveEdit}
                                 weight="light"
                                 size="lg"
-                                className={`ml-2 ${themes[editMode ? typeDraft : type].save}`}
+                                className={`ml-2 ${themes[type].save}`}
                             >
                                 Save
                             </SecondaryButton>

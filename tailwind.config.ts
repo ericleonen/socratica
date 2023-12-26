@@ -20,7 +20,8 @@ const config: Config = {
         "md": "3px 3px #334155"
       },
       transitionProperty: {
-        "margin": "margin"
+        "margin": "margin",
+        "deleting": "height, margin, border"
       }
     },
     colors: {

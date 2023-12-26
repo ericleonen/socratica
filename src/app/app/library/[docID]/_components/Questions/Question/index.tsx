@@ -1,38 +1,38 @@
 import QuestionField from "./QuestionField"
 import AnswerField from "./AnswerField"
-import { useQuestions } from "@/db/docs/read"
-import { useContext, useEffect, useRef } from "react"
-import { HeightStateContext } from "../DimensionsContext"
-
-type QuestionProps = {
-    ID: string,
-    isBottom: boolean
-}
+import { useEffect, useRef, useState } from "react"
+import { useQuestionType } from "@/db/docs/read";
 
 export type QuestionIDProp = { ID: string };
 
-export default function Question({ ID, isBottom }: QuestionProps) {
-    const questions = useQuestions();
-
-    const { setHeight } = useContext(HeightStateContext);
-
+export default function Question({ ID }: QuestionIDProp) {
     const divRef = useRef<HTMLDivElement>(null);
+    const deleting = useQuestionType(ID) === "deleting";
+
+    const [isHeightSet, setIsHeightSet] = useState(false);
 
     useEffect(() => {
         const div = divRef.current;
-        if (div && isBottom) {
-            setHeight(div.offsetTop + div.offsetHeight + 32)
-        };
-    }, [ID, isBottom, JSON.stringify(questions)]);
+        if (!div || !deleting) return;
+
+        if (!isHeightSet) {
+            div.style.height = "0px";
+            div.style.height = `${div.scrollHeight}px`;
+            div.style.opacity = "0";
+
+            setIsHeightSet(true);
+        } else {
+            div.style.height = "0px";
+        }
+    }, [deleting, isHeightSet]);
 
     return (
         <div 
             ref={divRef}
+            className={`${deleting && isHeightSet ? "border-0 mb-0 transition-deleting duration-300" : "border-2 mb-8"} shrink-0 flex flex-col border-slate-700 shadow-sm rounded-md overflow-hidden`}
         >
-            <div className="shrink-0 flex flex-col border-2 border-slate-700 shadow-sm rounded-md overflow-hidden mb-8">
-                <QuestionField {...{ID}} />
-                <AnswerField {...{ID}} />
-            </div>
+            <QuestionField {...{ID}} />
+            <AnswerField {...{ID}} />
         </div>
     )
 }

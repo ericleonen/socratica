@@ -105,6 +105,9 @@ export function useGenerateQuestions() {
                 const { done, value } = await reader.read();
 
                 if (done) {
+                    dispatch(questionsActions.delete({
+                        ID: loadingID
+                    }));
                     dispatch(questionsActions.setGeneratingStatus("succeeded"));
                     break;
                 };
@@ -113,12 +116,12 @@ export function useGenerateQuestions() {
                 const update = JSON.parse(chunks);
                 
                 switch (update.type) {
-                    case "sectionIntervals":
-                        const intervals = update.data as [number, number][];
-                        const numSections = intervals.length;
+                    case "textSections":
+                        const sections = update.data as string[];
+                        const numSections = sections.length;
 
                         dispatch(questionsActions.scaffoldSections(numSections));
-                        dispatch(docActions.sectionifyText(intervals));
+                        dispatch(docActions.setText(sections));
 
                         dispatch(questionsActions.add({
                             sectionIndex: 0,

@@ -120,7 +120,7 @@ export default function QuestionField({ ID }: QuestionIDProp) {
                         ref={textareaRef}
                         value={editMode ? questionDraft: question}
                         onChange={handleChange(setQuestionDraft)}
-                        className="text-slate-700 mt-1 pr-3 focus:outline-none resize-none bg-transparent"
+                        className="text-slate-700 mt-1 pl-1 pr-3 focus:outline-none resize-none bg-transparent"
                     />
                     {
                         editMode &&

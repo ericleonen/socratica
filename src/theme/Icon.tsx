@@ -5,5 +5,5 @@ type IconProps = {
 
 export default function Icon({ type, className }: IconProps) {
     const ThemeIcon = type;
-    return <ThemeIcon stroke={4} type="outline" className={className} />
+    return <ThemeIcon stroke={5} type="outline" className={className} />
 }

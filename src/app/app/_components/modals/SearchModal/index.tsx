@@ -22,7 +22,7 @@ export default function SearchModal() {
     return (
         <Modal 
             close={close}
-            className="w-[32rem] bg-white"
+            className="w-[28rem] bg-white"
         >
             <SearchBar {...{query, setQuery}} />
             <SearchResults {...{close, query}} />

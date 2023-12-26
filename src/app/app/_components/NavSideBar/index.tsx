@@ -31,7 +31,7 @@ export default function NavSideBar() {
             leaveFrom="ml-0"
             leaveTo="ml-[-3.5rem]"
             afterLeave={() => setShowMain(true)}
-            className="w-[3.5rem] duration-75 border-r-2 border-slate-700 bg-stone-100 h-full shrink-0"
+            className="w-[3.5rem] duration-75 border-r-2 border-slate-400 bg-stone-100 h-full shrink-0"
         >
             <TooltipProvider 
                 text="Open sidebar"
@@ -55,7 +55,7 @@ export default function NavSideBar() {
             leaveFrom="ml-0"
             leaveTo="ml-[-18rem]"
             afterLeave={() => setShowMini(true)}
-            className="duration-75 flex flex-col w-72 h-full p-3 pb-0 bg-stone-100 border-r-2 border-slate-700 overflow-hidden shrink-0"
+            className="duration-75 flex flex-col w-72 h-full p-3 pb-0 bg-stone-100 border-r-2 border-slate-400 overflow-hidden shrink-0"
         >
             <div className="flex items-center">
                 <AccountButton />

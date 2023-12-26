@@ -30,15 +30,16 @@ export default function LibraryList() {
             <div className="py-1 flex items-center w-full">
                 <SecondaryButton 
                     onClick={toggleRecent}
+                    weight="light"
                     className="mr-2"
                 >
                     <Icon type={Down} className={`text-lg text-slate-400 transition-transform ${showRecent ? "0" : "rotate-[-90deg]"}`} />
                 </SecondaryButton>
-                <p className="text-sm tracking-wider font-bold text-slate-700/50 uppercase">Documents</p>
+                <p className="text-sm tracking-wider font-bold text-slate-400 uppercase">Documents</p>
             </div>
             <Transition
                 show={showRecent} 
-                className="w-full flex-grow overflow-y-scroll pb-5 border-t-2 border-slate-200"
+                className="w-full flex-grow overflow-y-scroll pb-5 border-t-2 border-slate-300"
             >{
                 sortedIDs.map(ID => 
                     <NavButton

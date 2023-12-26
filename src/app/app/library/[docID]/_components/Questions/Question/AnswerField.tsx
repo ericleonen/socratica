@@ -20,7 +20,7 @@ export default function AnswerField({ ID }: QuestionIDProp) {
                 allowSaves();
             }}
             placeholder="Your answer here"
-            className="bg-white flex-grow w-full h-min resize-none focus:outline-none px-6 py-3 text-slate-700 placeholder:text-slate-700/70"
+            className="bg-white flex-grow w-full h-min resize-none focus:outline-none px-6 py-3 text-slate-700 placeholder:text-slate-400"
         />
     )
 }

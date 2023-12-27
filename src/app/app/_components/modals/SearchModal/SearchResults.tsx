@@ -2,8 +2,12 @@ import { useDocsMetadatas } from "@/db/docs/read";
 import { Trigger } from "@/types";
 import SearchResult from "./SearchResult";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useKeyDown } from "@/utils/input";
+import { useCreateDoc } from "@/db/docs/create";
+import PrimaryButton from "@/theme/PrimaryButton";
+import Icon from "@/theme/Icon";
+import { LoadingFour, PlusCross } from "@icon-park/react";
 
 type SearchResultsProps = {
     query: string,
@@ -58,12 +62,25 @@ export default function SearchResults({ query, close }: SearchResultsProps) {
 
         router.push(`/app/library/${selectedID}`);
         close();
-    }, "Enter")
+    }, "Enter");
+
+    const [inProgress, createDoc] = useCreateDoc();
+    const wasInProgress = useRef(false);
+
+    useEffect(() => {
+        if (inProgress) {
+            wasInProgress.current = true;
+        } else {
+            if (wasInProgress.current) {
+                close();
+            }
+        }
+    }, [inProgress]);
  
     return (
         <div className="h-40 flex flex-col flex-grow font-medium text-slate-500 py-3 px-3 overflow-y-scroll">
             {
-                filteredIDs.map(ID =>
+                filteredIDs.length > 0 ? filteredIDs.map(ID =>
                     <SearchResult 
                         key={ID}
                         title={docsMetadatas[ID].title}
@@ -75,6 +92,22 @@ export default function SearchResults({ query, close }: SearchResultsProps) {
                         selected={selectedID === ID}
                         select={() => setSelectedID(ID)}
                     />
+                ) : (
+                    <div className="flex flex-col h-full w-full items-center justify-center">
+                        <p>No documents found</p>
+                        <PrimaryButton 
+                            onClick={() => createDoc(query)}
+                            className="mt-2 justify-center"
+                        >{
+                            inProgress ? <>
+                                <Icon type={LoadingFour}  className="mr-3 animate-spin"/>
+                                Creating "{query}"
+                            </>: <>
+                                <Icon type={PlusCross}  className="mr-3"/>
+                                Create a document titled "{query}"
+                            </>
+                        }</PrimaryButton>
+                    </div>
                 )
             }
         </div>

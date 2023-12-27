@@ -1,12 +1,12 @@
 import { useAutoSave, useEditableAnswer, useSaveQuestion } from "@/db/docs/update";
 import { autoResize, handleChange } from "@/utils/input";
-import { useQuestionType } from "@/db/docs/read";
+import { useQuestionStatus, useQuestionType, useQuestionsGeneratingStatus } from "@/db/docs/read";
 import { QuestionIDProp } from ".";
 import { useState } from "react";
 
 export default function AnswerField({ ID }: QuestionIDProp) {
     const [answer, setAnswer] = useEditableAnswer(ID);
-    const disabled = useQuestionType(ID) === "loading";
+    const disabled = useQuestionStatus(ID) === "deleting";
 
     const saveAnswer = useSaveQuestion(ID);
     const allowSaves = useAutoSave(saveAnswer, answer);
@@ -26,7 +26,7 @@ export default function AnswerField({ ID }: QuestionIDProp) {
                     allowSaves();
                 }}
                 placeholder="Your answer here"
-                className="bg-white flex-grow w-full h-min resize-none rounded-md focus:outline-none pl-6 pr-5 py-2 text-slate-700 placeholder:text-slate-400"
+                className="bg-transparent flex-grow w-full h-min resize-none rounded-md focus:outline-none pl-6 pr-5 py-2 text-slate-700 placeholder:text-slate-400"
             />
         </div>
     )

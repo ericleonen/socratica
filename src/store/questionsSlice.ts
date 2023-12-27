@@ -1,9 +1,9 @@
-import { QuestionIDsMap, QuestionType, QuestionsMap } from "@/db/schemas"
+import { QuestionIDsMap, QuestionType, QuestionsMap, QuestionStatus, Question } from "@/db/schemas"
 import { ResourceStatus, SavingStatus } from "./types"
 import { createSlice } from "@reduxjs/toolkit";
 
 export type QuestionsState = {
-    map: QuestionsMap,
+    map: QuestionsMap<Question>,
     IDs: string[][],
     loadingStatus: ResourceStatus,
     generatingStatus: ResourceStatus,
@@ -29,7 +29,7 @@ const questionsSlice = createSlice({
         clear: () => ({...initialState}),
         setQuestions: (state, action) => {
             type Payload = {
-                map: QuestionsMap,
+                map: QuestionsMap<Question>,
                 IDs: QuestionIDsMap,
             }
             const { map, IDs } = action.payload as Payload;
@@ -48,32 +48,46 @@ const questionsSlice = createSlice({
         },
         add: (state, action) => {
             type Payload = {
-                questionIndex?: number,
+                // where to put it?
                 sectionIndex: number,
+                questionIndex?: number,
+                // new info
                 ID: string,
-                type: QuestionType,
+                status?: "generating",
                 question?: string,
-                replace?: boolean
+                type?: QuestionType
             }
-            const { questionIndex, sectionIndex, ID, type, question, replace } = action.payload as Payload;
 
+            const {
+                sectionIndex, questionIndex,
+                ID, status, question, type
+            } = action.payload as Payload;
+
+            // add to map
             state.map[ID] = {
                 question: question || "",
-                type,
-                answer: ""
-            }
+                answer: "",
+                type: type || "comprehension",
+                status: status || "adding"
+            };
 
-            if (sectionIndex < 0 || sectionIndex >= state.IDs.length) return state;
-
+            // add to IDs matrix
             if (typeof questionIndex === "number") {
-                if (replace) {
-                    state.IDs[sectionIndex][questionIndex] = ID;
-                } else {
-                    state.IDs[sectionIndex].splice(questionIndex, 0, ID);
-                }
+                // insert
+                state.IDs[sectionIndex].splice(questionIndex, 0, ID);
             } else {
+                // add to end
                 state.IDs[sectionIndex].push(ID);
             }
+        },
+        setQuestionStatus: (state, action) => {
+            type Payload = {
+                ID: string,
+                status: QuestionStatus
+            }
+            const { ID, status } = action.payload as Payload;
+
+            state.map[ID].status = status;
         },
         setQuestion: (state, action) => {
             type Payload = {
@@ -93,7 +107,6 @@ const questionsSlice = createSlice({
             if (type) {
                 state.map[ID].type = type;
             }
-            
         },
         delete:(state, action) => {
             type Payload = {
@@ -133,6 +146,18 @@ const questionsSlice = createSlice({
             const sectionIndex = action.payload as number;
 
             state.focusSection = sectionIndex;
+        },
+        removeNonReady: (state, action) => {
+            const sectionIndex = action.payload as number;
+
+            state.IDs[sectionIndex] = state.IDs[sectionIndex].filter(ID => {
+                if (!["ready", "generating"].includes(state.map[ID].status)) {
+                    delete state.map[ID];
+                    return false;
+                }
+
+                return true;
+            })
         }
     }
 });

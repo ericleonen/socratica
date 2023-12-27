@@ -39,7 +39,8 @@ const config: Config = {
       blue: colors.blue,
       sky: colors.sky,
       emerald: colors.emerald,
-      violet: colors.violet
+      violet: colors.violet,
+      green: colors.green
     }
   },
   plugins: [],

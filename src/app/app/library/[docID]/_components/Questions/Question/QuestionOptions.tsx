@@ -5,7 +5,7 @@ import { Delete, Edit, More } from "@icon-park/react";
 import OptionsProvider, { Option } from "@/app/app/_components/OptionsProvider";
 import { useDeleteQuestion } from "@/db/docs/delete";
 import React, { useMemo } from "react";
-import { useQuestionType } from "@/db/docs/read";
+import { useQuestionStatus, useQuestionType } from "@/db/docs/read";
 
 type QuestionOptionsProps = {
     ID: string,
@@ -16,10 +16,7 @@ type QuestionOptionsProps = {
 export default function QuestionOptions({ ID, editMode, setEditMode }: QuestionOptionsProps) {
     const deleteQuestion = useDeleteQuestion(ID);
     const type = useQuestionType(ID);
-
-    const notAvailable = useMemo(() => {
-        return ["loading", "deleting"].includes(type) || editMode;
-    }, [type, editMode]);
+    const notReady = useQuestionStatus(ID) !== "ready" || editMode;
 
     const options: Option[] = [
         {
@@ -38,11 +35,11 @@ export default function QuestionOptions({ ID, editMode, setEditMode }: QuestionO
     return (
         <OptionsProvider 
             options={options}
-            disabled={notAvailable}
+            disabled={notReady}
             className="shadow-sm"
         >
             <TooltipProvider
-                disabled={notAvailable}
+                disabled={notReady}
                 text="Question options"
                 className="right-0 translate-y-1"
             >
@@ -50,7 +47,7 @@ export default function QuestionOptions({ ID, editMode, setEditMode }: QuestionO
                     onClick={() => {}}
                     weight="light"
                     size="sm"
-                    className={`invisible ${!notAvailable && "group-hover:visible"}`}
+                    className={`invisible ${!notReady && "group-hover:visible"}`}
                 >
                     <Icon type={More} className="text-2xl"/>
                 </SecondaryButton>

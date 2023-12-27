@@ -51,8 +51,9 @@ export default function OptionsProvider({ children, options, disabled, className
                     }
                     className={`bg-white rounded-md p-2 border-2 border-slate-700 fixed translate-y-1 ${className || ""}`}
                 >{
-                    options.map(option =>
+                    options.map((option, optionIndex) =>
                         <Option
+                            key={`option_${optionIndex}`}
                             onClick={() => {
                                 option.onClick();
                                 setShow(false);

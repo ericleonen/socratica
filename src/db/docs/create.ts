@@ -11,6 +11,7 @@ import { questionsActions } from "@/store/questionsSlice";
 import { docActions } from "@/store/docSlice";
 import { useSaveQuestions } from "./update";
 import { Question } from "../schemas";
+import { Trigger } from "@/types";
 
 /**
  * Hook that provides a function to create a new doc. Opens the doc in the app after creation
@@ -97,17 +98,11 @@ export function useGenerateQuestions() {
 
             const reader = questionsRes.body.getReader();
             let sectionIndex = 0;
-            let questionIndex = 0;
-
-            const loadingID = crypto.randomUUID();
 
             while (true) {
                 const { done, value } = await reader.read();
 
                 if (done) {
-                    dispatch(questionsActions.delete({
-                        ID: loadingID
-                    }));
                     dispatch(questionsActions.setGeneratingStatus("succeeded"));
                     break;
                 };
@@ -123,36 +118,20 @@ export function useGenerateQuestions() {
                         dispatch(questionsActions.scaffoldSections(numSections));
                         dispatch(docActions.setText(sections));
 
-                        dispatch(questionsActions.add({
-                            sectionIndex: 0,
-                            type: "loading",
-                            ID: loadingID
-                        }));
                         break;
                     case "newQuestion":
                         const { type, question, ID, last } = update.data;
 
                         dispatch(questionsActions.add({
-                            questionIndex,
-                            sectionIndex,
-                            type,
-                            question,
+                            sectionIndex, 
                             ID,
-                            replace: last
+                            status: "generating",
+                            question,
+                            type
                         }));
 
-                        questionIndex++;
+                        if (last) sectionIndex++;
 
-                        if (last) {
-                            sectionIndex++;
-                            questionIndex = 0;
-
-                            dispatch(questionsActions.add({
-                                sectionIndex,
-                                type: "loading",
-                                ID: loadingID
-                            }));
-                        }
                         break;
                     default:
                         throw new Error(`Invalid update received: ${update.type}`);
@@ -164,5 +143,17 @@ export function useGenerateQuestions() {
             dispatch(questionsActions.setGeneratingStatus("failed"));
             dispatch(questionsActions.setError(error.message));
         }
+    }
+}
+
+export function useAddQuestion(sectionIndex: number, questionIndex?: number): Trigger {
+    const dispatch = useAppDispatch();
+
+    return () => {
+        dispatch(questionsActions.add({
+            sectionIndex,
+            questionIndex,
+            ID: crypto.randomUUID()
+        }))
     }
 }

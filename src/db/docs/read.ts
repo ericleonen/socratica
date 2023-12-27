@@ -7,7 +7,7 @@ import { ResourceStatus, SavingStatus } from "@/store/types";
 import { useEffect } from "react";
 import { DocMetadataMap, fetchDocsMetadatas } from "@/store/docsMetadatasSlice";
 import { usePathDocID } from "@/utils/routing";
-import { Question, QuestionType, QuestionsMap } from "../schemas";
+import { Question, QuestionStatus, QuestionType, QuestionsMap } from "../schemas";
 import { db } from "@/firebase";
 import { Timestamp, doc, getDoc } from "firebase/firestore";
 import { docActions } from "@/store/docSlice";
@@ -35,6 +35,11 @@ export function useLoadDoc() {
                 const data = docRes.data();
                 if (data) {
                     dispatch(docActions.setText(data.text));
+
+                    for (let ID in data.questions) {
+                        data.questions[ID].status = "ready"
+                    }
+
                     dispatch(questionsActions.setQuestions({
                         map: data.questions,
                         IDs: data.questionIDs
@@ -89,7 +94,7 @@ export function useQuestionIDs() {
 }
 
 export function useQuestions() {
-    const questions = useSelector<RootState, QuestionsMap>(
+    const questions = useSelector<RootState, QuestionsMap<Question>>(
         state => state.questions.map
     );
 
@@ -158,6 +163,14 @@ export function useNumQuestions() {
     );
 
     return numQuestions;
+}
+
+export function useQuestionStatus(ID: string) {
+    const status = useSelector<RootState, QuestionStatus>(
+        state => state.questions.map[ID].status
+    );
+
+    return status;
 }
 
 // DOCS METADATAS

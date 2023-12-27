@@ -1,38 +1,89 @@
 import QuestionField from "./QuestionField"
 import AnswerField from "./AnswerField"
-import { useEffect, useRef, useState } from "react"
-import { useQuestionType } from "@/db/docs/read";
+import { useEffect, useRef, } from "react"
+import { useQuestionStatus } from "@/db/docs/read";
+import AddQuestionButton from "../AddQuestionButton";
+import { Transition } from "@headlessui/react";
+import { useAppDispatch } from "@/store";
+import { questionsActions } from "@/store/questionsSlice";
 
 export type QuestionIDProp = { ID: string };
 
-export default function Question({ ID }: QuestionIDProp) {
-    const divRef = useRef<HTMLDivElement>(null);
-    const deleting = useQuestionType(ID) === "deleting";
+type QuestionProps = {
+    ID: string,
+    sectionIndex: number,
+    questionIndex: number
+}
 
-    const [isHeightSet, setIsHeightSet] = useState(false);
+export default function Question({ ID, sectionIndex, questionIndex }: QuestionProps) {
+    const divRef = useRef<HTMLDivElement>(null);
+    const status = useQuestionStatus(ID);
+
+    const dispatch = useAppDispatch();
+
+    const makeReady = () => {
+        if (status !== "generating") return;
+        dispatch(questionsActions.setQuestionStatus({
+            ID,
+            status: "ready"
+        }));
+}
 
     useEffect(() => {
-        const div = divRef.current;
-        if (!div || !deleting) return;
+        const container = divRef.current;
 
-        if (!isHeightSet) {
-            div.style.height = "0px";
-            div.style.height = `${div.scrollHeight}px`;
-            div.style.opacity = "0";
+        if (!container) return;
+        else if (status === "adding") {
+            container.style.height = `${container.scrollHeight}px`;
 
-            setIsHeightSet(true);
-        } else {
-            div.style.height = "0px";
+            const timeout = setTimeout(() => {
+                container.style.height = "auto";
+                container.style.opacity = "100";
+            }, 300);
+
+            return () => clearTimeout(timeout);
+        } else if (status === "deleting") {
+            container.style.height = `${container.getBoundingClientRect().height}px`;
+            container.style.opacity = "0";
+
+            const timeout = setTimeout(() => {
+                container.style.height = "0px";
+            }, 0);
+
+            return () => clearTimeout(timeout);
         }
-    }, [deleting, isHeightSet]);
-
+    }, [status]);
+    
     return (
-        <div 
-            ref={divRef}
-            className={`${deleting && isHeightSet ? "border-0 mb-0 transition-deleting duration-300" : "border-2 mb-8"} shrink-0 flex flex-col border-slate-700 shadow-sm rounded-md overflow-hidden`}
+        <Transition 
+            show={true}
+            appear={true}
+            enter={status === "generating" ? "transition-opacity" : ""}
+            enterFrom={"opacity-0"}
+            enterTo="opacity-100"
+            afterEnter={makeReady}
+            className="w-full"
         >
-            <QuestionField {...{ID}} />
-            <AnswerField {...{ID}} />
-        </div>
+            <div
+                ref={divRef}
+                className={`
+                    shrink-0 flex flex-col w-full pb-1 duration-300
+                    ${ status === "adding" && "transition-[height] h-0 opacity-0 overflow-hidden" }
+                    ${ status === "deleting" && "transition-[height] overflow-hidden" }
+                `}
+            >
+                <AddQuestionButton
+                    {...{sectionIndex, questionIndex}}
+                    hidden
+                    className={`text-lg mb-1 ${status === "deleting" && "pointer-events-none"}`}
+                >
+                    +
+                </AddQuestionButton>
+                <div className="flex flex-col border-slate-700 border-2 shadow-sm rounded-md overflow-hidden shrink-0 w-full">
+                    <QuestionField {...{ID}} />
+                    <AnswerField {...{ID}} />
+                </div>
+            </div>
+        </Transition>
     )
 }

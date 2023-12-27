@@ -11,7 +11,7 @@ export default function PopUp({ children, style, className }: PopUpProps) {
         <Transition
             show={true}
             appear={true}
-            enter="transition-opacity transition-transform"
+            enter="transition-[opacity,transform]"
             enterFrom="opacity-0 scale-90"
             enterTo="opacity-100 scale-100"
             className={className}

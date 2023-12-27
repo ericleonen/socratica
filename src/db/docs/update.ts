@@ -5,10 +5,10 @@ import { usePathDocID } from "@/utils/routing";
 import { useUserID } from "../user";
 import { Timestamp, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AUTOSAVE_DELAY } from "@/config";
 import { Trigger } from "@/types";
-import { QuestionIDsMap, QuestionType } from "../schemas";
+import { QuestionIDsMap, QuestionType, QuestionsMap, ReadyQuestion } from "../schemas";
 import { docActions } from "@/store/docSlice";
 import { questionsActions } from "@/store/questionsSlice";
 
@@ -110,17 +110,30 @@ export function useSaveQuestions(): Trigger {
             dispatch(questionsActions.setSavingStatus("saving"));
             const lastSaved = Timestamp.now();
 
-            const questionIDsMap: QuestionIDsMap = {};
+            const readyQuestions: QuestionsMap<ReadyQuestion> = {};
+            for (let ID in questions) {
+                const question = questions[ID];
 
-            // mapify
+                if (question.status === "ready") {
+                    readyQuestions[ID] = {
+                        question: question.question,
+                        answer: question.answer,
+                        type: question.type
+                    }
+                }
+            }
+
+            const readyQuestionIDs: QuestionIDsMap = {};
             questionIDs.forEach((sectionIDs, sectionIndex) => {
-                questionIDsMap[sectionIndex] = sectionIDs;
+                readyQuestionIDs[sectionIndex] = sectionIDs.filter(
+                    ID => readyQuestions.hasOwnProperty(ID)
+                );
             });
 
             const docRef = doc(db, "users", userID, "docs", docID);
             await updateDoc(docRef, {
-                questions,
-                questionIDs: questionIDsMap
+                questions: readyQuestions,
+                questionIDs: readyQuestionIDs
             });
 
             const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
@@ -153,12 +166,22 @@ export function useSaveQuestion(ID: string) {
     const dispatch = useAppDispatch();
     const saveCallback = useCallback(async () => {
         try {
+            if (question.status !== "ready") {
+                throw new Error("Attempting to save non-ready question!");
+            }
+            
             dispatch(questionsActions.setSavingStatus("saving"));
             const lastSaved = Timestamp.now();
 
+            const readyQuestion: ReadyQuestion = {
+                question: question.question,
+                answer: question.answer,
+                type: question.type
+            };
+
             const docRef = doc(db, "users", userID, "docs", docID);
             await updateDoc(docRef, {
-                [`questions.${ID}`]: question
+                [`questions.${ID}`]: readyQuestion
             });
 
             const docMetadataRef = doc(db, "users", userID, "docsMetadatas", docID);
@@ -185,39 +208,33 @@ export function useSaveQuestion(ID: string) {
 
 export function useEditableQuestionDraft(ID: string): [
     string, QuestionType,
-    (newQuestion: string) => void, (newType: QuestionType) => void,
+    React.Dispatch<React.SetStateAction<string>>, React.Dispatch<React.SetStateAction<QuestionType>>,
     Trigger, Trigger
 ] {
     const { question, type } = useQuestion(ID);
-    const origQuestion = useMemo(() => ({ question, type }), [ID]);
 
     const dispatch = useAppDispatch();
-    const saveQuestion = useSaveQuestion(ID);
 
-    const setQuestion = (newQuestion: string) => {
+    const [questionDraft, setQuestionDraft] = useState<string>(question);
+    const [typeDraft, setTypeDraft] = useState<QuestionType>(type);
+
+    const writeQuestion = () => {
         dispatch(questionsActions.setQuestion({
             ID,
-            question: newQuestion
+            question: questionDraft,
+            type: typeDraft
         }));
     }
-    const setType = (newType: string) => {
-        dispatch(questionsActions.setQuestion({
-            ID,
-            type: newType
-        }));
-    }
-    const revert = () => {
-        dispatch(questionsActions.setQuestion({
-            ID,
-            question: origQuestion.question,
-            type: origQuestion.type
-        }));
+
+    const resetQuestion = () => {
+        setQuestionDraft(question);
+        setTypeDraft(type);
     }
 
     return [
-        question, type,
-        setQuestion, setType,
-        saveQuestion, revert
+        questionDraft, typeDraft,
+        setQuestionDraft, setTypeDraft,
+        writeQuestion, resetQuestion
     ]
 }
 

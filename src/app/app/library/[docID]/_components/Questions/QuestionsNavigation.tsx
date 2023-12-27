@@ -1,6 +1,7 @@
 import TooltipProvider from "@/components/TooltipProvider"
 import { useQuestionIDs } from "@/db/docs/read"
 import { useEditableFocusSection } from "@/db/docs/update"
+import { useAppDispatch } from "@/store"
 import Icon from "@/theme/Icon"
 import SecondaryButton from "@/theme/SecondaryButton"
 import { Left, Right } from "@icon-park/react"

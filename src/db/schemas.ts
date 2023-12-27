@@ -12,14 +12,14 @@ export type User = {
 export type Doc = {
     text: string[],
     questionIDs: string[][],
-    questions: QuestionsMap
+    questions: QuestionsMap<Question>
 }
 
 /**
  * Map of question ID to its data
  */
-export type QuestionsMap = {
-    [ID: string]: Question
+export type QuestionsMap<T> = {
+    [ID: string]: T
 }
 
 /**
@@ -28,13 +28,25 @@ export type QuestionsMap = {
 export type Question = {
     question: string,
     answer: string,
+    type: QuestionType,
+    status: QuestionStatus
+}
+
+export type ReadyQuestion = {
+    question: string,
+    answer: string,
     type: QuestionType
 }
 
 /**
  * Possible question types
  */
-export type QuestionType = "comprehension" | "research" | "big idea" | "loading" | "deleting";
+export type QuestionType = "comprehension" | "research" | "big idea";
+
+/**
+ * Possible question statuses (not included in Firestore)
+ */
+export type QuestionStatus = "deleting" | "adding" | "ready" | "generating";
 
 /**
  * Type of questionIDs field in Firestore

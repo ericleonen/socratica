@@ -13,7 +13,7 @@ export default function SearchBar({ query, setQuery }: SearchBarProps) {
 
     return (
         <div className={`transition-colors p-1 border-b-2 border-slate-400 ${focused && "bg-amber-200"}`}>
-            <div className="flex rounded-md overflow-hidden w-full items-center bg-white">
+            <div className="flex rounded-md overflow-hidden w-full items-center bg-transparent">
                 <Icon type={Search} className="text-base text-slate-400 py-3 px-3"/>
                 <input 
                     autoFocus

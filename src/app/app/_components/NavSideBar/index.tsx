@@ -31,7 +31,7 @@ export default function NavSideBar() {
             leaveFrom="ml-0"
             leaveTo="ml-[-3.5rem]"
             afterLeave={() => setShowMain(true)}
-            className="w-[3.5rem] duration-75 border-r-2 border-slate-400 bg-stone-100 h-full shrink-0"
+            className="w-[3.5rem] duration-75 border-r-2 bg-stone-100 dark:bg-stone-900 border-slate-400 dark:border-slate-700 h-full shrink-0"
         >
             <TooltipProvider 
                 text="Open sidebar"

@@ -115,3 +115,11 @@ export function sentencify(text: string, locale: string = "en"): string[] {
 
     return sentences;
 }
+
+export function in2Px(inches: number) {
+    return inches * 96;
+}
+
+export function words2Chars(words: number) {
+    return words * 5;
+}

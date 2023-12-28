@@ -10,7 +10,14 @@ function parse<T>(value: string, isString: boolean) {
 export function useLocalStorage<T>(key: string, initialValue: T): [
     T, (newValue: T) => void
 ] {
+    if (typeof window === "undefined") {
+        return [initialValue, (newValue: T) => {
+            console.log("Window doesn't exist so you can't use localStorage!")
+        }];
+    }
+
     const isString = typeof initialValue === "string";
+    const localStorage = window.localStorage;
 
     if (key in localStorage) {
         initialValue = parse<T>(localStorage[key], isString);

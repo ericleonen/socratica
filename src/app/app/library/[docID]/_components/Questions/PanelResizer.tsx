@@ -12,7 +12,7 @@ export default function PanelResizer() {
     return (
         <div
             onMouseDown={() => setDragging(true)}
-            className="ml-1 w-1 h-full hover:cursor-w-resize hover:bg-amber-200 relative"
+            className="ml-1 w-1 h-full hover:cursor-w-resize hover:bg-amber-200 dark:hover:bg-amber-300/30 relative"
         >
             { dragging && 
                 <div 

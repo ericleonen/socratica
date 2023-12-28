@@ -33,11 +33,11 @@ export default function SettingsModal() {
         { text: "Long (200 words)", onClick: () => setSectionSize(words2Chars(200)) }
     ];
 
-    const [compFreq, setCompFreq] = useLocalStorage<number>("compFreq", 100);
+    const [compFreq, setCompFreq] = useLocalStorage<number>("compFreq", words2Chars(100));
     const compOptions: Option[] = [
-        { text: "Few (every 200 words)", onClick: () => setCompFreq(200) },
-        { text: "Default (every 100 words)", onClick: () => setCompFreq(100) },
-        { text: "Many (every 50 words)", onClick: () => setCompFreq(50) }
+        { text: "Few (every 200 words)", onClick: () => setCompFreq(words2Chars(200)) },
+        { text: "Default (every 100 words)", onClick: () => setCompFreq(words2Chars(100)) },
+        { text: "Many (every 50 words)", onClick: () => setCompFreq(words2Chars(50)) }
     ];
 
     const [bigIdeaFreq, setBigIdeaFreq] = useLocalStorage<number>("bigIdeaFreq", 4);
@@ -137,9 +137,9 @@ export default function SettingsModal() {
                             className="ml-auto"
                         >
                             {
-                                compFreq === 200 ? "Few" :
-                                compFreq === 100 ? "Default" :
-                                compFreq === 50 && "Many"
+                                compFreq === words2Chars(200) ? "Few" :
+                                compFreq === words2Chars(100) ? "Default" :
+                                compFreq === words2Chars(50) && "Many"
                             }
                             <Icon type={Down} className="ml-1" />
                         </SecondaryButton>

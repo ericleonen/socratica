@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import { Pipeline } from "@xenova/transformers";
 import { Matrix, add, dotDivide, exp, index, map, matrix, multiply, transpose, zeros } from "mathjs";
 import { generateIDs, linspace } from "./helpers";
-import { CHARS_PER_COMP, MIN_SECTION_LENGTH, SECTIONS_PER_BIG_IDEA, TEST_MODE } from "@/config";
+import { TEST_MODE } from "@/config";
 
 function sleep(time: number) {
     return new Promise((resolve) => {
@@ -10,7 +10,9 @@ function sleep(time: number) {
     });
   }
 
-export async function sectionify(sentences: string[], embedder: Pipeline) {
+export async function sectionify(
+    sentences: string[], embedder: Pipeline, MIN_SECTION_LENGTH: number,
+) {
     const embeddings = (await embedder(sentences, {
         pooling: "mean",
         normalize: true
@@ -95,11 +97,13 @@ export async function sectionify(sentences: string[], embedder: Pipeline) {
         }
     }
 
-    return { sections, intervals };
+    return sections;
 }
 
 export default async function* generate(
-    sections: string[], openai: OpenAI
+    sections: string[], openai: OpenAI,
+    CHARS_PER_COMP: number,
+    SECTIONS_PER_BIG_IDEA: number
 ) {
     yield JSON.stringify({
         type: "textSections",

@@ -8,12 +8,17 @@ const openai = new OpenAI({
 });
 
 export async function POST(req: Request) {
-    const { text } = await req.json();
+    const { 
+      text,
+      MIN_SECTION_LENGTH,
+      CHARS_PER_COMP,
+      SECTIONS_PER_BIG_IDEA
+    } = await req.json();
     
     const sentences = sentencify(text);
-    const { sections, intervals } = await sectionify(sentences, await XenovaLM.getInstance());
+    const sections = await sectionify(sentences, await XenovaLM.getInstance(), MIN_SECTION_LENGTH);
     
-    const generator = generate(sections, intervals, openai);
+    const generator = generate(sections, openai, CHARS_PER_COMP, SECTIONS_PER_BIG_IDEA);
     const stream = iteratorToStream(generator);
 
     return new Response(stream);

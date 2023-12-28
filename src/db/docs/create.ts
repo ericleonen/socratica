@@ -6,12 +6,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useSelector } from "react-redux";
 import { useHasQuestions, useText } from "./read";
-import { MIN_SECTION_LENGTH } from "@/config";
 import { questionsActions } from "@/store/questionsSlice";
 import { docActions } from "@/store/docSlice";
-import { useSaveQuestions } from "./update";
-import { Question } from "../schemas";
 import { Trigger } from "@/types";
+import { useLocalStorage } from "@/utils/localStorage";
+import { words2Chars } from "@/utils/format";
 
 /**
  * Hook that provides a function to create a new doc. Opens the doc in the app after creation
@@ -74,6 +73,10 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
 export function useGenerateQuestions() {
     const text = useText().join("");
     const hasQuestions = useHasQuestions();
+    const MIN_SECTION_LENGTH = useLocalStorage("sectionSize", words2Chars(100))[0];
+    const CHARS_PER_COMP = useLocalStorage("compFreq", words2Chars(100))[0];
+    const SECTIONS_PER_BIG_IDEA = useLocalStorage("bigIdeaFreq", 4)[0];
+
     
     const dispatch = useAppDispatch();
 
@@ -91,7 +94,12 @@ export function useGenerateQuestions() {
                 headers: {
                     "Content-type": "application/json"
                 },
-                body: JSON.stringify({ text })
+                body: JSON.stringify({ 
+                    text,
+                    MIN_SECTION_LENGTH,
+                    CHARS_PER_COMP,
+                    SECTIONS_PER_BIG_IDEA
+                })
             });
 
             if (!questionsRes.body) return;

@@ -17,12 +17,15 @@ type OptionsProviderProps = {
     disabled?: boolean,
     className?: string,
     align?: "right" | "left"
-    position?: "above" | "below"
+    position?: "above" | "below",
+    absolute?: boolean
 }
 
 type Position = number  | "";
 
-export default function OptionsProvider({ children, options, disabled, className, align, position }: OptionsProviderProps) {
+export default function OptionsProvider({ 
+    children, options, disabled, className, align, position, absolute }: OptionsProviderProps
+) {
     if (!align) align = "right";
     if (!position) position = "below";
 
@@ -45,7 +48,7 @@ export default function OptionsProvider({ children, options, disabled, className
         }
 
         if (position === "below") {
-            top = div.offsetTop + div.offsetHeight;
+            top = absolute ? div.getBoundingClientRect().bottom : div.offsetTop + div.offsetHeight;
         } else {
             let totalHeight = 0;
             if (div.offsetParent) totalHeight = div.offsetParent.getBoundingClientRect().height;

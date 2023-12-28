@@ -4,7 +4,9 @@ import TextSubSection from "./TextSubSection";
 type TextSectionProps = {
     value: string,
     highlight: boolean
-    firstSection: boolean
+    firstSection: boolean,
+    forPrinting: boolean,
+    sectionIndex: number
 }
 
 function useScroll(highlight: boolean) {
@@ -26,7 +28,7 @@ function useScroll(highlight: boolean) {
     return spanRef;
 }
 
-export default function TextSection({ value, highlight, firstSection }: TextSectionProps) {
+export default function TextSection({ value, highlight, firstSection, forPrinting, sectionIndex }: TextSectionProps) {
     const spanRef = useScroll(highlight);
 
     const parts = useMemo(() => {
@@ -50,8 +52,8 @@ export default function TextSection({ value, highlight, firstSection }: TextSect
             <TextSubSection 
                 key={`text_sub_section_${index}`}
                 value={part}
-                highlight={highlight} 
                 ref={refUsed ? null : spanRef}
+                {...{forPrinting, highlight, sectionIndex}}
             />
         );
 

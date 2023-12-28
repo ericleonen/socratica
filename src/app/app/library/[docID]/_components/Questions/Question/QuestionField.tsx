@@ -107,6 +107,7 @@ export default function QuestionField({ ID }: QuestionIDProp) {
                     options={questionTypeOptions}
                     disabled={!editMode}
                     align="left"
+                    absolute
                 >
                     <div className={`
                         text-xs flex items-center p-1 rounded-md 

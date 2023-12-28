@@ -1,13 +1,15 @@
-import { MIN_SECTION_LENGTH } from "@/config"
 import PrimaryButton from "@/theme/PrimaryButton"
 import Icon from "@/theme/Icon"
 import { LoadingFour, Magic } from "@icon-park/react"
 import { useGenerateQuestions } from "@/db/docs/create"
 import { useQuestionsGeneratingStatus, useText } from "@/db/docs/read"
 import TooltipProvider from "@/components/TooltipProvider"
+import { useLocalStorage } from "@/utils/localStorage"
+import { words2Chars } from "@/utils/format"
 
 export default function GenerateQuestions() {
     const status = useQuestionsGeneratingStatus();
+    const MIN_SECTION_LENGTH = useLocalStorage("sectionSize", words2Chars(100))[0];
     const disabled = useText().join("").length < MIN_SECTION_LENGTH;
 
     const generate = useGenerateQuestions();

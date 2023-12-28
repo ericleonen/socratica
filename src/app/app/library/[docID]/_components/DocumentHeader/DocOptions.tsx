@@ -6,11 +6,18 @@ import TooltipProvider from "@/components/TooltipProvider";
 import Icon from "@/theme/Icon";
 import SecondaryButton from "@/theme/SecondaryButton";
 import { useCopyText } from "@/utils/input";
-import { Copy, Delete, More } from "@icon-park/react";
-import { useContext } from "react";
+import { Copy, Delete, More, Printer } from "@icon-park/react";
+import { useContext, useRef } from "react";
+import { useReactToPrint } from "react-to-print";
+import Worksheet from "../Worksheet";
 
 export default function DocOptions() {
     const copyText = useCopyText();
+
+    const printRef = useRef<HTMLDivElement>(null);
+    const handlePrint = useReactToPrint({
+        content: () => printRef.current
+    });
     
     const deleteModal = useContext(modalContexts["delete"]);
     const setAlert = useContext(AlertContext);
@@ -25,6 +32,11 @@ export default function DocOptions() {
             },
         },
         {
+            icon: Printer,
+            text: "Print worksheet",
+            onClick: handlePrint
+        },
+        {
             icon: Delete,
             text: "Delete document",
             onClick: deleteModal.open,
@@ -32,9 +44,13 @@ export default function DocOptions() {
         }
     ];
 
-    return (
+    return <>
+        <div className="hidden">
+            <Worksheet ref={printRef} />
+        </div>
         <OptionsProvider
             options={options}
+            absolute
             className="shadow-sm dark:shadow-sm-dark"
         >
             <TooltipProvider 
@@ -51,5 +67,5 @@ export default function DocOptions() {
                 
             </TooltipProvider>
         </OptionsProvider>
-    )
+    </>
 }

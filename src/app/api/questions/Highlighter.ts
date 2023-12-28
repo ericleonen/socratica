@@ -130,6 +130,8 @@ export default async function* generate(
     for (let sectionIndex = 0; sectionIndex < sections.length; sectionIndex++) {
         await sleep(1000);
 
+        const isBigIdea = bigIdeaIndices.includes(sectionIndex);
+
         if (TEST_MODE) {
             for (let j = 0; j < numCompQuestions[sectionIndex]; j++) {
                 await sleep(2000);
@@ -143,8 +145,6 @@ export default async function* generate(
                     }
                 });
             }
-
-            const isBigIdea = bigIdeaIndices.includes(sectionIndex);
 
             await sleep(2000);
             yield JSON.stringify({
@@ -199,6 +199,8 @@ export default async function* generate(
                     data: {
                         type: "comprehension",
                         question: line.replace(`${parseInt(line)}.`, "").trim(),
+                        ID: crypto.randomUUID(),
+                        last: false
                     }
                 });
             }
@@ -219,6 +221,8 @@ export default async function* generate(
                 data: {
                     type: "research",
                     question: researchRes,
+                    ID: crypto.randomUUID(),
+                    last: !isBigIdea
                 }
             });
         }
@@ -243,6 +247,8 @@ export default async function* generate(
                     data: {
                         type: "big idea",
                         question: bigIdeaRes,
+                        ID: crypto.randomUUID(),
+                        last: true
                     }
                 });
             }

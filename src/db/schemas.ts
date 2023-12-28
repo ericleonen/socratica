@@ -46,7 +46,7 @@ export type QuestionType = "comprehension" | "research" | "big idea";
 /**
  * Possible question statuses (not included in Firestore)
  */
-export type QuestionStatus = "deleting" | "adding" | "ready" | "generating";
+export type QuestionStatus = "deleting" | "adding" | "ready";
 
 /**
  * Type of questionIDs field in Firestore

@@ -4,8 +4,6 @@ import { useEffect, useRef, } from "react"
 import { useQuestionStatus } from "@/db/docs/read";
 import AddQuestionButton from "../AddQuestionButton";
 import { Transition } from "@headlessui/react";
-import { useAppDispatch } from "@/store";
-import { questionsActions } from "@/store/questionsSlice";
 
 export type QuestionIDProp = { ID: string };
 
@@ -18,16 +16,6 @@ type QuestionProps = {
 export default function Question({ ID, sectionIndex, questionIndex }: QuestionProps) {
     const divRef = useRef<HTMLDivElement>(null);
     const status = useQuestionStatus(ID);
-
-    const dispatch = useAppDispatch();
-
-    const makeReady = () => {
-        if (status !== "generating") return;
-        dispatch(questionsActions.setQuestionStatus({
-            ID,
-            status: "ready"
-        }));
-}
 
     useEffect(() => {
         const container = divRef.current;
@@ -58,10 +46,9 @@ export default function Question({ ID, sectionIndex, questionIndex }: QuestionPr
         <Transition 
             show={true}
             appear={true}
-            enter={status === "generating" ? "transition-opacity" : ""}
+            enter="transition-opacity"
             enterFrom={"opacity-0"}
             enterTo="opacity-100"
-            afterEnter={makeReady}
             className="w-full"
         >
             <div

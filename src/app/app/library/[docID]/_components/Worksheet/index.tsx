@@ -1,8 +1,7 @@
 import { Fragment, forwardRef } from "react"
 import "./styles.css";
-import { useQuestionIDs, useQuestions, useText, useTitle } from "@/db/docs/read";
+import { useQuestionIDs, useQuestions, useTitle } from "@/db/docs/read";
 import TextDisplay from "../Document/TextDisplay";
-
 
 const Worksheet = forwardRef((props: any, ref: React.Ref<HTMLDivElement> | null) => {
     const title = useTitle();
@@ -23,7 +22,9 @@ const Worksheet = forwardRef((props: any, ref: React.Ref<HTMLDivElement> | null)
                     <Fragment key={`questionSection_${sectionIndex}`}>
                         <p className="font-bold w-full border-b-2 border-slate-300 mb-3 text-slate-500 tracking-wider text-sm break-after-avoid">SECTION {sectionIndex + 1}</p>
                         {
-                            sectionIDs.map((ID, questionIndex) => 
+                            sectionIDs
+                            .filter(ID => questions[ID].status === "ready")
+                            .map((ID, questionIndex) => 
                                 <div 
                                     key={ID}
                                     className="flex pb-32 break-inside-avoid-page"

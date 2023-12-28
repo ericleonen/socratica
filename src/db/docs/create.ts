@@ -77,7 +77,6 @@ export function useGenerateQuestions() {
     const CHARS_PER_COMP = useLocalStorage("compFreq", words2Chars(100))[0];
     const SECTIONS_PER_BIG_IDEA = useLocalStorage("bigIdeaFreq", 4)[0];
 
-    
     const dispatch = useAppDispatch();
 
     return async () => {
@@ -133,7 +132,7 @@ export function useGenerateQuestions() {
                         dispatch(questionsActions.add({
                             sectionIndex, 
                             ID,
-                            status: "generating",
+                            status: "ready",
                             question,
                             type
                         }));

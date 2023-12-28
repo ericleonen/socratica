@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react";
 import PanelResizer from "./PanelResizer";
 import QuestionsNavigation from "./QuestionsNavigation";
 import GenerateQuestions from "./GenerateQuestions";
-import { useDocLoadingStatus, useHasQuestions, useQuestionsGeneratingStatus, useQuestionsSavingStatus } from "@/db/docs/read";
+import { useDocLoadingStatus, useHasQuestions, useNumQuestions, useQuestionsGeneratingStatus, useQuestionsSavingStatus } from "@/db/docs/read";
 import { WidthStateContext } from "./DimensionsContext";
 import QuestionSlider from "./QuestionSlider";
 import SkeletonList from "@/components/SkeletonList";

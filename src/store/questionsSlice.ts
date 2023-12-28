@@ -53,7 +53,7 @@ const questionsSlice = createSlice({
                 questionIndex?: number,
                 // new info
                 ID: string,
-                status?: "generating",
+                status?: QuestionStatus,
                 question?: string,
                 type?: QuestionType
             }
@@ -151,7 +151,7 @@ const questionsSlice = createSlice({
             const sectionIndex = action.payload as number;
 
             state.IDs[sectionIndex] = state.IDs[sectionIndex].filter(ID => {
-                if (!["ready", "generating"].includes(state.map[ID].status)) {
+                if (state.map[ID].status !== "ready") {
                     delete state.map[ID];
                     return false;
                 }

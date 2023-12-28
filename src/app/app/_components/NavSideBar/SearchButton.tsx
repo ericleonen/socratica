@@ -1,10 +1,10 @@
 import { Search } from "@icon-park/react";
 import NavButton from "./NavButton";
-import { useModalContext } from "../modals/ModalContext";
+import { useContext } from "react";
+import { modalContexts } from "../modals/ModalProviders";
 
 export default function SearchButton() {
-    const { setSearchModal } = useModalContext();
-    const open = () => setSearchModal(true);
+    const { open } = useContext(modalContexts["search"])
 
     return (
         <NavButton

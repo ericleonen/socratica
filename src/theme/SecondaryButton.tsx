@@ -18,9 +18,9 @@ export default function SecondaryButton({ onClick, className, children, size, we
             className={`
                 rounded font-medium flex items-center
                 ${
-                    weight === "heavy"  ? "bg-amber-200 hover:bg-amber-300 text-slate-700" :
-                    weight === "normal" ? "hover:bg-gray-200 text-slate-500" :
-                    weight === "light" && "hover:bg-black/10 text-slate-500"
+                    weight === "heavy"  ? "bg-amber-200 dark:bg-yellow-300/10 hover:bg-amber-300 dark:hover:bg-yellow-300/20 text-slate-700 dark:text-amber-300" :
+                    weight === "normal" ? "hover:bg-gray-200 dark:hover:bg-white/10 text-slate-500 dark:text-slate-400" :
+                    weight === "light" && "hover:bg-black/10 dark:hover:bg-white/5 text-slate-500"
                                          
                 }
                 ${

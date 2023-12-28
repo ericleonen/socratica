@@ -79,7 +79,7 @@ export default function Question({ ID, sectionIndex, questionIndex }: QuestionPr
                 >
                     +
                 </AddQuestionButton>
-                <div className="flex flex-col border-slate-700 border-2 shadow-sm rounded-md overflow-hidden shrink-0 w-full">
+                <div className="flex flex-col border-slate-700 dark:border-slate-300 border-2 shadow-sm dark:shadow-sm-dark rounded-md overflow-hidden shrink-0 w-full">
                     <QuestionField {...{ID}} />
                     <AnswerField {...{ID}} />
                 </div>

@@ -31,7 +31,7 @@ export default function SearchResult({ title, query, onClick, selected, select }
             ref={buttonRef}
             onClick={onClick}
             onMouseEnter={select}
-            className={`text-slate-500 scroll-m-3 w-full px-3 py-2 rounded-md flex items-center ${selected && "bg-amber-200 text-slate-700"}`}
+            className={`text-slate-500 scroll-m-3 w-full px-3 py-2 rounded-md flex items-center ${selected && "bg-amber-200 dark:bg-amber-300/10 text-slate-700 dark:text-amber-300"}`}
         >
             <Icon type={Notes} className="text-lg mr-3"/>
             {

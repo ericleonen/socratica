@@ -30,7 +30,7 @@ export default function QuestionsNavigation() {
                     </SecondaryButton>
                 </TooltipProvider>
                 
-                <p className="font-bold text-slate-700 uppercase text-sm tracking-wide">Section {section + 1}/{numSections}</p>
+                <p className="font-bold text-slate-700 dark:text-slate-300 uppercase text-sm tracking-wide">Section {section + 1}/{numSections}</p>
                 <TooltipProvider 
                     text="Next"
                     disabled={section === numSections - 1}

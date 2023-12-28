@@ -1,5 +1,6 @@
 import OptionsProvider, { Option } from "@/app/app/_components/OptionsProvider";
 import { useModalContext } from "@/app/app/_components/modals/ModalContext";
+import { modalContexts } from "@/app/app/_components/modals/ModalProviders";
 import { AlertContext } from "@/components/AlertProvider";
 import TooltipProvider from "@/components/TooltipProvider";
 import Icon from "@/theme/Icon";
@@ -11,7 +12,7 @@ import { useContext } from "react";
 export default function DocOptions() {
     const copyText = useCopyText();
     
-    const { setDeleteModal } = useModalContext();
+    const deleteModal = useContext(modalContexts["delete"]);
     const setAlert = useContext(AlertContext);
 
     const options: Option[] = [
@@ -26,7 +27,7 @@ export default function DocOptions() {
         {
             icon: Delete,
             text: "Delete document",
-            onClick: () => setDeleteModal(true),
+            onClick: deleteModal.open,
             theme: "danger"
         }
     ];
@@ -34,7 +35,7 @@ export default function DocOptions() {
     return (
         <OptionsProvider
             options={options}
-            className="shadow-sm"
+            className="shadow-sm dark:shadow-sm-dark"
         >
             <TooltipProvider 
                 text="Document options"

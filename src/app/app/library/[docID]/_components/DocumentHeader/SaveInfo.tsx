@@ -22,7 +22,7 @@ export default function SaveInfo() {
     );
 
     return (
-        <div className="text-slate-400 flex items-center font-medium mr-2">{
+        <div className="text-slate-400 dark:text-slate-600 flex items-center font-medium mr-2">{
             allSaved && lastSaved ? (<>
                 <Icon type={CheckOne} className="mr-2"/> {lastSaved}
             </>) :

@@ -2,27 +2,32 @@ import { useDeleteDoc } from "@/db/docs/delete";
 import { useTitle } from "@/db/docs/read";
 import PrimaryButton from "@/theme/PrimaryButton";
 import SecondaryButton from "@/theme/SecondaryButton";
-import { useModalContext } from "./ModalContext";
 import Modal from "./Modal";
+import { useContext } from "react";
+import { modalContexts } from "./ModalProviders";
+import { useRouter } from "next/navigation";
+import { AlertContext } from "@/components/AlertProvider";
 
 export default function DeleteWarningModal() {
     const title = useTitle();
 
     const deleteDoc = useDeleteDoc();
-    const deleteAndClose = () => {
-        setTimeout(() => {
-            deleteDoc();
-            close();
-        }, 200);
+    const router = useRouter();
+    const setAlert = useContext(AlertContext);
+
+    const deleteAndClose = async () => {
+        await deleteDoc();
+        setAlert("deletion", "Document deleted");
+        router.push("/app");
+        close();
     }
 
-    const { setDeleteModal } = useModalContext();
-    const close = () => setDeleteModal(false);
+    const { close } = useContext(modalContexts["delete"]);
 
     return (
         <Modal 
             close={close}
-            className="py-5 px-7 bg-white"
+            className="py-5 px-7"
         >
             <p className="font-medium text-slate-700">{
                 title ? <>

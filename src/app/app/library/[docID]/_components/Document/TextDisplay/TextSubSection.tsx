@@ -18,7 +18,7 @@ const TextSubSection = React.forwardRef(
             return (
                 <span 
                     ref={ref}
-                    className={`${highlight && "bg-amber-200 font-medium"} scroll-m-16`}
+                    className={`${highlight && "bg-amber-200 dark:bg-yellow-600/30 dark:text-white font-medium"} scroll-m-16`}
                 >
                     {value}
                 </span>

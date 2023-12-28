@@ -16,8 +16,6 @@ export function useDeleteDoc() {
     const docID = usePathDocID() as string;
     
     const dispatch = useAppDispatch();
-    const router = useRouter();
-    const setAlert = useContext(AlertContext);
 
     return async () => {
         try {
@@ -32,10 +30,6 @@ export function useDeleteDoc() {
             dispatch(docsMetadatasActions.remove(docID));
             dispatch(docActions.clear());
             dispatch(questionsActions.clear());
-
-            setAlert("deletion", "Document deleted");
-
-            router.push("/app");
         } catch (err) {
             const error = err as Error;
             dispatch(docActions.setSavingStatus("failed"));

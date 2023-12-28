@@ -33,13 +33,13 @@ export default function LibraryList() {
                     weight="light"
                     className="mr-2"
                 >
-                    <Icon type={Down} className={`text-lg text-slate-400 transition-transform ${showRecent ? "0" : "rotate-[-90deg]"}`} />
+                    <Icon type={Down} className={`text-lg transition-transform ${showRecent ? "0" : "rotate-[-90deg]"}`} />
                 </SecondaryButton>
-                <p className="text-sm tracking-wider font-bold text-slate-400 uppercase">Documents</p>
+                <p className="text-slate-400 dark:text-slate-600 text-sm tracking-wider font-bold uppercase">Documents</p>
             </div>
             <Transition
                 show={showRecent} 
-                className="w-full flex-grow overflow-y-scroll pb-5 border-t-2 border-slate-300"
+                className="border-slate-300 dark:border-slate-600 w-full flex-grow overflow-y-scroll pb-5 border-t-2"
             >{
                 sortedIDs.map(ID => 
                     <NavButton

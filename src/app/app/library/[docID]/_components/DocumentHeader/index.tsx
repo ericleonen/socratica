@@ -8,7 +8,7 @@ export default function DocumentHeader() {
     const status = useDocLoadingStatus();
 
     return (
-        <div className="py-3 w-full flex items-center bg-white px-3 z-10 border-b-2 border-slate-400">
+        <div className="border-slate-400 dark:border-slate-700 py-3 w-full flex items-center px-3 z-10 border-b-2">
             <MiniTitle />
             {
                 status === "succeeded" ? (

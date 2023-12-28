@@ -55,7 +55,7 @@ export default function NavSideBar() {
             leaveFrom="ml-0"
             leaveTo="ml-[-18rem]"
             afterLeave={() => setShowMini(true)}
-            className="duration-75 flex flex-col w-72 h-full p-3 pb-0 bg-stone-100 border-r-2 border-slate-400 overflow-hidden shrink-0"
+            className="bg-stone-100 dark:bg-stone-900 border-slate-400 dark:border-slate-700 duration-75 flex flex-col w-72 h-full p-3 pb-0 border-r-2 overflow-hidden shrink-0"
         >
             <div className="flex items-center">
                 <AccountButton />

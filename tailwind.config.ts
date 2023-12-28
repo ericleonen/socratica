@@ -17,7 +17,8 @@ const config: Config = {
       },
       boxShadow: {
         "sm": "2px 2px #334155",
-        "md": "3px 3px #334155"
+        "sm-amber": "2px 2px #fcd34d",
+        "sm-dark": "2px 2px #cbd5e1"
       },
       transitionProperty: {
         "margin": "margin",
@@ -44,5 +45,6 @@ const config: Config = {
     }
   },
   plugins: [],
+  darkMode: "class"
 }
 export default config

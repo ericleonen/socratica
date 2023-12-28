@@ -90,7 +90,7 @@ export function useSaveText(): Trigger {
             dispatch(docActions.setSavingStatus("failed"));
             dispatch(docActions.setError(error));
         }
-    }, [userID, docID, text.join("")]);
+    }, [userID, docID, text.join(""), text.length]);
     const saveText = useSave(saveCallback);
 
     return saveText;

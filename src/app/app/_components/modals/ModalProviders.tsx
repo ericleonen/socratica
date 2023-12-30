@@ -3,11 +3,13 @@ import React, { createContext, useState } from "react";
 import DeleteWarningModal from "./DeleteModal";
 import SearchModal from "./SearchModal";
 import SettingsModal from "./SettingsModal.tsx";
+import AccountModal from "./AccountModal.tsx";
 
 const modals: { [modal: string]: React.ElementType } = {
     "delete": DeleteWarningModal,
     "search": SearchModal,
-    "settings": SettingsModal
+    "settings": SettingsModal,
+    "account": AccountModal
 };
 export const modalContexts: { [modal: string]: React.Context<ModalContext> } = {};
 

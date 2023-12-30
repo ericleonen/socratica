@@ -17,18 +17,21 @@ const themes = {
     "comprehension": {
         background: "bg-sky-100 dark:bg-sky-400/10",
         labelText: "text-sky-500",
+        darkText: "dark:text-sky-500",
         save: "!text-sky-500 hover:!bg-sky-200",
         icon: BookOne
     },
     "research": {
         background: "bg-emerald-100 dark:bg-emerald-400/10",
         labelText: "text-emerald-500",
+        darkText: "dark:text-emerald-500",
         save: "!text-emerald-500 hover:!bg-emerald-200",
         icon: ThinkingProblem
     },
     "big idea": {
         background: "bg-violet-100 dark:bg-violet-400/10",
         labelText: "text-violet-500",
+        darkText: "dark:text-violet-500",
         save: "!text-violet-500 hover:!bg-violet-200",
         icon: World
     }
@@ -123,7 +126,7 @@ export default function QuestionField({ ID }: QuestionIDProp) {
                     <QuestionOptions {...{ID, editMode, setEditMode}} />
                 </div>
             </div>
-            <div className={`transition-colors p-1 pb-0 mt-1 rounded-md ${focused && "bg-amber-200 dark:bg-amber-300/30"}`}>
+            <div className={`transition-colors p-1 pb-0 mt-1 rounded-md ${focused && "bg-amber-200 dark:bg-amber-300/10"}`}>
                 <textarea 
                     onFocus={() => setFocused(true)}
                     onBlur={() => setFocused(false)}
@@ -132,7 +135,7 @@ export default function QuestionField({ ID }: QuestionIDProp) {
                     value={questionDraft}
                     placeholder="A question here"
                     onChange={handleChange(setQuestionDraft)}
-                    className={`text-slate-700 dark:text-slate-300 px-[2px] w-full h-full focus:outline-none rounded-md resize-none placeholder:text-slate-400 dark:placeholder:text-slate-400/80 bg-transparent`}
+                    className={`text-slate-700 dark:text-slate-300 px-[2px] w-full h-full focus:outline-none rounded-md resize-none placeholder:text-slate-400 dark:placeholder:text-slate-400/80 bg-transparent ${themes[typeDraft].darkText}`}
                 />
             </div>
             {

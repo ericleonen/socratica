@@ -4,15 +4,17 @@ import HorizontalLayout from "@/components/HorizontalLayout";
 import { LayoutProps } from "@/types";
 import NavSideBar from "./_components/NavSideBar";
 import { useLoadDocsMetadatas } from "@/db/docs/read";
-import { useUser } from "@/db/user";
+import { useLoadUser } from "@/db/user/read";
 import AlertProvider from "@/components/AlertProvider";
 import ModalProviders from "./_components/modals/ModalProviders";
 import { useEffect } from "react";
 import { useLocalStorage } from "@/utils/localStorage";
+import { useAutoLogOut } from "@/auth";
 
 export default function AppLayout({ children }: LayoutProps) {
-    useUser();
+    useLoadUser();
     useLoadDocsMetadatas();
+    useAutoLogOut();
 
     const theme = useLocalStorage<"light" | "dark">("theme", "light")[0];
 

@@ -29,7 +29,7 @@ export default function DeleteWarningModal() {
             close={close}
             className="py-5 px-7"
         >
-            <p className="font-medium text-slate-700">{
+            <p className="font-medium text-slate-700 dark:text-slate-300">{
                 title ? <>
                     Delete the document <span className="font-bold">"{title}"</span> forever?
                 </> : "Delete the untitled document forever?"

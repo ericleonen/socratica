@@ -1,15 +1,12 @@
 import { usePathDocID } from "@/utils/routing";
-import { useUserID } from "../user";
+import { useUserID } from "../user/read";
 import { useAppDispatch } from "@/store";
-import { useRouter } from "next/navigation";
 import { db } from "@/firebase";
 import { doc, deleteDoc } from "firebase/firestore";
 import { docActions } from "@/store/docSlice";
 import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
 import { Trigger } from "@/types";
 import { questionsActions } from "@/store/questionsSlice";
-import { useContext } from "react";
-import { AlertContext } from "@/components/AlertProvider";
 
 export function useDeleteDoc() {
     const userID = useUserID();

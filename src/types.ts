@@ -1,5 +1,6 @@
 export type LayoutProps = {
-    children: React.ReactNode
+    children?: React.ReactNode,
+    className?: string
 }
 
 export type Paragraph = {

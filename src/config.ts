@@ -1,5 +1,5 @@
 // Questions API
-export const TEST_MODE = true; // true to generate dummy questions, false for AI questions
+export const TEST_MODE = false; // true to generate dummy questions, false for AI questions
 
 // Doc
 export const AUTOSAVE_DELAY = 1000; // in ms

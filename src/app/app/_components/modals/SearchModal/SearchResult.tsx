@@ -31,12 +31,12 @@ export default function SearchResult({ title, query, onClick, selected, select }
             ref={buttonRef}
             onClick={onClick}
             onMouseEnter={select}
-            className={`text-slate-500 scroll-m-3 w-full px-3 py-2 rounded-md flex items-center ${selected && "bg-amber-200 dark:bg-amber-300/10 text-slate-700 dark:text-amber-300"}`}
+            className={`text-slate-400 scroll-m-3 w-full px-3 py-2 rounded-md flex items-center ${selected && "bg-gray-200 dark:bg-amber-300/10 text-slate-700 dark:text-amber-300"}`}
         >
             <Icon type={Notes} className="text-lg mr-3"/>
             {
                 title ?
-                <p>{preMatch}<b>{query}</b>{postMatch}</p> :
+                <p className="whitespace-nowrap overflow-hidden text-ellipsis">{preMatch}<b>{query}</b>{postMatch}</p> :
                 "Untitled"
             }
         </button>

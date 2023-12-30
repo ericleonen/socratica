@@ -14,7 +14,7 @@ export default function AnswerField({ ID }: QuestionIDProp) {
     const [focused, setFocused] = useState(false);
 
     return (
-        <div className={`transition-colors p-1 pb-0 h-min ${focused && "bg-amber-200 dark:bg-amber-300/30"}`}>
+        <div className={`transition-colors p-1 pb-0 h-min ${focused && "bg-amber-200 dark:bg-amber-300/10"}`}>
             <textarea 
                 onFocus={() => setFocused(true)}
                 onBlur={() => setFocused(false)}

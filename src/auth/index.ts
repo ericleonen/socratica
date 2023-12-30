@@ -1,11 +1,12 @@
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { auth } from "../firebase";
-import { initializeUser } from "../db/user";
+import { initializeUser } from "../db/user/create";
 import { MIN_PASSWORD_LENGTH } from "./config";
 import { GoogleAuthProvider } from "firebase/auth";
 import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { Trigger } from "@/types";
 
 /**
  * Signs up a user locally, checking that no fields are empty and the password is proper
@@ -76,6 +77,28 @@ export async function signInWithGoogle() {
     }
 }
 
+export function useGoogleAuth(): [
+    boolean, Trigger, Error | undefined
+] {
+    const [signingIn, setSigningIn] = useState(false);
+    const [error, setError] = useState<Error>();
+
+    return [
+        signingIn,
+        async () => {
+            setSigningIn(true);
+
+            const error = await signInWithGoogle();
+            
+            if (error) {
+                setSigningIn(false);
+                setError(error);
+            }
+        },
+        error
+    ]
+}
+
 /**
  * Hook that automatically takes the user to the /app route if they are already logged in
  */
@@ -88,4 +111,88 @@ export function useAutoLogIn() {
             router.push("/app");
         }
     }, [authUser, authLoading, authError]);
+}
+
+export function useAutoLogOut() {
+    const router = useRouter();
+    const [authUser, authLoading, authError] = useAuthState(auth);
+
+    useEffect(() => {
+        if ((!authUser && !authLoading) || authError) {
+            router.push("/");
+        }
+    }, [authUser, authLoading, authError]);
+}
+
+export function useSignUp(
+    name: string, email: string, password: string, confirmPassword: string
+): [
+    boolean, (e: React.FormEvent) => void, Error | undefined
+] {
+    const [signingUp, setSigningUp] = useState(false);
+    const [error, setError] = useState<Error>();
+
+    return [
+        signingUp,
+        async (e: React.FormEvent) => {
+            e.preventDefault();
+
+            setSigningUp(true);
+            const error = await signUpLocally(name, email, password, confirmPassword);
+
+            if (error) {
+                setSigningUp(false);
+                setError(error);
+            }
+        },
+        error
+    ]
+}
+
+/**
+ * Hook that logs a user in
+ * @param email 
+ * @param password 
+ * @returns a boolean representing the logging-in state, a login form submit handler, and, if
+ *          there is an error, an Error object, otherwise undefined
+ */
+export function useLogIn(email: string, password: string): [
+    boolean, (e: React.FormEvent) => void, Error | undefined
+] {
+    const [loggingIn, setLoggingIn] = useState(false);
+    const [error, setError] = useState<Error>();
+
+    return [
+        loggingIn,
+        async (e: React.FormEvent) => {
+            e.preventDefault();
+
+            setLoggingIn(true);
+            const error = await logInLocally(email, password);
+
+            if (error) {
+                setLoggingIn(false);
+                setError(error);
+            }
+        },
+        error
+    ]
+}
+
+export function useLogOut(): [
+    boolean, Trigger
+] {
+    const [loggingOut, setLoggingOut] = useState(false);
+
+    return [
+        loggingOut,
+        async () => {
+            setLoggingOut(true);
+            logOut();
+        }
+    ]
+}
+
+export async function logOut() {
+    await signOut(auth);
 }

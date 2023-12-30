@@ -1,46 +1,57 @@
 "use client"
 
-import { useState } from "react";
-import AuthContent from "../_components/AuthContent";
-import AuthHeader from "../_components/AuthHeader";
-import Form from "../_components/Form";
-import EmailField from "../_components/EmailField";
-import HorizontalDivider from "../_components/HorizontalDivider";
-import PasswordField from "../_components/PasswordField";
+import { useEffect, useState } from "react";
 import SubmitButton from "../_components/SubmitButton";
-import SignInWithGoogle from "../_components/SignInWithGoogle";
-import { logInLocally, signInWithGoogle, useAutoLogIn } from "@/auth";
+import { useAutoLogIn, useLogIn } from "@/auth";
+import GoogleButton from "../_components/GoogleButton";
+import PrimaryText from "@/components/text/PrimaryText";
+import Logo from "@/components/Logo";
+import InputField from "../_components/InputField";
+import Icon from "@/theme/Icon";
+import { LoadingFour } from "@icon-park/react";
+import OrDivider from "../_components/OrDivider";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<Error>();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        const loginError = await logInLocally(email, password);
-        if (loginError) setError(loginError);
-    }
-
+    const [loggingIn, logIn, error] = useLogIn(email, password);
     useAutoLogIn();
 
-    return (<>
-        <AuthHeader>Login</AuthHeader>
-        <AuthContent>
-            <SignInWithGoogle 
-                onClick={signInWithGoogle}
-            >
-                Sign in with Google
-            </SignInWithGoogle>
-            <HorizontalDivider />
-            <Form
-                onSubmit={handleSubmit}
-            >
-                <EmailField {...{email, setEmail}} />
-                <PasswordField {...{password, setPassword}} />
-                <SubmitButton>Log in</SubmitButton>
-            </Form>
-        </AuthContent>
-    </>);
+    useEffect(() => {
+        if (error) console.error(error);
+    }, [error]);
+
+    return (
+        <div className="h-screen w-screen flex items-center justify-center bg-stone-100 p-3">
+            <div className="px-5 w-full max-w-96">
+                <div className="flex justify-center p-3">
+                    <PrimaryText className="text-lg font-bold">Log in to <Logo className="ml-1"/></PrimaryText>
+                </div>
+                <GoogleButton />
+                <OrDivider />
+                <form 
+                    onSubmit={logIn}
+                    className="w-full flex flex-col"
+                >
+                    <InputField 
+                        type="email"
+                        value={email}
+                        setValue={setEmail}
+                    />
+                    <InputField 
+                        type="password"
+                        value={password}
+                        setValue={setPassword}
+                        className="mt-3"
+                    />
+                    <SubmitButton className="mt-8">{
+                        loggingIn ? <>
+                            <Icon type={LoadingFour} className="animate-spin text-lg mr-2" /> Logging you in
+                        </> : "Log in"
+                    }</SubmitButton>
+                </form>
+            </div>
+        </div>    
+    );
 }

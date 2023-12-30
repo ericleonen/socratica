@@ -2,7 +2,7 @@
 
 import { RootState, useAppDispatch } from "@/store";
 import { useSelector } from "react-redux";
-import { useUserID } from "../user";
+import { useUserID } from "../user/read";
 import { ResourceStatus, SavingStatus } from "@/store/types";
 import { useEffect } from "react";
 import { DocMetadataMap, fetchDocsMetadatas } from "@/store/docsMetadatasSlice";

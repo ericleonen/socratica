@@ -1,23 +1,22 @@
-import { useCreateDoc } from "@/db/docs/create";
-import Icon from "@/theme/Icon";
-import PrimaryButton from "@/theme/PrimaryButton";
 import { LoadingFour, PlusCross } from "@icon-park/react";
+import { useCreateDoc } from "@/db/docs/create";
+import SecondaryButton from "@/theme/SecondaryButton";
+import Icon from "@/theme/Icon";
 
-export default function NewDocButton() {
+export default function SearchButton() {
     const [inProgress, createDoc] = useCreateDoc();
 
     return (
-        <PrimaryButton 
+        <SecondaryButton
+            size="xl"
             onClick={createDoc}
-            className="mt-5"
-        >{
-            inProgress ? <>
-                <Icon type={LoadingFour}  className="mr-3 animate-spin"/>
-                Creating
-            </>: <>
-                <Icon type={PlusCross}  className="mr-3"/>
-                New document
-            </>
-        }</PrimaryButton>
+            className="mt-3"
+        >
+            <Icon 
+                type={inProgress ? LoadingFour : PlusCross}
+                className={`text-lg mr-3 ${inProgress && "animate-spin"}`}
+            />
+            { inProgress ? "Creating" : "New document" }
+        </SecondaryButton>
     )
 }

@@ -16,9 +16,9 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       boxShadow: {
-        "sm": "2px 2px #334155",
         "sm-amber": "2px 2px #fcd34d",
-        "sm-dark": "2px 2px #cbd5e1"
+        "sm-dark": "2px 2px #cbd5e1",
+        "focus": "0 0 0 4px #fcd34d50"
       },
       transitionProperty: {
         "margin": "margin",

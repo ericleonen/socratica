@@ -4,7 +4,7 @@ import ShortcutKey from "./ShortcutKey";
 
 export default function SearchShortcuts() {
     return (
-        <div className="px-3 py-2 flex items-center border-t-2 border-slate-400 dark:border-slate-600 justify-around text-slate-400 dark:text-slate-500 font-medium text-xs">
+        <div className="px-3 py-2 flex items-center border-t-2 border-slate-200 dark:border-slate-600 justify-around text-slate-400 dark:text-slate-500 font-medium text-xs">
             <div className="flex items-center">
                 <ShortcutKey className="mr-2">ENTER</ShortcutKey>
                 Open

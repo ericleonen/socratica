@@ -1,12 +1,11 @@
-import { HighLight } from "@icon-park/react";
+import { LayoutProps } from "@/types";
 
-export default function Logo() {
+export default function Logo({ className }: LayoutProps) {
     return (
-        <mark className="px-1 rounded-md bg-amber-200">
-            <h1 className="flex items-center text-lg font-bold text-theme-black">
-                highlights
-            </h1>
-        </mark>
-        
+        <span 
+            className={`text-slate-700 font-bold bg-amber-300 ${className || ""}`}
+        >
+            highlights
+        </span>
     )
 }

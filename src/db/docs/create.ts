@@ -3,7 +3,7 @@ import { RootState, useAppDispatch } from "@/store";
 import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
 import { Timestamp, addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useHasQuestions, useText } from "./read";
 import { questionsActions } from "@/store/questionsSlice";
@@ -11,6 +11,7 @@ import { docActions } from "@/store/docSlice";
 import { Trigger } from "@/types";
 import { useLocalStorage } from "@/utils/localStorage";
 import { words2Chars } from "@/utils/format";
+import { usePathDocID } from "@/utils/routing";
 
 /**
  * Hook that provides a function to create a new doc. Opens the doc in the app after creation
@@ -21,10 +22,18 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
     const userID = useSelector<RootState, string>(
         state => state.user.ID
     );
+    const pathDocID = usePathDocID();
     const router = useRouter();
     const dispatch = useAppDispatch();
 
     const [inProgress, setInProgress] = useState(false);
+    const [newDocID, setNewDocID] = useState<string>();
+
+    useEffect(() => {
+        if (newDocID === pathDocID) {
+            setInProgress(false);
+        }
+    }, [pathDocID, newDocID]);
 
     const createDoc = async (title: string = "") => {
         try {
@@ -38,6 +47,7 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
             });
 
             const docID = newDocRef.id;
+            setNewDocID(docID);
             const timestamp = Timestamp.now();
 
             const newDocMetadataRef = doc(db, "users", userID, "docsMetadatas", newDocRef.id);
@@ -53,8 +63,6 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
             }));
 
             router.push(`/app/library/${docID}`, { scroll: false });
-
-            setInProgress(false);
         } catch (err) {
             const error = err as Error;
 

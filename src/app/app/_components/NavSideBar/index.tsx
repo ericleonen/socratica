@@ -57,12 +57,15 @@ export default function NavSideBar() {
             afterLeave={() => setShowMini(true)}
             className="bg-stone-100 dark:bg-stone-900 border-slate-400 dark:border-slate-700 duration-75 flex flex-col w-72 h-full p-3 pb-0 border-r-2 overflow-hidden shrink-0"
         >
-            <div className="flex items-center">
-                <AccountButton />
+            <div className="flex items-center w-full">
+                <div className="h-full flex-grow w-[calc(100%-2rem)]">
+                    <AccountButton />
+                </div>
                 <TooltipProvider 
                     text="Close sidebar"
                     disabled={!showMain}
                     className="right-0 translate-y-1"
+                    containerClassName="ml-auto"
                 >
                     <SecondaryButton 
                         onClick={() => setShowMain(false)}

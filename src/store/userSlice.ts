@@ -2,16 +2,16 @@ import { User } from "@/db/schemas";
 import { db } from "@/firebase";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { doc, getDoc } from "firebase/firestore";
-import { ResourceStatus } from "./types";
+import { ResourceStatus, SavingStatus } from "./types";
 
 export type UserState = {
     name: string,
     ID: string,
     email: string,
     authProvider: string,
-    tokens: number,
-    status: ResourceStatus,
-    error: string
+    loadingStatus: ResourceStatus,
+    error: string,
+    savingStatus: SavingStatus
 }
 
 const initialState: UserState = {
@@ -19,32 +19,39 @@ const initialState: UserState = {
     ID: "",
     email: "",
     authProvider: "",
-    tokens: 0,
-    status: "idle",
-    error: ""
+    loadingStatus: "idle",
+    error: "",
+    savingStatus: "saved"
+    
 };
 
 const userSlice = createSlice({
     name: "user",
     initialState,
-    reducers: {},
+    reducers: {
+        setName: (state, action) => {
+            state.name = action.payload as string;
+        },
+        setSavingStatus: (state, action) => {
+            state.savingStatus = action.payload as SavingStatus;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchUser.pending, (state) => {
-                state.status = "loading";
+                state.loadingStatus = "loading";
             })
             .addCase(fetchUser.fulfilled, (state, action) => {
-                const { name, ID, email, authProvider, tokens } = action.payload as User;
+                const { name, ID, email, authProvider } = action.payload as User;
                 
                 state.name = name;
                 state.ID = ID;
                 state.email = email;
                 state.authProvider = authProvider;
-                state.tokens = tokens;
-                state.status = "succeeded";
+                state.loadingStatus = "succeeded";
             })
             .addCase(fetchUser.rejected, (state, action) => {
-                state.status = "failed";
+                state.loadingStatus = "failed";
                 state.error = action.error.message as string;
             })
     }
@@ -59,5 +66,7 @@ export const fetchUser = createAsyncThunk(
         return userSnap.data();
     }
 );
+
+export const userActions = userSlice.actions;
 
 export default userSlice;

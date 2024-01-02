@@ -23,7 +23,6 @@ export default function QuestionsNavigation() {
                 >
                     <SecondaryButton
                         onClick={goBack}
-                        weight="light"
                         className={`${section === 0 && "invisible"}`}
                     >
                         <Icon type={Left} className="text-lg"/>
@@ -38,7 +37,6 @@ export default function QuestionsNavigation() {
                 >
                     <SecondaryButton
                         onClick={goForward}
-                        weight="light"
                         className={`${section === numSections - 1 && "invisible"}`}
                     >
                         <Icon type={Right} className="text-lg"/>

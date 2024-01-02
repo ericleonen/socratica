@@ -53,7 +53,7 @@ export default function Questions() {
             <PanelResizer />
             <div 
                 style={{ width: `${width}px` }}
-                className="h-full border-slate-400 dark:border-slate-700 border-l-2 flex flex-col overflow-y-scroll overflow-x-hidden shrink-0"
+                className="h-full flex flex-col overflow-y-scroll overflow-x-hidden shrink-0"
             >{
                 status !== "succeeded" ? (
                     <div className="flex flex-col w-full p-3 items-center">

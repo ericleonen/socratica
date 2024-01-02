@@ -73,7 +73,7 @@ export default function OptionsProvider({
             >
                 <PopUp 
                     style={{ top, bottom, left, right }}
-                    className={`bg-white dark:bg-slate-800 border-slate-700 dark:border-slate-300 rounded-md p-2 border-2 fixed z-[100] translate-y-1 ${className || ""}`}
+                    className={`shadow-contrast bg-white border-2 border-slate-200 dark:bg-gray-900 dark:border-0 rounded-md p-2 fixed z-[100] translate-y-1 ${className || ""}`}
                 >{
                     options.map((option, optionIndex) =>
                         <Option

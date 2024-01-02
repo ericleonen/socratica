@@ -9,6 +9,7 @@ import SettingContainer from "./SettingContainer";
 import OptionsProvider, { Option } from "../../OptionsProvider";
 import { useLocalStorage } from "@/utils/localStorage";
 import { in2Px, words2Chars } from "@/utils/format";
+import { useKeyDown } from "@/utils/input";
 
 export default function SettingsModal() {
     const { close } = useContext(modalContexts["settings"]);
@@ -46,6 +47,8 @@ export default function SettingsModal() {
         { text: "Default (every 4)", onClick: () => setBigIdeaFreq(4) },
         { text: "Often (every 2)", onClick: () => setBigIdeaFreq(2) }
     ]
+
+    useKeyDown(close, "Escape");
 
     return (
         <Modal 

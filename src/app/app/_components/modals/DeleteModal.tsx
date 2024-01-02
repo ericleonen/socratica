@@ -7,6 +7,7 @@ import { useContext } from "react";
 import { modalContexts } from "./ModalProviders";
 import { useRouter } from "next/navigation";
 import { AlertContext } from "@/components/AlertProvider";
+import DeleteButton from "@/theme/DeleteButton";
 
 export default function DeleteWarningModal() {
     const title = useTitle();
@@ -42,12 +43,7 @@ export default function DeleteWarningModal() {
                 >
                     Cancel
                 </SecondaryButton>
-                <PrimaryButton 
-                    onClick={deleteAndClose}
-                    theme="danger"
-                >
-                    Yes, delete
-                </PrimaryButton>
+                <DeleteButton onClick={deleteAndClose}>Yes, delete</DeleteButton>
             </div>
         </Modal>
     )

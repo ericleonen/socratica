@@ -18,7 +18,7 @@ import { usePathDocID } from "@/utils/routing";
  * @retruns a boolean representing whether creation is still in progress and the doc creating
  *          function with an optional title parameter
  */
-export function useCreateDoc(): [boolean, (title?: string) => void] {
+export function useCreateDoc(): [boolean, (title?: string, text?: string) => void] {
     const userID = useSelector<RootState, string>(
         state => state.user.ID
     );
@@ -35,13 +35,13 @@ export function useCreateDoc(): [boolean, (title?: string) => void] {
         }
     }, [pathDocID, newDocID]);
 
-    const createDoc = async (title: string = "") => {
+    const createDoc = async (title: string = "", text: string = "") => {
         try {
             setInProgress(true);
 
             const docsRef = collection(db, "users", userID, "docs");
             const newDocRef = await addDoc(docsRef, {
-                text: [""],
+                text: [text],
                 questions: {},
                 questionIDs: {}
             });

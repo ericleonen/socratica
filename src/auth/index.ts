@@ -83,17 +83,20 @@ export function useGoogleAuth(): [
     const [signingIn, setSigningIn] = useState(false);
     const [error, setError] = useState<Error>();
 
+    useEffect(() => {
+        if (error) {
+            console.error(error);
+            setSigningIn(false);
+        }
+    }, [error]);
+
     return [
         signingIn,
         async () => {
             setSigningIn(true);
 
             const error = await signInWithGoogle();
-            
-            if (error) {
-                setSigningIn(false);
-                setError(error);
-            }
+            setError(error);
         },
         error
     ]

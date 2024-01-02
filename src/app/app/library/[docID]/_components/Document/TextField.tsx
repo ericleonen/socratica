@@ -19,7 +19,7 @@ export default function TextField() {
                 allowSaves();
             }}
             placeholder="Paste some interesting text here..."
-            className="placeholder:text-slate-400 h-min mt-6 w-full resize-none bg-transparent focus:outline-none text-slate-700"
+            className="placeholder:text-slate-400 placeholder:dark:text-slate-600 h-min mt-6 w-full resize-none bg-transparent focus:outline-none text-slate-700 dark:text-slate-300"
         />
     ) : (
         <Skeleton className="mt-6 w-full">Loading...</Skeleton>

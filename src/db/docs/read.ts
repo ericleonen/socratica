@@ -12,6 +12,7 @@ import { db } from "@/firebase";
 import { Timestamp, doc, getDoc } from "firebase/firestore";
 import { docActions } from "@/store/docSlice";
 import { questionsActions } from "@/store/questionsSlice";
+import { useRouter } from "next/navigation";
 
 // DOCS
 // ==========
@@ -20,6 +21,7 @@ export function useLoadDoc() {
     const docID = usePathDocID() as string;
 
     const dispatch = useAppDispatch();
+    const router = useRouter();
 
     useEffect(() => {
         if (!userID || !docID) return;
@@ -55,6 +57,8 @@ export function useLoadDoc() {
                 dispatch(docActions.setLoadingStatus("failed"));
                 dispatch(questionsActions.setLoadingStatus("failed"));
                 dispatch(docActions.setError(err.message));
+
+                router.push("/app");
             })
     }, [userID, docID]);
 }

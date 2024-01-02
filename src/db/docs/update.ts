@@ -206,35 +206,23 @@ export function useSaveQuestion(ID: string) {
     return saveQuestion;
 }
 
-export function useEditableQuestionDraft(ID: string): [
-    string, QuestionType,
-    React.Dispatch<React.SetStateAction<string>>, React.Dispatch<React.SetStateAction<QuestionType>>,
-    Trigger, Trigger
+export function useEditableQuestion(ID: string): [
+    string, QuestionType, (newQuestion: string, newType: QuestionType) => void
 ] {
     const { question, type } = useQuestion(ID);
 
     const dispatch = useAppDispatch();
 
-    const [questionDraft, setQuestionDraft] = useState<string>(question);
-    const [typeDraft, setTypeDraft] = useState<QuestionType>(type);
-
-    const writeQuestion = () => {
-        dispatch(questionsActions.setQuestion({
-            ID,
-            question: questionDraft,
-            type: typeDraft
-        }));
-    }
-
-    const resetQuestion = () => {
-        setQuestionDraft(question);
-        setTypeDraft(type);
-    }
-
     return [
-        questionDraft, typeDraft,
-        setQuestionDraft, setTypeDraft,
-        writeQuestion, resetQuestion
+        question,
+        type,
+        (newQuestion: string, newType: QuestionType) => {
+            dispatch(questionsActions.setQuestion({
+                ID,
+                question: newQuestion,
+                type: newType
+            }));
+        }
     ]
 }
 

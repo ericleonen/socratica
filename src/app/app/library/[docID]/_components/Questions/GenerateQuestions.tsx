@@ -16,7 +16,7 @@ export default function GenerateQuestions() {
 
     return (
         <div className="h-full w-full flex flex-col items-center justify-center px-3">
-            <p className="mb-3 text-slate-500 text-center font-medium">You don't have any questions yet</p>
+            <p className="mb-3 text-slate-400 dark:text-slate-600 text-center font-medium">You don't have any questions yet</p>
             <TooltipProvider
                 text={
                     disabled ? 
@@ -26,19 +26,19 @@ export default function GenerateQuestions() {
                 containerClassName="w-2/3"
                 className="left-1/2 translate-x-[-50%] translate-y-2"
             >
-                <PrimaryButton 
+                <button
                     disabled={disabled}
-                    onClick={generate}
-                    className="justify-center w-full"
+                    onClick={generate}  
+                    className="disabled:bg-gray-200 disabled:text-slate-500 disabled:dark:bg-white/5 bg-amber-300 dark:bg-amber-300/10 hover:bg-amber-400 focus-visible:bg-amber-400 dark:focus-visible:bg-amber-300/20 dark:hover:bg-amber-300/20 text-slate-700 dark:text-amber-300 w-full justify-center font-bold px-3 py-2 flex items-center rounded focus:outline-none"  
                 >{
                     status === "loading" ? <>
-                        <Icon type={LoadingFour} className="mr-3 animate-spin" />
+                        <Icon type={LoadingFour} className="mr-3 animate-spin text-lg" />
                         Reading your text
                     </> : <>
-                        <Icon type={Magic} className="mr-3" />
+                        <Icon type={Magic} className="mr-3 text-lg" />
                         Generate questions
                     </>
-                }</PrimaryButton>
+                }</button>
             </TooltipProvider>
         </div>
     );

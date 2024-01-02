@@ -1,4 +1,5 @@
 import Icon from "@/theme/Icon"
+import { questionTheme } from "@/theme/questions";
 
 type OptionProps = {
     text: string,
@@ -14,13 +15,12 @@ export function Option({ text, icon, onClick, theme }: OptionProps) {
         <button
             onClick={onClick}
             className={`
-                flex items-center mb-1 last:mb-0 w-full p-2 rounded-md
+                flex items-center mb-1 last:mb-0 w-full p-2 rounded-md focus:outline-none
                 ${
-                    theme === "basic"         ? "hover:bg-gray-200 dark:hover:bg-white/10 text-slate-700 dark:text-slate-300 text-sm font-medium" :
-                    theme === "danger"        ? "hover:bg-gray-200 dark:hover:bg-white/10 text-red-500 text-sm font-medium" :
-                    theme === "comprehension" ? "hover:bg-sky-100 dark:hover:bg-sky-300/20 text-sky-500 uppercase text-xs font-bold" :
-                    theme === "research"      ? "hover:bg-emerald-100 dark:hover:bg-emerald-300/20 text-emerald-500 uppercase text-xs font-bold" :
-                    theme === "big idea"     && "hover:bg-violet-100 dark:hover:bg-violet-300/20 text-violet-500 uppercase text-xs font-bold"
+                    theme === "basic"         ? "hover:bg-gray-200 focus-visible:bg-gray-200 hover:dark:bg-white/5 focus-visible:dark:bg-white/5 text-slate-700 dark:text-slate-300 text-sm font-medium" :
+                    theme === "danger"        ? "hover:bg-red-500/20 focus-visible:bg-red-500/20 text-red-500 text-sm font-medium" :
+                    ["comprehension", "research", "big idea"].includes(theme)
+                        && `${questionTheme[theme].save} ${questionTheme[theme].text} uppercase tracking-wider text-xs font-bold`
                 }
             `}
         >

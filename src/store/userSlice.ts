@@ -34,6 +34,9 @@ const userSlice = createSlice({
         },
         setSavingStatus: (state, action) => {
             state.savingStatus = action.payload as SavingStatus;
+        },
+        setError: (state, action) => {
+            state.error = action.payload as string;
         }
     },
     extraReducers: (builder) => {

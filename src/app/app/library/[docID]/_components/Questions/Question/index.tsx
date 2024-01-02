@@ -1,11 +1,11 @@
 import QuestionField from "./QuestionField"
 import AnswerField from "./AnswerField"
-import { useEffect, useRef, } from "react"
+import { useEffect, useRef, useState, } from "react"
 import { useQuestionStatus } from "@/db/docs/read";
 import AddQuestionButton from "../AddQuestionButton";
 import { Transition } from "@headlessui/react";
-
-export type QuestionIDProp = { ID: string };
+import { QuestionType } from "@/db/schemas";
+import { questionTheme } from "@/theme/questions";
 
 type QuestionProps = {
     ID: string,
@@ -13,7 +13,7 @@ type QuestionProps = {
     questionIndex: number
 }
 
-export default function Question({ ID, sectionIndex, questionIndex }: QuestionProps) {
+function useQuestionAnimations(ID: string) {
     const divRef = useRef<HTMLDivElement>(null);
     const status = useQuestionStatus(ID);
 
@@ -24,7 +24,7 @@ export default function Question({ ID, sectionIndex, questionIndex }: QuestionPr
         else if (status === "adding") {
             container.style.height = `${container.scrollHeight}px`;
 
-            const timeout = setTimeout(() => {
+            const timeout: NodeJS.Timeout = setTimeout(() => {
                 container.style.height = "auto";
                 container.style.opacity = "100";
             }, 300);
@@ -41,6 +41,15 @@ export default function Question({ ID, sectionIndex, questionIndex }: QuestionPr
             return () => clearTimeout(timeout);
         }
     }, [status]);
+
+    return { divRef, status };
+}
+
+export default function Question({ ID, sectionIndex, questionIndex }: QuestionProps) {
+    const { divRef, status } = useQuestionAnimations(ID);
+    const isAdding = useQuestionStatus(ID) === "adding";
+    const [editMode, setEditMode] = useState(isAdding);
+    const [typeDraft, setTypeDraft] = useState<QuestionType>("comprehension");
     
     return (
         <Transition 
@@ -66,9 +75,14 @@ export default function Question({ ID, sectionIndex, questionIndex }: QuestionPr
                 >
                     +
                 </AddQuestionButton>
-                <div className="flex flex-col border-slate-700 dark:border-slate-300 border-2 shadow-sm dark:shadow-sm-dark rounded-md overflow-hidden shrink-0 w-full">
-                    <QuestionField {...{ID}} />
-                    <AnswerField {...{ID}} />
+                <div className={`
+                    rounded-md p-3 border-2 group
+                    flex flex-col
+                    ${questionTheme[typeDraft].background}
+                    ${questionTheme[typeDraft].border}
+                `}>
+                    <QuestionField {...{ID, editMode, setEditMode, typeDraft, setTypeDraft}} />
+                    <AnswerField {...{ID, editMode, setEditMode}} type={typeDraft} />
                 </div>
             </div>
         </Transition>

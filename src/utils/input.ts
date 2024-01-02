@@ -4,19 +4,19 @@ import { Trigger } from "@/types";
 import { ChangeEvent, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-export function handleChange(setValue: (value: any) => void, parseAsInt: boolean = false) {
+export function handleChange(
+    setValue: (value: any) => void,
+    callback?: Trigger
+) {
     return (event: ChangeEvent) => {
         if (
             event.target instanceof HTMLTextAreaElement || 
             event.target instanceof HTMLInputElement
         ) {
             const val = event.target.value;
+            setValue(val);
 
-            if (parseAsInt) {
-                setValue(parseInt(val));
-            } else {
-                setValue(val)
-            }
+            if (callback) callback();
         }
     };
 }

@@ -16,8 +16,6 @@ export default function AlertProvider({ children }: LayoutProps) {
     const [show, setShow] = useState(false);
 
     const setAlert = (theme: AlertTheme, text: string) => {
-        console.log(theme, text, show);
-
         if (show) return;
 
         setTheme(theme);
@@ -43,14 +41,14 @@ export default function AlertProvider({ children }: LayoutProps) {
                 leave="transition-opacity"
                 leaveFrom="opacity-100"
                 leaveTo="opacity-0"
-                className="z-[100] absolute left-1/2 translate-x-[-50%] top-10"
+                className={`z-[100] absolute left-1/2 translate-x-[-50%] top-10 dark:bg-slate-800 ${theme !== "copied" && "bg-white"} rounded-md`}
             >
                 <div
                     className={`
                         pointer-events-none whitespace-nowrap flex items-center py-2 px-3 rounded-md border-2 font-bold text-sm
                         ${
-                            theme === "deletion" ? "bg-red-200 dark:bg-slate-800 text-red-700 dark:text-red-500 border-red-700 dark:border-red-500" :
-                            theme === "success"  ? "bg-green-200 dark:bg-slate-800 text-green-700 dark:text-green-500 border-green-700 dark:border-green-500" :
+                            theme === "deletion" ? "text-red-500 bg-red-500/10 border-red-500" :
+                            theme === "success"  ? "text-green-500 bg-green-500/10 border-green-500" :
                             theme === "copied"  && "bg-slate-700 dark:bg-slate-800 text-white dark:text-slate-300 border-slate-700 dark:border-slate-300"
                         }
                     `}

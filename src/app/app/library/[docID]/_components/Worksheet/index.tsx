@@ -2,6 +2,7 @@ import { Fragment, forwardRef } from "react"
 import "./styles.css";
 import { useQuestionIDs, useQuestions, useTitle } from "@/db/docs/read";
 import TextDisplay from "../Document/TextDisplay";
+import { questionTheme } from "@/theme/questions";
 
 const Worksheet = forwardRef((props: any, ref: React.Ref<HTMLDivElement> | null) => {
     const title = useTitle();
@@ -16,7 +17,12 @@ const Worksheet = forwardRef((props: any, ref: React.Ref<HTMLDivElement> | null)
             <p className="text-4xl font-bold">{title} <span className="text-slate-500">Reading</span></p>
             <TextDisplay forPrinting />
             <div className="page-break"/>
-            <p className="text-4xl font-bold mb-6">{title} <span className="text-slate-500">Questions</span></p>
+            {
+                questionIDs.length > 0 &&
+                <p className="text-4xl font-bold mb-6">
+                    {title} <span className="text-slate-500">Questions</span>
+                </p>
+            }
             {
                 questionIDs.map((sectionIDs, sectionIndex) =>
                     <Fragment key={`questionSection_${sectionIndex}`}>
@@ -34,11 +40,7 @@ const Worksheet = forwardRef((props: any, ref: React.Ref<HTMLDivElement> | null)
                                         <span 
                                             className={`
                                                 font-bold mr-1 uppercase text-sm tracking-wider
-                                                ${
-                                                    questions[ID].type === "comprehension" ? "bg-sky-200" :
-                                                    questions[ID].type === "research"      ? "bg-emerald-200" :
-                                                    questions[ID].type === "big idea"      && "bg-violet-200"
-                                                }
+                                                ${questionTheme[questions[ID].type].print}
                                             `}
                                         >
                                             {questions[ID].type}

@@ -20,11 +20,11 @@ const TextSubSection = React.forwardRef(
             return (
                 <span 
                     ref={ref}
-                    className={`${highlight && "bg-amber-200 dark:bg-amber-300/10 font-medium"} ${highlight && !forPrinting && "dark:text-amber-300"} scroll-m-16`}
+                    className={`${highlight && "bg-amber-300 dark:bg-amber-300/10 font-medium"} ${highlight && !forPrinting && "dark:text-amber-300"} scroll-m-16`}
                 >
                     {
                         forPrinting && ref &&
-                        <mark className="bg-amber-200 font-bold mr-1 text-sm tracking-wider">{"("}SECTION {sectionIndex + 1}{")"}</mark>
+                        <mark className="bg-amber-300 font-bold mr-1 text-sm tracking-wider">{"("}SECTION {sectionIndex + 1}{")"}</mark>
                     }
                     {value}
                 </span>

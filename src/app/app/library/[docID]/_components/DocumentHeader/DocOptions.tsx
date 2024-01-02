@@ -1,5 +1,4 @@
 import OptionsProvider, { Option } from "@/app/app/_components/OptionsProvider";
-import { useModalContext } from "@/app/app/_components/modals/ModalContext";
 import { modalContexts } from "@/app/app/_components/modals/ModalProviders";
 import { AlertContext } from "@/components/AlertProvider";
 import TooltipProvider from "@/components/TooltipProvider";
@@ -51,7 +50,6 @@ export default function DocOptions() {
         <OptionsProvider
             options={options}
             absolute
-            className="shadow-sm dark:shadow-sm-dark"
         >
             <TooltipProvider 
                 text="Document options"
@@ -59,8 +57,7 @@ export default function DocOptions() {
             >
                 <SecondaryButton
                     onClick={() => {}}
-                    weight="light"
-                    size="sm"
+                    size="md"
                 >
                     <Icon type={More} className="text-2xl"/>
                 </SecondaryButton>

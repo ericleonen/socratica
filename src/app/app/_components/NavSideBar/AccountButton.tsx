@@ -19,8 +19,9 @@ export default function AccountButton() {
         >
             <div className="flex flex-col w-[calc(100%-2rem)]">
                 <p className="font-bold whitespace-nowrap overflow-hidden text-ellipsis text-start text-slate-700 dark:text-slate-300">
-                    {name || "Nameless"}'s 
-                    <Logo className="ml-1"/>
+                    {name ? `${name}'s` : ""}
+                    &nbsp;
+                    <Logo />
                 </p>
                 <p className="text-xs text-slate-500 text-start">{email}</p>
             </div>

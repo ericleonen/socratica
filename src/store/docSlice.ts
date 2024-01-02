@@ -6,16 +6,14 @@ export type DocState = {
     text: string[],
     loadingStatus: ResourceStatus,
     savingStatus: SavingStatus,
-    error: string,
-    threateningDelete: boolean
+    error: string
 }
 
 const initialState: DocState = {
     text: [],
     loadingStatus: "idle",
     savingStatus: "saved",
-    error: "",
-    threateningDelete: false
+    error: ""
 };
 
 const docSlice = createSlice({

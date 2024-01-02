@@ -31,7 +31,7 @@ export default function NavSideBar() {
             leaveFrom="ml-0"
             leaveTo="ml-[-3.5rem]"
             afterLeave={() => setShowMain(true)}
-            className="w-[3.5rem] duration-75 border-r-2 bg-stone-100 dark:bg-stone-900 border-slate-400 dark:border-slate-700 h-full shrink-0"
+            className="w-[3.5rem] duration-75 border-r-2 bg-stone-100 dark:bg-stone-900 border-slate-300 dark:border-slate-700 h-full shrink-0"
         >
             <TooltipProvider 
                 text="Open sidebar"
@@ -55,7 +55,7 @@ export default function NavSideBar() {
             leaveFrom="ml-0"
             leaveTo="ml-[-18rem]"
             afterLeave={() => setShowMini(true)}
-            className="bg-stone-100 dark:bg-stone-900 border-slate-400 dark:border-slate-700 duration-75 flex flex-col w-72 h-full p-3 pb-0 border-r-2 overflow-hidden shrink-0"
+            className="bg-stone-100 dark:bg-gray-900 border-slate-300 dark:border-slate-700 duration-75 flex flex-col w-72 h-full p-3 pb-0 border-r-2 overflow-hidden shrink-0"
         >
             <div className="flex items-center w-full">
                 <div className="h-full flex-grow w-[calc(100%-2rem)]">

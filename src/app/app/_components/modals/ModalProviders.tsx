@@ -4,12 +4,14 @@ import DeleteWarningModal from "./DeleteModal";
 import SearchModal from "./SearchModal";
 import SettingsModal from "./SettingsModal.tsx";
 import AccountModal from "./AccountModal.tsx";
+import TokensModal from "./TokensModal";
 
 const modals: { [modal: string]: React.ElementType } = {
     "delete": DeleteWarningModal,
     "search": SearchModal,
     "settings": SettingsModal,
-    "account": AccountModal
+    "account": AccountModal,
+    "tokens": TokensModal
 };
 export const modalContexts: { [modal: string]: React.Context<ModalContext> } = {};
 

@@ -8,10 +8,6 @@ import { useEffect } from "react";
 export default function GoogleButton({ className }: LayoutProps) {
     const [signingIn, signIn, error] = useGoogleAuth();
 
-    useEffect(() => {
-        if (error) console.error(error);
-    }, [error]);
-
     return (
         <button
             onClick={signIn}

@@ -78,7 +78,7 @@ export default function SearchResults({ query, close }: SearchResultsProps) {
     }, [inProgress]);
  
     return (
-        <div className="h-40 flex flex-col flex-grow font-medium text-slate-500 py-3 px-3 overflow-y-scroll">
+        <div className="h-40 flex flex-col flex-grow font-medium text-slate-500 px-3 overflow-y-scroll">
             {
                 filteredIDs.length > 0 ? filteredIDs.map(ID =>
                     <SearchResult 

@@ -1,9 +1,15 @@
-import { LayoutProps } from "@/types";
+type AccountGroupProps = {
+    name: string,
+    children: React.ReactNode
+}
 
-export default function AccountGroup({ children }: LayoutProps) {
+export default function AccountGroup({ name, children }: AccountGroupProps) {
     return (
-        <div className="flex flex-col items-center px-12 py-6 border-t-2 border-slate-200 dark:border-slate-600">
-            {children}
+        <div className="flex flex-col px-7 pt-3 pb-6 border-t-2 border-slate-200 dark:border-slate-600">
+            <p className="font-bold text-slate-400 dark:text-slate-600 uppercase tracking-wider text-xs">{name}</p>
+            <div className="w-full mt-2 px-3">
+                {children}
+            </div>
         </div>
-    )
+    );
 }

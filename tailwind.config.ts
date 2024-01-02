@@ -16,9 +16,8 @@ const config: Config = {
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       boxShadow: {
-        "sm-amber": "2px 2px #fcd34d",
-        "sm-dark": "2px 2px #cbd5e1",
-        "focus": "0 0 0 4px #fcd34d50"
+        "focus": "0 0 0 4px #fcd34d50",
+        "contrast": "rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;"
       },
       transitionProperty: {
         "margin": "margin",
@@ -41,7 +40,8 @@ const config: Config = {
       sky: colors.sky,
       emerald: colors.emerald,
       violet: colors.violet,
-      green: colors.green
+      green: colors.green,
+      pink: colors.pink
     }
   },
   plugins: [],

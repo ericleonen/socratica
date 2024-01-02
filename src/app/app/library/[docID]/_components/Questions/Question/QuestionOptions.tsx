@@ -37,7 +37,6 @@ export default function QuestionOptions({ ID, editMode, setEditMode }: QuestionO
             options={options}
             disabled={notReady}
             absolute
-            className="shadow-sm dark:shadow-sm-dark"
         >
             <TooltipProvider
                 disabled={notReady}

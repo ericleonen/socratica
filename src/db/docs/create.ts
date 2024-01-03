@@ -12,6 +12,7 @@ import { Trigger } from "@/types";
 import { useLocalStorage } from "@/utils/localStorage";
 import { words2Chars } from "@/utils/format";
 import { usePathDocID } from "@/utils/routing";
+import { useUserID } from "../user/read";
 
 /**
  * Hook that provides a function to create a new doc. Opens the doc in the app after creation
@@ -84,6 +85,7 @@ export function useGenerateQuestions() {
     const MIN_SECTION_LENGTH = useLocalStorage("sectionSize", words2Chars(100))[0];
     const CHARS_PER_COMP = useLocalStorage("compFreq", words2Chars(100))[0];
     const SECTIONS_PER_BIG_IDEA = useLocalStorage("bigIdeaFreq", 4)[0];
+    const userID = useUserID();
 
     const dispatch = useAppDispatch();
 
@@ -105,11 +107,15 @@ export function useGenerateQuestions() {
                     text,
                     MIN_SECTION_LENGTH,
                     CHARS_PER_COMP,
-                    SECTIONS_PER_BIG_IDEA
+                    SECTIONS_PER_BIG_IDEA,
+                    userID
                 })
             });
 
-            if (!questionsRes.body) return;
+            if (!questionsRes.body) {
+                // An unexpected error occurred
+                return;
+            };
 
             const reader = questionsRes.body.getReader();
             let sectionIndex = 0;

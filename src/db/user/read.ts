@@ -1,8 +1,9 @@
-import { auth } from "@/firebase";
+import { auth, db } from "@/firebase";
 import { useAppDispatch, RootState } from "@/store";
 import { ResourceStatus, SavingStatus } from "@/store/types";
 import { fetchUser } from "@/store/userSlice";
-import { useEffect } from "react";
+import { DocumentData, doc, getDoc } from "firebase/firestore";
+import { useEffect, useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useSelector } from "react-redux";
 
@@ -66,4 +67,22 @@ export function useUserSavingStatus() {
     );
 
     return status;
+}
+
+export function useTokens() {
+    const userID = useUserID();
+    const [tokens, setTokens] = useState(-1);
+
+    const getTokens = async () => {
+        const userRef = doc(db, "users", userID);
+        const userData = (await getDoc(userRef)).data() as DocumentData;
+        
+        if (userData) setTokens(userData.tokens);
+    }
+
+    useEffect(() => {
+        getTokens();
+    }, []);
+
+    return tokens;
 }

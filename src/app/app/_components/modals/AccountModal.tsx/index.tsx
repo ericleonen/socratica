@@ -4,7 +4,7 @@ import { modalContexts } from "../ModalProviders";
 import AccountGroup from "./AccountGroup";
 import NameField from "./NameField";
 import EmailDisplay from "./EmailDisplay";
-import { useUserSavingStatus } from "@/db/user/read";
+import { useTokens, useUserSavingStatus } from "@/db/user/read";
 import DeleteButton from "@/theme/DeleteButton";
 import BuyTokensButton from "./BuyTokensButton";
 import LogOutButton from "./LogOutButton";
@@ -17,6 +17,7 @@ export default function AccountModal() {
     const [name, setName] = useEditableUserName();
     const [nameDraft, setNameDraft] = useState(name);
     const saveName = useSaveUserName();
+    const tokens = useTokens();
     
     return (
         <Modal 
@@ -61,8 +62,8 @@ export default function AccountModal() {
            </AccountGroup>
            <AccountGroup name="Tokens">
                 <p className="text-slate-700 dark:text-slate-300 font-medium">{
-                    0 === 0 ? "You don't have any tokens yet" :
-                    `You have ${0} tokens`
+                    tokens <= 0 ? "You don't have any tokens yet" :
+                    `You have ${tokens.toLocaleString("en-US")} tokens`
                 }</p>
                 <BuyTokensButton 
                     onClick={close}

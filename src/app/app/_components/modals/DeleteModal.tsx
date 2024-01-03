@@ -28,7 +28,7 @@ export default function DeleteWarningModal() {
     return (
         <Modal 
             close={close}
-            className="py-5 px-7"
+            className="p-7"
         >
             <p className="font-medium text-slate-700 dark:text-slate-300">{
                 title ? <>

@@ -2,6 +2,8 @@ import { initializeApp } from "firebase/app";
 // import { getAnalytics } from "firebase/analytics";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
+import * as adminFirestore from "firebase-admin/firestore";
+import admin, { ServiceAccount } from "firebase-admin";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDd8DoMdMIgK7axANLIbrki40SpJ7BWaik",

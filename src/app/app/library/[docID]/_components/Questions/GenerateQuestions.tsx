@@ -6,13 +6,15 @@ import { useQuestionsGeneratingStatus, useText } from "@/db/docs/read"
 import TooltipProvider from "@/components/TooltipProvider"
 import { useLocalStorage } from "@/utils/localStorage"
 import { words2Chars } from "@/utils/format"
+import { useContext } from "react"
+import { modalContexts } from "@/app/app/_components/modals/ModalProviders"
 
 export default function GenerateQuestions() {
     const status = useQuestionsGeneratingStatus();
     const MIN_SECTION_LENGTH = useLocalStorage("sectionSize", words2Chars(100))[0];
     const disabled = useText().join("").length < MIN_SECTION_LENGTH;
 
-    const generate = useGenerateQuestions();
+    const { open } = useContext(modalContexts["spend"]);
 
     return (
         <div className="h-full w-full flex flex-col items-center justify-center px-3">
@@ -28,7 +30,7 @@ export default function GenerateQuestions() {
             >
                 <button
                     disabled={disabled}
-                    onClick={generate}  
+                    onClick={open}  
                     className="disabled:bg-gray-200 disabled:text-slate-500 disabled:dark:bg-white/5 bg-amber-300 dark:bg-amber-300/10 hover:bg-amber-400 focus-visible:bg-amber-400 dark:focus-visible:bg-amber-300/20 dark:hover:bg-amber-300/20 text-slate-700 dark:text-amber-300 w-full justify-center font-bold px-3 py-2 flex items-center rounded focus:outline-none"  
                 >{
                     status === "loading" ? <>

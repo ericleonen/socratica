@@ -76,10 +76,9 @@ export default function Question({ ID, sectionIndex, questionIndex }: QuestionPr
                     +
                 </AddQuestionButton>
                 <div className={`
-                    rounded-md p-3 border-2 group
+                    rounded-md p-3 group
                     flex flex-col
                     ${questionTheme[typeDraft].background}
-                    ${questionTheme[typeDraft].border}
                 `}>
                     <QuestionField {...{ID, editMode, setEditMode, typeDraft, setTypeDraft}} />
                     <AnswerField {...{ID, editMode, setEditMode}} type={typeDraft} />

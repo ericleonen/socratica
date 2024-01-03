@@ -3,6 +3,7 @@ import Modal from "./Modal";
 import { modalContexts } from "./ModalProviders";
 import axios from "axios";
 import Stripe from "stripe";
+import { useUserID } from "@/db/user/read";
 
 function useProduct() {
     const [product, setProduct] = useState<Stripe.Price>();
@@ -23,6 +24,7 @@ export default function TokensModal() {
     const [quantity, setQuantity] = useState("");
     const product = useProduct();
     const PPT = product ? (product.unit_amount || 0) / 100 : 0;
+    const userID = useUserID();
 
     const { close } = useContext(modalContexts["tokens"]);
 
@@ -42,7 +44,8 @@ export default function TokensModal() {
         
         const { data } = await axios.post("/api/payment", {
             priceID: product?.id,
-            quantity
+            quantity,
+            userID
         }, {
             headers: {
                 "Content-Type": "application/json"

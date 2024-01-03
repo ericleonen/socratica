@@ -1,6 +1,7 @@
 import { useDocsMetadatas, useLastSaved } from "@/db/docs/read";
 import { usePathDocID } from "./routing";
 import { Timestamp } from "firebase/firestore";
+import { encodingForModel } from "js-tiktoken";
 
 /**
  * Converts a seconds number to a date
@@ -122,4 +123,11 @@ export function in2Px(inches: number) {
 
 export function words2Chars(words: number) {
     return words * 5;
+}
+
+export function words2Tokens(words: string) {
+    const encoder = encodingForModel("gpt-3.5-turbo-1106");
+    const tokens = encoder.encode(words);
+
+    return Math.ceil(tokens.length / 100);
 }

@@ -77,12 +77,10 @@ export function useTokens() {
         const userRef = doc(db, "users", userID);
         const userData = (await getDoc(userRef)).data() as DocumentData;
         
-        if (userData) setTokens(userData.tokens);
+        setTokens(userData.tokens);
     }
 
-    useEffect(() => {
-        getTokens();
-    }, []);
+    getTokens();
 
     return tokens;
 }

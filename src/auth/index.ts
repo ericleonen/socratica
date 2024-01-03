@@ -7,6 +7,11 @@ import { useRouter } from "next/navigation";
 import { useAuthState } from "react-firebase-hooks/auth";
 import React, { useEffect, useState } from "react";
 import { Trigger } from "@/types";
+import { useAppDispatch } from "@/store";
+import { docActions } from "@/store/docSlice";
+import { userActions } from "@/store/userSlice";
+import { questionsActions } from "@/store/questionsSlice";
+import { docsMetadatasActions } from "@/store/docsMetadatasSlice";
 
 /**
  * Signs up a user locally, checking that no fields are empty and the password is proper
@@ -118,13 +123,13 @@ export function useAutoLogIn() {
 
 export function useAutoLogOut() {
     const router = useRouter();
-    const [authUser, authLoading, authError] = useAuthState(auth);
+    const authUser = useAuthState(auth)[0];
 
     useEffect(() => {
-        if ((!authUser && !authLoading) || authError) {
+        if (!authUser) {
             router.push("/");
         }
-    }, [authUser, authLoading, authError]);
+    }, [authUser]);
 }
 
 export function useSignUp(
@@ -186,16 +191,21 @@ export function useLogOut(): [
     boolean, Trigger
 ] {
     const [loggingOut, setLoggingOut] = useState(false);
+    const dispatch = useAppDispatch();
+    const router = useRouter();
 
     return [
         loggingOut,
         async () => {
             setLoggingOut(true);
-            logOut();
+            await signOut(auth);
+
+            router.push("/");
+
+            dispatch(docActions.clear());
+            dispatch(questionsActions.clear());
+            dispatch(userActions.clear());
+            dispatch(docsMetadatasActions.clear());
         }
     ]
-}
-
-export async function logOut() {
-    await signOut(auth);
 }

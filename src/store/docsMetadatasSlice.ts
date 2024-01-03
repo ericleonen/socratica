@@ -26,6 +26,7 @@ const docsMetadatasSlice = createSlice({
     name: "docsMetadatas",
     initialState,
     reducers: {
+        clear: () => initialState,
         setTitle: (state, action) => {
             type Payload = { 
                 docID: string, 

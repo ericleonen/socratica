@@ -11,6 +11,9 @@ import LogOutButton from "./LogOutButton";
 import { useEditableUserName, useSaveUserName } from "@/db/user/update";
 import { Transition } from "@headlessui/react";
 import SecondaryButton from "@/theme/SecondaryButton";
+import Skeleton from "@/components/Skeleton";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "@/firebase";
 
 export default function AccountModal() {
     const { close } = useContext(modalContexts["account"]);
@@ -18,6 +21,7 @@ export default function AccountModal() {
     const [nameDraft, setNameDraft] = useState(name);
     const saveName = useSaveUserName();
     const tokens = useTokens();
+    const userAuth = useAuthState(auth)[0];
     
     return (
         <Modal 
@@ -29,7 +33,7 @@ export default function AccountModal() {
                 <NameField {...{nameDraft, setNameDraft}} />
                 <EmailDisplay className="mt-2" />
                 <Transition
-                    show={nameDraft !== name}
+                    show={nameDraft !== name && !!userAuth}
                     enter="transition-[height,margin] invisible"
                     enterFrom="h-0"
                     enterTo="h-[32px]"
@@ -61,10 +65,16 @@ export default function AccountModal() {
             </Transition>
            </AccountGroup>
            <AccountGroup name="Tokens">
-                <p className="text-slate-700 dark:text-slate-300 font-medium">{
-                    tokens <= 0 ? "You don't have any tokens yet" :
-                    `You have ${tokens.toLocaleString("en-US")} tokens`
-                }</p>
+                {
+                    tokens >= 0 ? (
+                        <p className="text-slate-700 dark:text-slate-300 font-medium">{
+                            tokens === 0 ? "You don't have any tokens yet" :
+                            `You have ${tokens.toLocaleString("en-US")} token${tokens > 1 ? "s" : ""}`
+                        }</p>
+                    ) : (
+                        <Skeleton className="">The tokens you have</Skeleton>
+                    )
+                }
                 <BuyTokensButton 
                     onClick={close}
                     className="mt-2"

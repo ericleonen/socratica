@@ -6,6 +6,7 @@ import SettingsModal from "./SettingsModal.tsx";
 import AccountModal from "./AccountModal.tsx";
 import TokensModal from "./TokensModal";
 import SpendModal from "./SpendModal";
+import HelpModal from "./HelpModal.tsx";
 
 const modals: { [modal: string]: React.ElementType } = {
     "delete": DeleteWarningModal,
@@ -13,7 +14,8 @@ const modals: { [modal: string]: React.ElementType } = {
     "settings": SettingsModal,
     "account": AccountModal,
     "tokens": TokensModal,
-    "spend": SpendModal
+    "spend": SpendModal,
+    "help": HelpModal
 };
 export const modalContexts: { [modal: string]: React.Context<ModalContext> } = {};
 

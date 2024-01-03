@@ -26,9 +26,8 @@ export default function AnswerField({ ID, editMode, type }: AnswerFieldProps) {
             onChange={handleChange(setAnswer, allowSaves)}
             placeholder="Your answer here"
             className={`
-                disabled:cursor-not-allowed text-slate-700 dark:text-slate-300 placeholder:text-slate-400 placeholder:dark:text-slate-600 bg-white dark:bg-slate-800 rounded font-medium px-3 py-2 border-2 w-full focus:outline-none focus:shadow-[0_0_0_4px] resize-none overflow-hidden
-                ${questionTheme[type].focus} 
-                ${questionTheme[type].border}    
+                disabled:cursor-not-allowed text-slate-700 dark:text-slate-300 placeholder:text-slate-400 placeholder:dark:text-slate-600 bg-white dark:bg-slate-800 border-slate-300 dark:border-slate-700 rounded font-medium px-3 py-2 border-2 w-full focus:outline-none focus:shadow-[0_0_0_4px] resize-none overflow-hidden
+                ${questionTheme[type].focus}   
             `}
         />
     )

@@ -4,7 +4,7 @@ import NavLink from "./NavLink";
 
 export default function Header() {
     return (
-        <div className="py-2 px-5 border-b-2 border-transparent w-full flex items-center bg-stone-100 justify-center">
+        <div className="py-2 px-5 border-b-2 border-transparent w-full flex items-center bg-stone-100 dark:bg-slate-800 justify-center">
             <Logo className="text-lg" />
             <div className="ml-6 md:flex items-center h-full hidden">
                 <NavLink 

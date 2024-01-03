@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 import GoogleButton from "../_components/GoogleButton";
 import InputField from "../_components/InputField";
 import OrDivider from "../_components/OrDivider";
-import SubmitButton from "../_components/SubmitButton";
+import ActionButton from "@/theme/ActionButton";
 
 export default function Signup() {
     const [name, setName] = useState("");
@@ -27,7 +27,7 @@ export default function Signup() {
     }, [error]);
 
     return (
-        <div className="h-screen w-screen flex items-center justify-center bg-stone-100 p-3">
+        <div className="h-screen w-screen flex items-center justify-center bg-stone-100 dark:bg-slate-800 p-3">
             <div className="px-5 w-full max-w-96">
                 <div className="flex justify-center p-3">
                     <PrimaryText className="text-lg font-bold">Sign up for <Logo className="ml-1"/></PrimaryText>
@@ -62,11 +62,15 @@ export default function Signup() {
                         placeholder="Confirm Password"
                         className="mt-3"
                     />
-                    <SubmitButton className="mt-8">{
+                    <ActionButton
+                        submit
+                        bolded
+                        className="mt-8"
+                    >{
                         signingUp ? <>
                             <Icon type={LoadingFour} className="animate-spin text-lg mr-2" /> Creating account
                         </> : "Create account"
-                    }</SubmitButton>
+                    }</ActionButton>
                 </form>
             </div>
         </div>    

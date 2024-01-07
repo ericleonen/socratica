@@ -1,4 +1,4 @@
-@media print {
+/* @media print {
     .page-break {
       margin-top: 1rem;
       display: block;
@@ -9,4 +9,4 @@
 @page {
     margin: 6rem;
     size: auto;
-}
+} */

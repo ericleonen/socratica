@@ -2,16 +2,16 @@ import Icon from "@/theme/Icon";
 import SecondaryButton from "@/theme/SecondaryButton"
 import { useKeyDown } from "@/utils/input";
 import { Left, Right } from "@icon-park/react";
+import helpData from "./help";
 
 type HelpNavigationProps = {
     helpIndex: number,
     setHelpIndex: React.Dispatch<React.SetStateAction<number>>,
-    numHelp: number
 }
 
-export default function HelpNavigation({ helpIndex, setHelpIndex, numHelp }: HelpNavigationProps) {
+export default function HelpNavigation({ helpIndex, setHelpIndex }: HelpNavigationProps) {
     const moveBack = () => setHelpIndex(prev => Math.max(prev - 1, 0));
-    const moveForward = () => setHelpIndex(prev => Math.min(numHelp - 1, prev + 1));
+    const moveForward = () => setHelpIndex(prev => Math.min(helpData.length - 1, prev + 1));
 
     useKeyDown(moveBack, "ArrowLeft");
     useKeyDown(moveForward, "ArrowRight");
@@ -28,7 +28,7 @@ export default function HelpNavigation({ helpIndex, setHelpIndex, numHelp }: Hel
                 </SecondaryButton>
             }
             {
-                helpIndex < numHelp - 1 &&
+                helpIndex < helpData.length - 1 &&
                 <SecondaryButton
                     onClick={moveForward}
                     className="ml-auto"

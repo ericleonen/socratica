@@ -28,8 +28,12 @@ export default function Main() {
                 </SecondaryText>
             </div>
             <img 
-                className="md:ml-9 w-3/5 md:w-1/4 h-min mb-3" 
+                className="md:ml-9 w-3/5 md:w-1/4 h-min mb-3 dark:hidden" 
                 src="./beanieMonkey.png"
+            />
+            <img 
+                className="md:ml-9 w-3/5 md:w-1/4 h-min mb-3 hidden dark:block" 
+                src="./whiteMonkey.png"
             />
         </div>
     )

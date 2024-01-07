@@ -1,8 +1,8 @@
 import Stripe from "stripe";
-import { NextResponse, NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-    const stripe = new Stripe(process.env.STRIPE_SECRET_TEST!);
+    const stripe = new Stripe(process.env.STRIPE_SECRET!);
     let { priceID, quantity, userID } = await req.json();
     const session = await stripe.checkout.sessions.create({
          line_items: [{

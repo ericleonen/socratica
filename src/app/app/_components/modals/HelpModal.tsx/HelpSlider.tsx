@@ -1,21 +1,21 @@
 import HelpVisual from "./HelpVisual"
+import helpData, { HelpData } from "./help"
 
 type HelpSliderProps = {
-    helpIndex: number,
-    numHelp: number
+    helpIndex: number
 }
 
-export default function HelpSlider({ helpIndex, numHelp }: HelpSliderProps) {
+export default function HelpSlider({ helpIndex }: HelpSliderProps) {
     return (
-        <div className="relative w-[640px] h-[360px] overflow-hidden">
+        <div className="relative w-[640px] overflow-hidden">
             <div
                 style={{
                     marginLeft: `-${helpIndex * 640}px` 
                 }}
                 className="transition-[margin] duration-150 flex"
             >{
-                Array.from(Array(numHelp)).map((_:any, visualIndex: number) => 
-                    <HelpVisual {...{helpIndex, visualIndex}} />
+                helpData.map((visualData: HelpData, visualIndex: number) => 
+                    <HelpVisual {...{visualData, visualIndex}} />
                 )
             }</div>
         </div>
